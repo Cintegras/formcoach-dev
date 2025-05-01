@@ -120,10 +120,10 @@ const LogWorkout = () => {
         
         <div className="relative z-10">
           <p className="text-gray-400 text-sm">
-            {`{MachineType} (ex: ${getMachineName()} ${formattedExerciseName})`}
+            {getMachineName()} {formattedExerciseName}
           </p>
           <h2 className="text-4xl font-bold my-2 text-white">
-            {`{ExerciseName}`}
+            {formattedExerciseName}
           </h2>
           
           <button className="bg-white text-black px-6 py-2 rounded-full mt-2">
@@ -133,11 +133,11 @@ const LogWorkout = () => {
       </div>
 
       <div className="bg-[#1C1C1E] rounded-lg p-5">
-        <h3 className="text-xl font-semibold mb-4">Set Logging</h3>
+        <h3 className="text-xl font-semibold mb-4 text-[#D7E4E3]">Set Logging</h3>
         
         {sets.map((set, index) => (
           <div key={index} className="mb-6 last:mb-0">
-            <p className="text-white mb-2">
+            <p className="text-[#D7E4E3] mb-2 text-lg font-semibold font-outfit">
               {set.label} — {set.reps} reps
             </p>
 
@@ -148,7 +148,7 @@ const LogWorkout = () => {
                   value={set.weight}
                   onChange={(e) => updateSet(index, 'weight', e.target.value)}
                   placeholder="Weight"
-                  className="bg-[#121212] border-0 rounded-md text-gray-300 p-3 w-full"
+                  className="bg-[#000F0E] border-0 rounded-md text-[#B0BEE3] py-[13px] px-[13.5px] w-full font-outfit font-semibold text-lg"
                 />
               </div>
               <div>
@@ -157,7 +157,7 @@ const LogWorkout = () => {
                   value={set.reps}
                   onChange={(e) => updateSet(index, 'reps', e.target.value)}
                   placeholder="Reps"
-                  className="bg-[#121212] border-0 rounded-md text-gray-300 p-3 w-full"
+                  className="bg-[#000F0E] border-0 rounded-md text-[#B0BEE3] py-[13px] px-[13.5px] w-full font-outfit font-semibold text-lg"
                 />
               </div>
             </div>
@@ -165,11 +165,11 @@ const LogWorkout = () => {
         ))}
 
         <div className="mt-8 space-y-3">
-          <PrimaryButton onClick={nextExercise}>
+          <PrimaryButton onClick={nextExercise} className="h-[90px] rounded-[20px] font-bold">
             Next Exercise
           </PrimaryButton>
           
-          <SecondaryButton onClick={nextExercise}>
+          <SecondaryButton onClick={nextExercise} className="h-[90px] rounded-[20px] font-bold border border-[#00C4B4] text-[#00C4B4] bg-transparent">
             Skip Exercise
           </SecondaryButton>
         </div>

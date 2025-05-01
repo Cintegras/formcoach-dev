@@ -79,6 +79,7 @@ export default {
 			},
 			fontFamily: {
 				poppins: ['Poppins', 'sans-serif'],
+				outfit: ['Outfit', 'system-ui', 'sans-serif'],
 			},
 			keyframes: {
 				'accordion-down': {
