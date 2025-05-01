@@ -3,7 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
+import LogWorkout from "./pages/LogWorkout";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -15,8 +15,13 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+          {/* 👇 Set LogWorkout as the default page */}
+          <Route path="/" element={<LogWorkout />} />
+
+          {/* You can still route to other pages if needed */}
+          <Route path="/log-workout/:exercise" element={<LogWorkout />} />
+
+          {/* Catch-all 404 page */}
           <Route path="*" element={<NotFound />} />
         </Routes>
       </BrowserRouter>
