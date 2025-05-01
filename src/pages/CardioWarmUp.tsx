@@ -98,7 +98,7 @@ const CardioWarmUp = () => {
   return (
     <PageContainer>
       <div className="mt-8 mb-6">
-        <h1 className="font-bold text-[28px] text-center text-[#FFFFFF]">
+        <h1 className="font-bold text-[28px] text-center text-[#D7E4E3]">
           Cardio Warm-Up
         </h1>
         <p className="font-normal text-[14px] text-[#9CA3AF] text-center mt-2">
@@ -130,7 +130,7 @@ const CardioWarmUp = () => {
             />
           </svg>
           <div className="absolute flex flex-col items-center justify-center">
-            <span className="font-bold text-[48px] text-[#FFFFFF]">
+            <span className="font-bold text-[48px] text-[#D7E4E3]">
               {formatTime(timeLeft)}
             </span>
             <span className="font-normal text-[14px] text-[#9CA3AF]">

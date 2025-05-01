@@ -11,7 +11,7 @@ const Welcome = () => {
     <PageContainer>
       <div className="flex flex-col items-center justify-center min-h-[80vh]">
         <div className="mb-10">
-          <h1 className="font-bold text-[32px] text-center text-[#FFFFFF]">
+          <h1 className="font-bold text-[32px] text-center text-[#D7E4E3]">
             Welcome to FormCoach
           </h1>
           <p className="font-normal text-[16px] text-[#9CA3AF] text-center mt-4 mb-8">

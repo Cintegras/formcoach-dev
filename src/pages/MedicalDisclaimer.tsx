@@ -22,7 +22,7 @@ const MedicalDisclaimer = () => {
     <PageContainer>
       <div className="flex flex-col items-center justify-center min-h-[80vh]">
         <div className="mb-6">
-          <h1 className="font-bold text-[28px] text-center text-[#FFFFFF]">
+          <h1 className="font-bold text-[28px] text-center text-[#D7E4E3]">
             Medical Disclaimer
           </h1>
           <p className="font-normal text-[14px] text-[#9CA3AF] text-center mt-2">
@@ -31,18 +31,18 @@ const MedicalDisclaimer = () => {
         </div>
         
         <div className="bg-[#1C1C1E] rounded-lg p-6 mb-8">
-          <p className="font-normal text-[14px] text-[#FFFFFF] mb-4">
+          <p className="font-normal text-[14px] text-[#D7E4E3] mb-4">
             FormCoach is designed to assist with workout guidance but is not a substitute for professional medical advice, diagnosis, or treatment.
           </p>
           
-          <p className="font-normal text-[14px] text-[#FFFFFF] mb-4">
+          <p className="font-normal text-[14px] text-[#D7E4E3] mb-4">
             Before beginning any exercise program:
           </p>
           
           <ul className="space-y-3 mb-6">
             <li className="flex items-start">
               <span className="text-[#00C4B4] mr-2">•</span>
-              <span className="font-normal text-[14px] text-[#FFFFFF]">
+              <span className="font-normal text-[14px] text-[#D7E4E3]">
                 Consult with your healthcare provider, especially if you have chronic conditions, injuries, or health concerns
               </span>
             </li>

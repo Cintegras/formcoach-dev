@@ -105,7 +105,7 @@ const WorkoutPlan = () => {
   return (
     <PageContainer>
       <div className="mt-8 mb-6">
-        <h1 className="font-bold text-[28px] text-center text-[#FFFFFF]">
+        <h1 className="font-bold text-[28px] text-center text-[#D7E4E3]">
           Today's Workout Plan
         </h1>
         <p className="font-normal text-[14px] text-[#9CA3AF] text-center mt-2">

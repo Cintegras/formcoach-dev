@@ -55,7 +55,7 @@ export default {
 				},
 				formcoach: {
 					background: '#020D0C',
-					text: '#FFFFFF',
+					text: '#D7E4E3',
 					subtext: '#9CA3AF',
 					primary: '#00C4B4',
 					card: '#1C1C1E',
