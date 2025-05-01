@@ -1,10 +1,10 @@
+
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import SecondaryButton from '@/components/SecondaryButton';
 import { Input } from '@/components/ui/input';
-import { Check } from 'lucide-react';
 import { toast } from "@/hooks/use-toast";
 
 interface SetData {
@@ -18,7 +18,8 @@ const LogWorkout = () => {
   const navigate = useNavigate();
   const { exercise } = useParams<{ exercise: string }>();
 
-  const exerciseName = exercise ? exercise.replace(/-/g, ' ') : 'Leg Press';
+  // Make sure we have a default exercise and properly format it
+  const exerciseName = exercise ? decodeURIComponent(exercise).replace(/-/g, ' ') : 'Leg Press';
 
   // Format the exercise name to look nicer
   const formattedExerciseName = exerciseName
@@ -115,10 +116,10 @@ const LogWorkout = () => {
     <PageContainer>
       <div className="mt-8 mb-6">
         <h1 className="font-bold text-[28px] text-center text-[#A4B1B7]">
-          {formattedExerciseName}
+          Log Workout
         </h1>
         <p className="font-normal text-[14px] text-[#A4B1B7] text-center mt-2">
-          Log your sets below
+          {formattedExerciseName}
         </p>
       </div>
       
