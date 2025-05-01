@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
@@ -116,7 +115,7 @@ const LogWorkout = () => {
     <PageContainer>
       <div className="mt-8 mb-6">
         <h1 className="font-bold text-[28px] text-center text-[#A4B1B7]">
-          Log Workout
+          {formattedExerciseName}
         </h1>
         <p className="font-normal text-[14px] text-[#A4B1B7] text-center mt-2">
           Log your sets below
