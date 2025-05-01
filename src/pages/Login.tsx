@@ -47,7 +47,7 @@ const Login = () => {
 
   return (
     <PageContainer>
-      <div className="flex flex-col items-center justify-center min-h-[80vh] font-poppins">
+      <div className="flex flex-col items-center justify-center min-h-[80vh] font-inter">
         <div className="mb-10">
           <h1 className="font-bold text-[32px] text-center text-[#D7E4E3]">
             FormCoach

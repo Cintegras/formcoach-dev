@@ -38,7 +38,7 @@ const SecondaryButton: React.FC<SecondaryButtonProps> = ({
     duration-200 
     disabled:opacity-50 
     disabled:cursor-not-allowed
-    font-poppins
+    font-inter
   `;
 
   const finalClass = `${baseClass} ${className}`.trim();
