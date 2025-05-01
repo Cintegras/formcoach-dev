@@ -1,3 +1,4 @@
+
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -15,12 +16,12 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          {/* 👇 Set LogWorkout as the default page */}
+          {/* Default route for LogWorkout with a sample exercise */}
           <Route path="/" element={<LogWorkout />} />
-
-          {/* You can still route to other pages if needed */}
-          <Route path="/log-workout/:exercise" element={<LogWorkout />} />
-
+          
+          {/* Route for specific exercises */}
+          <Route path="/workout-tracking/:exercise" element={<LogWorkout />} />
+          
           {/* Catch-all 404 page */}
           <Route path="*" element={<NotFound />} />
         </Routes>

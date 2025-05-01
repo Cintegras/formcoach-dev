@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
@@ -30,11 +30,19 @@ const LogWorkout = () => {
       case 'leg press':
         return 'Matrix';
       case 'seated leg curl':
-        return 'Nautilus';
+        return 'Matrix';
+      case 'leg extension':
+        return 'Matrix';
       case 'chest press':
         return 'Matrix';
       case 'lat pulldown':
-        return 'Cybex';
+        return 'Cable Pulley';
+      case 'seated row':
+        return 'Cable';
+      case 'triceps pushdown':
+        return 'Matrix';
+      case 'biceps curl':
+        return 'Matrix';
       default:
         return 'Matrix';
     }
@@ -133,7 +141,7 @@ const LogWorkout = () => {
         ))}
       </div>
 
-      <PrimaryButton onClick={nextExercise}>
+      <PrimaryButton onClick={nextExercise} className="mb-3">
         Save and Continue
       </PrimaryButton>
 

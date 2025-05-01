@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -31,6 +32,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
     duration-200 
     disabled:opacity-50 
     disabled:cursor-not-allowed
+    font-poppins
   `;
 
   const finalClass = `${baseClass} ${className}`.trim();
