@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -19,8 +18,22 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
   disabled = false,
   type = "button"
 }) => {
-  const baseClass = "formcoach-primary-btn";
-  const finalClass = `${baseClass} ${className} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`;
+  const baseClass = `
+    w-full 
+    text-center 
+    rounded-xl 
+    bg-formcoach-primary 
+    text-white 
+    font-semibold 
+    px-4 py-3 
+    hover:opacity-90 
+    transition 
+    duration-200 
+    disabled:opacity-50 
+    disabled:cursor-not-allowed
+  `;
+
+  const finalClass = `${baseClass} ${className}`.trim();
 
   if (to) {
     return (
