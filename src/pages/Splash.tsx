@@ -18,7 +18,7 @@ const Splash = () => {
   return (
     <PageContainer className="flex items-center justify-center">
       <div className="text-center">
-        <h1 className="font-bold text-[40px] text-[#FFFFFF] mb-4">
+        <h1 className="font-bold text-[40px] text-[#00C4B4] mb-4">
           FormCoach
         </h1>
         <div className="animate-pulse">

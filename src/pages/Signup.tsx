@@ -10,7 +10,6 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 const signupSchema = z.object({
-  name: z.string().min(2, { message: 'Name must be at least 2 characters' }),
   email: z.string().email({ message: 'Please enter a valid email address' }),
   password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
   confirmPassword: z.string(),
@@ -28,7 +27,6 @@ const Signup = () => {
   const form = useForm<SignupValues>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
-      name: '',
       email: '',
       password: '',
       confirmPassword: '',
@@ -51,7 +49,7 @@ const Signup = () => {
     <PageContainer>
       <div className="flex flex-col items-center justify-center min-h-[80vh]">
         <div className="mb-10">
-          <h1 className="font-bold text-[32px] text-center text-[#FFFFFF]">
+          <h1 className="font-bold text-[32px] text-center text-[#00C4B4]">
             Create Account
           </h1>
           <p className="font-normal text-[16px] text-[#9CA3AF] text-center mt-2">
@@ -62,24 +60,6 @@ const Signup = () => {
         <div className="w-full bg-[#1C1C1E] rounded-lg p-6">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-[#D7E4E3] font-normal text-[14px]">Full Name</FormLabel>
-                    <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="John Doe"
-                        className="bg-[#000F0E] border-0 rounded-md text-[#B0BEE3] py-[13px] px-[13.5px] w-full h-auto font-semibold text-[18px]"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-[#FF4D4F]" />
-                  </FormItem>
-                )}
-              />
-              
               <FormField
                 control={form.control}
                 name="email"

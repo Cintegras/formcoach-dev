@@ -40,11 +40,16 @@ const Login = () => {
     navigate('/workout-plan');
   };
 
+  const handleForgotPassword = () => {
+    // This would normally navigate to a forgot password page or show a modal
+    alert("Forgot password functionality would be implemented here");
+  };
+
   return (
     <PageContainer>
       <div className="flex flex-col items-center justify-center min-h-[80vh]">
         <div className="mb-10">
-          <h1 className="font-bold text-[32px] text-center text-[#FFFFFF]">
+          <h1 className="font-bold text-[32px] text-center text-[#00C4B4]">
             FormCoach
           </h1>
           <p className="font-normal text-[16px] text-[#9CA3AF] text-center mt-2">
@@ -92,6 +97,16 @@ const Login = () => {
                   </FormItem>
                 )}
               />
+
+              <div className="text-right">
+                <button 
+                  type="button"
+                  onClick={handleForgotPassword}
+                  className="text-[#00C4B4] text-[14px] hover:underline"
+                >
+                  Forgot Password?
+                </button>
+              </div>
               
               <PrimaryButton type="submit" disabled={isLoading}>
                 {isLoading ? 'Signing in...' : 'Sign In'}
