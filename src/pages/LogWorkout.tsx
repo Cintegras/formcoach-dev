@@ -110,14 +110,14 @@ const LogWorkout = () => {
     <PageContainer>
       <div className="mt-8 mb-6">
         <h1 className="font-bold text-[28px] text-center text-[#A4B1B7]">
-          {`${formattedExerciseName} (${getMachineName()})`}
+          Log Workout
         </h1>
-        <p className="font-normal text-[14px] text-[#9CA3AF] text-center mt-2">
+        <p className="font-normal text-[14px] text-[#A4B1B7] text-center mt-2">
           Log your sets below
         </p>
       </div>
       
-      <div className="bg-[#1C1C1E] rounded-lg p-4 mb-6">
+      <div className="bg-[#A4B1B7] rounded-lg p-4 mb-6">
         {sets.map((set, index) => (
           <div key={index} className="mb-6 last:mb-0">
             <p className="font-normal text-[16px] text-[#A4B1B7 mb-2">
@@ -132,7 +132,12 @@ const LogWorkout = () => {
                   value={set.weight}
                   onChange={(e) => updateSet(index, 'weight', e.target.value)}
                   placeholder="Weight"
-                  className="bg-[#000F0E] border-0 rounded-md text-[#B0BEE3] py-[13px] px-[13.5px] w-full h-auto font-semibold text-[18px]"
+                  //className="bg-[#000F0E] border-0 rounded-md text-[#B0BEE3] py-[13px] px-[13.5px] w-full h-auto font-semibold text-[18px]"
+                  className="rounded-md w-full h-auto px-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
+                  style={{
+                    backgroundColor: "rgba(176, 232, 227, 0.12)", // #B0E8E3 @ 12%
+                    color: "rgba(209, 235, 233, 0.62)"           // #D1EBE9 @ 62%
+                  }}
                 />
               </div>
               <div>
@@ -142,7 +147,12 @@ const LogWorkout = () => {
                   value={set.reps}
                   onChange={(e) => updateSet(index, 'reps', e.target.value)}
                   placeholder="Reps"
-                  className="bg-[#000F0E] border-0 rounded-md text-[#B0BEE3] py-[13px] px-[13.5px] w-full h-auto font-semibold text-[18px]"
+                  //className="bg-[#000F0E] border-0 rounded-md text-[#B0BEE3] py-[13px] px-[13.5px] w-full h-auto font-semibold text-[18px]"
+                  className="rounded-md w-full h-auto px-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
+                  style={{
+                    backgroundColor: "rgba(176, 232, 227, 0.12)", // #B0E8E3 @ 12%
+                    color: "rgba(209, 235, 233, 0.62)"           // #D1EBE9 @ 62%
+                  }}
                 />
               </div>
             </div>
