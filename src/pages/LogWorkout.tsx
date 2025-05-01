@@ -37,7 +37,7 @@ const LogWorkout = () => {
       case 'chest press':
         return 'Matrix';
       case 'lat pulldown':
-        return 'Cybex'; // Changed to match the image
+        return 'Cybex'; 
       case 'seated row':
         return 'Cable';
       case 'triceps pushdown':
@@ -52,25 +52,31 @@ const LogWorkout = () => {
   const [sets, setSets] = useState<SetData[]>([
     {
       label: 'Warm-up Set',
-      reps: '10',
-      weight: '20',
+      reps: '12-15',
+      weight: '',
       isWarmup: true
     },
     {
       label: 'Set 1',
       reps: '10',
-      weight: '30'
+      weight: ''
     },
     {
       label: 'Set 2',
       reps: '10',
-      weight: '30'
+      weight: ''
     },
     {
       label: 'Set 3',
-      reps: '10',
-      weight: '30'
+      reps: '8-10',
+      weight: ''
     },
+    {
+      label: 'Cool-down Set',
+      reps: '12',
+      weight: '',
+      isWarmup: true
+    }
   ]);
 
   const updateSet = (index: number, field: 'reps' | 'weight', value: string) => {
@@ -103,73 +109,71 @@ const LogWorkout = () => {
 
   return (
     <PageContainer>
-      <div className="mt-12 mb-6 text-center">
-        <h1 className="text-2xl font-semibold mb-1">
-          {`${formattedExerciseName} (${getMachineName()})`}
+      <div className="mt-8 mb-4">
+        <h1 className="text-xl font-normal mb-4 text-gray-400">
+          Today's Workout
         </h1>
-        <p className="text-formcoach-subtext text-base">
-          Log your sets below
-        </p>
+      </div>
+      
+      <div className="bg-[#1C1C1E] rounded-lg p-5 mb-6 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('/lovable-uploads/76e71100-67b3-4ed4-a2c1-931ef7648e6f.png')] bg-cover opacity-20 z-0"></div>
+        
+        <div className="relative z-10">
+          <p className="text-gray-400 text-sm">
+            {`{MachineType} (ex: ${getMachineName()} ${formattedExerciseName})`}
+          </p>
+          <h2 className="text-4xl font-bold my-2 text-white">
+            {`{ExerciseName}`}
+          </h2>
+          
+          <button className="bg-white text-black px-6 py-2 rounded-full mt-2">
+            Start Exercise
+          </button>
+        </div>
       </div>
 
-      <div className="bg-formcoach-card rounded-xl p-4 mb-6">
+      <div className="bg-[#1C1C1E] rounded-lg p-5">
+        <h3 className="text-xl font-semibold mb-4">Set Logging</h3>
+        
         {sets.map((set, index) => (
-          <div key={index} className="mb-5 last:mb-0">
-            <div className="flex justify-between items-center mb-2">
-              <p className="text-white text-base">
-                {set.label}
-              </p>
-              <span className="text-formcoach-subtext text-sm">(Recommended)</span>
-            </div>
+          <div key={index} className="mb-6 last:mb-0">
+            <p className="text-white mb-2">
+              {set.label} — {set.reps} reps
+            </p>
 
-            <div className="flex space-x-3">
-              <div className="flex-1">
-                <label className="text-formcoach-subtext text-xs mb-1 block">Reps</label>
-                <div className="relative">
-                  <Input
-                    type="number"
-                    value={set.reps}
-                    onChange={(e) => updateSet(index, 'reps', e.target.value)}
-                    className="bg-black/40 border border-white/20 rounded-lg p-3 w-full text-white"
-                  />
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                    <div className="flex flex-col">
-                      <button className="text-white text-xs opacity-50 pointer-events-auto" onClick={() => updateSet(index, 'reps', String(Number(set.reps) + 1))}>▲</button>
-                      <button className="text-white text-xs opacity-50 pointer-events-auto" onClick={() => updateSet(index, 'reps', String(Math.max(1, Number(set.reps) - 1)))}>▼</button>
-                    </div>
-                  </div>
-                </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Input
+                  type="text"
+                  value={set.weight}
+                  onChange={(e) => updateSet(index, 'weight', e.target.value)}
+                  placeholder="Weight"
+                  className="bg-[#121212] border-0 rounded-md text-gray-300 p-3 w-full"
+                />
               </div>
-
-              <div className="flex-1">
-                <label className="text-formcoach-subtext text-xs mb-1 block">Weight (lbs)</label>
-                <div className="relative">
-                  <Input
-                    type="number"
-                    value={set.weight}
-                    onChange={(e) => updateSet(index, 'weight', e.target.value)}
-                    className="bg-black/40 border border-white/20 rounded-lg p-3 w-full text-white"
-                  />
-                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
-                    <div className="flex flex-col">
-                      <button className="text-white text-xs opacity-50 pointer-events-auto" onClick={() => updateSet(index, 'weight', String(Number(set.weight) + 5))}>▲</button>
-                      <button className="text-white text-xs opacity-50 pointer-events-auto" onClick={() => updateSet(index, 'weight', String(Math.max(5, Number(set.weight) - 5)))}>▼</button>
-                    </div>
-                  </div>
-                </div>
+              <div>
+                <Input
+                  type="text"
+                  value={set.reps === set.label.includes('Warm-up') ? '12-15' : set.reps}
+                  onChange={(e) => updateSet(index, 'reps', e.target.value)}
+                  placeholder="Reps"
+                  className="bg-[#121212] border-0 rounded-md text-gray-300 p-3 w-full"
+                />
               </div>
             </div>
           </div>
         ))}
+
+        <div className="mt-8 space-y-3">
+          <PrimaryButton onClick={nextExercise}>
+            Next Exercise
+          </PrimaryButton>
+          
+          <SecondaryButton onClick={nextExercise}>
+            Skip Exercise
+          </SecondaryButton>
+        </div>
       </div>
-
-      <PrimaryButton onClick={nextExercise} className="mb-3">
-        Save and Continue
-      </PrimaryButton>
-
-      <SecondaryButton onClick={nextExercise} className="bg-gray-500/30 text-white border-0">
-        Skip to Next Exercise
-      </SecondaryButton>
     </PageContainer>
   );
 };

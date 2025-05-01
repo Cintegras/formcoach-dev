@@ -22,9 +22,9 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
   const baseClass = `
     w-full 
     text-center 
-    rounded-xl 
+    rounded-full
     bg-[#00C4B4] 
-    text-white 
+    text-black
     font-semibold 
     px-4 py-3 
     hover:opacity-90 

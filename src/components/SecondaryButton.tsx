@@ -22,12 +22,12 @@ const SecondaryButton: React.FC<SecondaryButtonProps> = ({
   const baseClass = `
     w-full 
     text-center 
-    rounded-xl 
-    bg-gray-500/30
-    text-white 
+    rounded-full
+    bg-[#00C4B4] 
+    text-black
     font-semibold 
     px-4 py-3 
-    hover:bg-gray-500/40 
+    hover:opacity-90 
     transition 
     duration-200 
     disabled:opacity-50 
