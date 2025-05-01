@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link } from 'react-router-dom';
 
@@ -19,8 +18,24 @@ const SecondaryButton: React.FC<SecondaryButtonProps> = ({
   disabled = false,
   type = "button"
 }) => {
-  const baseClass = "formcoach-secondary-btn";
-  const finalClass = `${baseClass} ${className} ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`;
+  const baseClass = `
+    w-full 
+    text-center 
+    rounded-xl 
+    border 
+    border-formcoach-primary 
+    text-formcoach-primary 
+    font-semibold 
+    px-4 py-3 
+    bg-transparent 
+    hover:bg-formcoach-primary/10 
+    transition 
+    duration-200 
+    disabled:opacity-50 
+    disabled:cursor-not-allowed
+  `;
+
+  const finalClass = `${baseClass} ${className}`.trim();
 
   if (to) {
     return (
