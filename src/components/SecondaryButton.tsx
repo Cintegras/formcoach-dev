@@ -22,9 +22,9 @@ const SecondaryButton: React.FC<SecondaryButtonProps> = ({
   const baseClass = `
     w-full 
     text-center 
-    rounded-[20px]
-    bg-transparent 
-    text-[#00C4B4]
+    rounded-full
+    bg-[#00C4B4] 
+    text-black
     font-semibold 
     px-4 py-3 
     hover:opacity-90 
@@ -32,10 +32,7 @@ const SecondaryButton: React.FC<SecondaryButtonProps> = ({
     duration-200 
     disabled:opacity-50 
     disabled:cursor-not-allowed
-    font-outfit
-    h-[90px]
-    border
-    border-[#00C4B4]
+    font-poppins
   `;
 
   const finalClass = `${baseClass} ${className}`.trim();

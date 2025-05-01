@@ -22,7 +22,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
   const baseClass = `
     w-full 
     text-center 
-    rounded-[20px]
+    rounded-full
     bg-[#00C4B4] 
     text-black
     font-semibold 
@@ -32,8 +32,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
     duration-200 
     disabled:opacity-50 
     disabled:cursor-not-allowed
-    font-outfit
-    h-[90px]
+    font-poppins
   `;
 
   const finalClass = `${baseClass} ${className}`.trim();
