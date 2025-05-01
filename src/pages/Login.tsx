@@ -64,7 +64,7 @@ const Login = () => {
           ...
         </div>
         */}
-        <div className="w-full rounded-lg p-6 border-2 border-[#00C4B4] bg-black">
+        <div className="w-full rounded-lg p-6 bg-black">
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
