@@ -1,5 +1,4 @@
 
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
 import { CardGradient, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card-gradient';
