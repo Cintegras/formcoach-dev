@@ -65,7 +65,7 @@ const Login = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#D7E4E3] text-[14px] font-normal">
+                    <FormLabel className="text-[#D7E4E3] text-[17px] font-normal font-inter">
                       Email
                     </FormLabel>
                     <FormControl>
@@ -73,7 +73,7 @@ const Login = () => {
                         {...field}
                         placeholder="yourname@example.com"
                         type="email"
-                        className="rounded-md w-full h-auto px-[13.5px] py-[13px] border-0 font-semibold text-[18px]"
+                        className="rounded-md w-full h-auto px-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
                         style={{
                           backgroundColor: "rgba(176, 232, 227, 0.12)", // #B0E8E3 @ 12%
                           color: "rgba(209, 235, 233, 0.62)"           // #D1EBE9 @ 62%
@@ -98,7 +98,7 @@ const Login = () => {
                         {...field}
                         placeholder="******"
                         type="password"
-                        className="rounded-md w-full h-auto px-[13.5px] py-[13px] border-0 font-semibold text-[18px]"
+                        className="rounded-md w-full h-auto px-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
                         style={{
                           backgroundColor: "rgba(176, 232, 227, 0.12)", // #B0E8E3 @ 12%
                           color: "rgba(209, 235, 233, 0.62)"           // #D1EBE9 @ 62%
