@@ -154,7 +154,7 @@ const LogWorkout = () => {
               <div>
                 <Input
                   type="text"
-                  value={set.reps === set.label.includes('Warm-up') ? '12-15' : set.reps}
+                  value={set.reps}
                   onChange={(e) => updateSet(index, 'reps', e.target.value)}
                   placeholder="Reps"
                   className="bg-[#121212] border-0 rounded-md text-gray-300 p-3 w-full"
