@@ -105,8 +105,8 @@ const WorkoutPlan = () => {
   return (
     <PageContainer>
       <div className="mt-8 mb-6">
-        <h1 className="font-bold text-[28px] text-center text-[#A4B1B7]">
-          Today's Workout Plan
+        <h1 className="font-bold text-[28px] text-center text-[#B0E8E3]">
+          Today's Workout
         </h1>
         <p className="font-normal text-[14px] text-[#A4B1B7] text-center mt-2">
           Start with a warm-up, then complete each exercise
@@ -119,7 +119,7 @@ const WorkoutPlan = () => {
             key={exercise.id} 
             className="bg-[#1C1C1E] rounded-lg p-4 flex justify-between items-center"
             style={{
-              backgroundColor: "rgba(176, 232, 227, 0.12)", // #B0E8E3 @ 12%
+              backgroundColor: "rgba(176, 232, 227, 0.12)",
             }}
             onClick={() => startExercise(exercise.id)}
           >
@@ -156,6 +156,7 @@ const WorkoutPlan = () => {
         <PrimaryButton 
           onClick={() => navigate('/workout-review')}
           disabled={exercises.some(exercise => !exercise.completed)}
+          className="bg-[#00C4B4] text-[#000000]"
         >
           Complete Workout
         </PrimaryButton>
