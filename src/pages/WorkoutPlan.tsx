@@ -105,10 +105,10 @@ const WorkoutPlan = () => {
   return (
     <PageContainer>
       <div className="mt-8 mb-6">
-        <h1 className="font-bold text-[28px] text-center text-[#D7E4E3]">
+        <h1 className="font-bold text-[28px] text-center text-[#A4B1B7]">
           Today's Workout Plan
         </h1>
-        <p className="font-normal text-[14px] text-[#9CA3AF] text-center mt-2">
+        <p className="font-normal text-[14px] text-[#A4B1B7] text-center mt-2">
           Start with a warm-up, then complete each exercise
         </p>
       </div>
@@ -118,13 +118,16 @@ const WorkoutPlan = () => {
           <div 
             key={exercise.id} 
             className="bg-[#1C1C1E] rounded-lg p-4 flex justify-between items-center"
+            style={{
+              backgroundColor: "rgba(176, 232, 227, 0.12)", // #B0E8E3 @ 12%
+            }}
             onClick={() => startExercise(exercise.id)}
           >
             <div>
-              <h3 className="font-semibold text-[16px] text-[#D7E4E3]">
+              <h3 className="font-semibold text-[16px] text-[#A4B1B7]">
                 {exercise.name}
               </h3>
-              <p className="font-normal text-[14px] text-[#9CA3AF]">
+              <p className="font-normal text-[14px] text-[#A4B1B7]">
                 {exercise.isCardio
                   ? exercise.duration
                   : `${exercise.sets} sets × ${exercise.reps} reps`
