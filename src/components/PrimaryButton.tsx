@@ -23,7 +23,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
     w-full 
     text-center 
     rounded-xl 
-    bg-formcoach-primary 
+    bg-[#00C4B4] 
     text-white 
     font-semibold 
     px-4 py-3 

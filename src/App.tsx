@@ -21,6 +21,7 @@ const App = () => (
           
           {/* Route for specific exercises */}
           <Route path="/workout-tracking/:exercise" element={<LogWorkout />} />
+          <Route path="/login" element={<LogWorkout />} />
           
           {/* Catch-all 404 page */}
           <Route path="*" element={<NotFound />} />

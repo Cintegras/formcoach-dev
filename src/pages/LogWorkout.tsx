@@ -4,6 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import SecondaryButton from '@/components/SecondaryButton';
+import { Input } from '@/components/ui/input';
 
 interface SetData {
   label: string;
@@ -36,7 +37,7 @@ const LogWorkout = () => {
       case 'chest press':
         return 'Matrix';
       case 'lat pulldown':
-        return 'Cable Pulley';
+        return 'Cybex'; // Changed to match the image
       case 'seated row':
         return 'Cable';
       case 'triceps pushdown':
@@ -102,39 +103,60 @@ const LogWorkout = () => {
 
   return (
     <PageContainer>
-      <div className="mt-12 mb-6">
-        <h1 className="formcoach-heading">{`${formattedExerciseName} (${getMachineName()})`}</h1>
-        <p className="formcoach-subheading">
+      <div className="mt-12 mb-6 text-center">
+        <h1 className="text-2xl font-semibold mb-1">
+          {`${formattedExerciseName} (${getMachineName()})`}
+        </h1>
+        <p className="text-formcoach-subtext text-base">
           Log your sets below
         </p>
       </div>
 
-      <div className="formcoach-card mb-6">
+      <div className="bg-formcoach-card rounded-xl p-4 mb-6">
         {sets.map((set, index) => (
-          <div key={index} className="mb-4 last:mb-0">
-            <p className="text-formcoach-text text-[16px] mb-2">
-              {set.label} – <span className="text-formcoach-subtext text-[14px]">(Recommended)</span>
-            </p>
+          <div key={index} className="mb-5 last:mb-0">
+            <div className="flex justify-between items-center mb-2">
+              <p className="text-white text-base">
+                {set.label}
+              </p>
+              <span className="text-formcoach-subtext text-sm">(Recommended)</span>
+            </div>
 
             <div className="flex space-x-3">
               <div className="flex-1">
-                <label className="text-formcoach-subtext text-[12px] mb-1 block">Reps</label>
-                <input
-                  type="number"
-                  value={set.reps}
-                  onChange={(e) => updateSet(index, 'reps', e.target.value)}
-                  className="bg-formcoach-background border border-formcoach-subtext rounded-lg p-2 w-full text-formcoach-text"
-                />
+                <label className="text-formcoach-subtext text-xs mb-1 block">Reps</label>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    value={set.reps}
+                    onChange={(e) => updateSet(index, 'reps', e.target.value)}
+                    className="bg-black/40 border border-white/20 rounded-lg p-3 w-full text-white"
+                  />
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <div className="flex flex-col">
+                      <button className="text-white text-xs opacity-50 pointer-events-auto" onClick={() => updateSet(index, 'reps', String(Number(set.reps) + 1))}>▲</button>
+                      <button className="text-white text-xs opacity-50 pointer-events-auto" onClick={() => updateSet(index, 'reps', String(Math.max(1, Number(set.reps) - 1)))}>▼</button>
+                    </div>
+                  </div>
+                </div>
               </div>
 
               <div className="flex-1">
-                <label className="text-formcoach-subtext text-[12px] mb-1 block">Weight (lbs)</label>
-                <input
-                  type="number"
-                  value={set.weight}
-                  onChange={(e) => updateSet(index, 'weight', e.target.value)}
-                  className="bg-formcoach-background border border-formcoach-subtext rounded-lg p-2 w-full text-formcoach-text"
-                />
+                <label className="text-formcoach-subtext text-xs mb-1 block">Weight (lbs)</label>
+                <div className="relative">
+                  <Input
+                    type="number"
+                    value={set.weight}
+                    onChange={(e) => updateSet(index, 'weight', e.target.value)}
+                    className="bg-black/40 border border-white/20 rounded-lg p-3 w-full text-white"
+                  />
+                  <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                    <div className="flex flex-col">
+                      <button className="text-white text-xs opacity-50 pointer-events-auto" onClick={() => updateSet(index, 'weight', String(Number(set.weight) + 5))}>▲</button>
+                      <button className="text-white text-xs opacity-50 pointer-events-auto" onClick={() => updateSet(index, 'weight', String(Math.max(5, Number(set.weight) - 5)))}>▼</button>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -145,7 +167,7 @@ const LogWorkout = () => {
         Save and Continue
       </PrimaryButton>
 
-      <SecondaryButton onClick={nextExercise}>
+      <SecondaryButton onClick={nextExercise} className="bg-gray-500/30 text-white border-0">
         Skip to Next Exercise
       </SecondaryButton>
     </PageContainer>

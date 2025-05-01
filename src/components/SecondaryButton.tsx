@@ -23,13 +23,11 @@ const SecondaryButton: React.FC<SecondaryButtonProps> = ({
     w-full 
     text-center 
     rounded-xl 
-    border 
-    border-formcoach-primary 
-    text-formcoach-primary 
+    bg-gray-500/30
+    text-white 
     font-semibold 
     px-4 py-3 
-    bg-transparent 
-    hover:bg-formcoach-primary/10 
+    hover:bg-gray-500/40 
     transition 
     duration-200 
     disabled:opacity-50 
