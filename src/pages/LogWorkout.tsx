@@ -109,7 +109,7 @@ const LogWorkout = () => {
   return (
     <PageContainer>
       <div className="mt-8 mb-6">
-        <h1 className="font-bold text-[28px] text-center text-[#D7E4E3]">
+        <h1 className="font-bold text-[28px] text-center text-[#A4B1B7]">
           {`${formattedExerciseName} (${getMachineName()})`}
         </h1>
         <p className="font-normal text-[14px] text-[#9CA3AF] text-center mt-2">
@@ -120,13 +120,13 @@ const LogWorkout = () => {
       <div className="bg-[#1C1C1E] rounded-lg p-4 mb-6">
         {sets.map((set, index) => (
           <div key={index} className="mb-6 last:mb-0">
-            <p className="font-normal text-[16px] text-[#D7E4E3] mb-2">
+            <p className="font-normal text-[16px] text-[#A4B1B7 mb-2">
               {set.label} – {set.reps} reps @ {set.weight} lbs (Recommended)
             </p>
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block font-normal text-[14px] text-[#D7E4E3] mb-1">Weight</label>
+                <label className="block font-normal text-[14px] text-[#A4B1B7] mb-1">Weight</label>
                 <Input
                   type="text"
                   value={set.weight}
@@ -136,7 +136,7 @@ const LogWorkout = () => {
                 />
               </div>
               <div>
-                <label className="block font-normal text-[14px] text-[#D7E4E3] mb-1">Reps</label>
+                <label className="block font-normal text-[14px] text-[#A4B1B7] mb-1">Reps</label>
                 <Input
                   type="text"
                   value={set.reps}

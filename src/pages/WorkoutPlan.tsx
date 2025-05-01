@@ -158,7 +158,7 @@ const WorkoutPlan = () => {
           disabled={exercises.some(exercise => !exercise.completed)}
           className="bg-[#00C4B4] text-[#000000]"
         >
-          Complete Workout
+          Choose Exercises
         </PrimaryButton>
       </div>
     </PageContainer>
