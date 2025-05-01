@@ -120,7 +120,7 @@ const LogWorkout = () => {
       <div className="bg-[#1C1C1E] rounded-lg p-4 mb-6">
         {sets.map((set, index) => (
           <div key={index} className="mb-6 last:mb-0">
-            <p className="font-normal text-[16px] text-[#A4B1B7 mb-2">
+            <p className="font-normal text-[16px] text-[#A4B1B7] mb-2">
               {set.label} – {set.reps} reps @ {set.weight} lbs (Recommended)
             </p>
 
