@@ -57,7 +57,8 @@ const Login = () => {
           </p>
         </div>
 
-        <div className="w-full max-w-md bg-[#1C1C1E] rounded-lg p-6">
+        {/* <div className="w-full max-w-md bg-[#1C1C1E] rounded-lg p-6"> */}
+        <div className="w-full rounded-lg p-6" style={{ backgroundColor: "rgba(176, 232, 227, 0.12)" }}>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
