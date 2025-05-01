@@ -117,7 +117,7 @@ const LogWorkout = () => {
         </p>
       </div>
       
-      <div className="bg-[#1C1C1E] rounded-lg p-4 mb-6">
+      <div className="w-full rounded-lg p-6" style={{ backgroundColor: "rgba(176, 232, 227, 0.12)" }}>
         {sets.map((set, index) => (
           <div key={index} className="mb-6 last:mb-0">
             <p className="font-normal text-[16px] text-[#A4B1B7] mb-2">
