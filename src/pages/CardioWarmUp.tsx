@@ -19,13 +19,13 @@ const CardioWarmUp = () => {
   useEffect(() => {
     // Set initial time based on selected option
     let initialTime = 300; // Default 5 minutes
-    
+
     if (selectedOption === '3') initialTime = 180;
     else if (selectedOption === '7') initialTime = 420;
     else if (selectedOption === 'custom') initialTime = customMinutes * 60;
-    
+
     setTimeLeft(initialTime);
-    
+
     // Stop any running timer when component unmounts
     return () => {
       if (timerRef.current) {
@@ -50,7 +50,7 @@ const CardioWarmUp = () => {
     } else if (timerRef.current) {
       clearInterval(timerRef.current);
     }
-    
+
     return () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
@@ -67,11 +67,11 @@ const CardioWarmUp = () => {
   const calculateStrokeDashoffset = () => {
     // Calculate the total duration in seconds
     let totalDuration = 300; // Default 5 minutes
-    
+
     if (selectedOption === '3') totalDuration = 180;
     else if (selectedOption === '7') totalDuration = 420;
     else if (selectedOption === 'custom') totalDuration = customMinutes * 60;
-    
+
     // Calculate the progress and offset
     const progress = timeLeft / totalDuration;
     return circumference - progress * circumference;
@@ -84,7 +84,7 @@ const CardioWarmUp = () => {
   const selectOption = (option: TimerOption) => {
     setSelectedOption(option);
     setIsRunning(false);
-    
+
     // Reset timer based on selected option
     if (option === '3') setTimeLeft(180);
     else if (option === '5') setTimeLeft(300);
@@ -98,14 +98,14 @@ const CardioWarmUp = () => {
   return (
     <PageContainer>
       <div className="mt-8 mb-6">
-        <h1 className="font-bold text-[28px] text-center text-[#D7E4E3]">
+        <h1 className="font-bold text-[28px] text-center text-[#A4B1B7]">
           Cardio Warm-Up
         </h1>
-        <p className="font-normal text-[14px] text-[#9CA3AF] text-center mt-2">
+        <p className="font-normal text-[14px] text-[#A4B1B7] text-center mt-2">
           Complete a light cardio warm-up to prepare your body
         </p>
       </div>
-      
+
       <div className="flex justify-center my-8">
         <div className="relative w-[200px] h-[200px] flex items-center justify-center">
           <svg className="w-full h-full transform -rotate-90" viewBox="0 0 200 200">
@@ -130,10 +130,10 @@ const CardioWarmUp = () => {
             />
           </svg>
           <div className="absolute flex flex-col items-center justify-center">
-            <span className="font-bold text-[48px] text-[#D7E4E3]">
+            <span className="font-bold text-[48px] text-[#A4B1B7]">
               {formatTime(timeLeft)}
             </span>
-            <span className="font-normal text-[14px] text-[#9CA3AF]">
+            <span className="font-normal text-[14px] text-[#A4B1B7]">
               Minutes Remaining
             </span>
           </div>
@@ -142,35 +142,50 @@ const CardioWarmUp = () => {
 
       <div className="grid grid-cols-4 gap-3 mb-6">
         <button 
-          className={`py-2 rounded-lg ${selectedOption === '3' ? 'bg-[#00C4B4] text-[#000000]' : 'bg-[#1C1C1E] text-[#FFFFFF]'}`}
+          className={`py-2 rounded-lg ${selectedOption === '3' ? 'bg-[#00C4B4] text-[#000000]' : 'text-[#A4B1B7]'}`}
           onClick={() => selectOption('3')}
+          style={{
+            backgroundColor: selectedOption === '3' ? '#00C4B4' : "rgba(176, 232, 227, 0.12)"
+          }}
         >
           3 min
         </button>
         <button 
-          className={`py-2 rounded-lg ${selectedOption === '5' ? 'bg-[#00C4B4] text-[#000000]' : 'bg-[#1C1C1E] text-[#FFFFFF]'}`}
+          className={`py-2 rounded-lg ${selectedOption === '5' ? 'bg-[#00C4B4] text-[#000000]' : 'text-[#A4B1B7]'}`}
           onClick={() => selectOption('5')}
+          style={{
+            backgroundColor: selectedOption === '5' ? '#00C4B4' : "rgba(176, 232, 227, 0.12)"
+          }}
         >
           5 min
         </button>
         <button 
-          className={`py-2 rounded-lg ${selectedOption === '7' ? 'bg-[#00C4B4] text-[#000000]' : 'bg-[#1C1C1E] text-[#FFFFFF]'}`}
+          className={`py-2 rounded-lg ${selectedOption === '7' ? 'bg-[#00C4B4] text-[#000000]' : 'text-[#A4B1B7]'}`}
           onClick={() => selectOption('7')}
+          style={{
+            backgroundColor: selectedOption === '7' ? '#00C4B4' : "rgba(176, 232, 227, 0.12)"
+          }}
         >
           7 min
         </button>
         <button 
-          className={`py-2 rounded-lg ${selectedOption === 'custom' ? 'bg-[#00C4B4] text-[#000000]' : 'bg-[#1C1C1E] text-[#FFFFFF]'}`}
+          className={`py-2 rounded-lg ${selectedOption === 'custom' ? 'bg-[#00C4B4] text-[#000000]' : 'text-[#A4B1B7]'}`}
           onClick={() => selectOption('custom')}
+          style={{
+            backgroundColor: selectedOption === 'custom' ? '#00C4B4' : "rgba(176, 232, 227, 0.12)"
+          }}
         >
           Custom
         </button>
       </div>
-      
+
       <button 
         onClick={toggleTimer}
         className={`w-[100px] h-[40px] rounded-lg font-semibold mx-auto block mb-8 
-          ${isRunning ? 'bg-[#9CA3AF]' : 'bg-[#00C4B4]'} text-[#000000]`}
+          ${isRunning ? 'text-[#A4B1B7]' : 'bg-[#00C4B4] text-[#000000]'}`}
+        style={{
+          backgroundColor: isRunning ? "rgba(176, 232, 227, 0.12)" : "#00C4B4"
+        }}
       >
         {isRunning ? 'Pause' : 'Start'}
       </button>
@@ -179,7 +194,7 @@ const CardioWarmUp = () => {
         <PrimaryButton onClick={skipToWorkout}>
           Complete Warm-Up
         </PrimaryButton>
-        
+
         <SecondaryButton onClick={skipToWorkout}>
           Skip Warm-Up
         </SecondaryButton>

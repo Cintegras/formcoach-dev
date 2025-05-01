@@ -17,7 +17,7 @@ const Splash = () => {
 
   return (
     <PageContainer className="flex items-center justify-center">
-      <div className="text-center">
+      <div className="text-center font-inter">
         <h1 className="font-bold text-[40px] text-[#A4B1B7] mb-4">
           FormCoach
         </h1>

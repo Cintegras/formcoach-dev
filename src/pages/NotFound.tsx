@@ -1,8 +1,10 @@
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react";
+import PageContainer from '@/components/PageContainer';
 
 const NotFound = () => {
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.error(
@@ -12,15 +14,20 @@ const NotFound = () => {
   }, [location.pathname]);
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
-          Return to Home
-        </a>
+    <PageContainer>
+      <div className="min-h-[80vh] flex items-center justify-center font-inter">
+        <div className="text-center">
+          <h1 className="font-bold text-[32px] text-[#A4B1B7] mb-4">404</h1>
+          <p className="font-normal text-[16px] text-[#A4B1B7] mb-4">Oops! Page not found</p>
+          <button 
+            onClick={() => navigate('/')} 
+            className="text-[#A4B1B7] hover:underline"
+          >
+            Return to Home
+          </button>
+        </div>
       </div>
-    </div>
+    </PageContainer>
   );
 };
 
