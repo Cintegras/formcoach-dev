@@ -49,7 +49,7 @@ const Login = () => {
     <PageContainer>
       <div className="flex flex-col items-center justify-center min-h-[80vh]">
         <div className="mb-10">
-          <h1 className="font-bold text-[32px] text-center text-[#00C4B4]">
+          <h1 className="font-bold text-[32px] text-center text-[#D7E4E3]">
             FormCoach
           </h1>
           <p className="font-normal text-[16px] text-[#9CA3AF] text-center mt-2">
@@ -102,7 +102,7 @@ const Login = () => {
                 <button 
                   type="button"
                   onClick={handleForgotPassword}
-                  className="text-[#00C4B4] text-[14px] hover:underline"
+                  className="text-[#D7E4E3] text-[14px] hover:underline"
                 >
                   Forgot Password?
                 </button>
@@ -119,7 +119,7 @@ const Login = () => {
               Don't have an account?{' '}
               <button 
                 onClick={() => navigate('/signup')}
-                className="text-[#00C4B4] hover:underline"
+                className="text-[#D7E4E3] hover:underline"
               >
                 Sign Up
               </button>
