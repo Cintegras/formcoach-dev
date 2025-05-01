@@ -75,7 +75,7 @@ const Login = () => {
                         type="email"
                         className="rounded-md w-full h-auto px-[13.5px] py-[13px] border-0 font-semibold text-[18px]"
                         style={{
-                          backgroundColor: "rgba(215, 228, 227, 0.12)", // #D7E4E3 @ 12%
+                          backgroundColor: "rgba(176, 232, 227, 0.12)", // #B0E8E3 @ 12%
                           color: "rgba(209, 235, 233, 0.62)"           // #D1EBE9 @ 62%
                         }}
                       />
