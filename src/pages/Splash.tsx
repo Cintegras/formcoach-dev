@@ -18,11 +18,11 @@ const Splash = () => {
   return (
     <PageContainer className="flex items-center justify-center">
       <div className="text-center">
-        <h1 className="font-bold text-[40px] text-[#00C4B4] mb-4">
+        <h1 className="font-bold text-[40px] text-[#A4B1B7] mb-4">
           FormCoach
         </h1>
         <div className="animate-pulse">
-          <p className="font-normal text-[16px] text-[#00C4B4]">
+          <p className="font-normal text-[16px] text-[#A4B1B7]">
             Your AI Fitness Partner
           </p>
         </div>
