@@ -114,7 +114,7 @@ const Login = () => {
                 <button
                   type="button"
                   onClick={handleForgotPassword}
-                  className="text-[#D7E4E3] text-[14px] hover:underline"
+                  className="text-[#A4B1B7] text-[14px] hover:underline"
                 >
                   Forgot Password?
                 </button>
@@ -127,11 +127,11 @@ const Login = () => {
           </Form>
 
           <div className="mt-6 text-center">
-            <p className="text-[14px] text-[#9CA3AF]">
+            <p className="text-[14px] text-[#A4B1B7]">
               Don’t have an account?{' '}
               <button
                 onClick={() => navigate('/signup')}
-                className="text-[#D7E4E3] hover:underline"
+                className="text-[#A4B1B7] hover:underline"
               >
                 Sign Up
               </button>
