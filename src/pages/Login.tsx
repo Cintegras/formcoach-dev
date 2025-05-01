@@ -90,7 +90,7 @@ const Login = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#D7E4E3] text-[17px] font-Inter">
+                    <FormLabel className="text-[#D7E4E3] text-[17px] font-normal font-inter">
                       Password
                     </FormLabel>
                     <FormControl>
