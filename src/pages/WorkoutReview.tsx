@@ -30,7 +30,7 @@ const WorkoutReview = () => {
   return (
     <PageContainer>
       <div className="mt-8 mb-6">
-        <h1 className="font-bold text-[32px] text-center text-[#FFFFFF]">
+        <h1 className="font-bold text-[32px] text-center text-[#D7E4E3]">
           Great Job! 🎉
         </h1>
         <p className="font-normal text-[16px] text-[#9CA3AF] text-center mt-2">
@@ -51,19 +51,19 @@ const WorkoutReview = () => {
       
       <div className="bg-[#1C1C1E] rounded-lg p-4 mb-6 border-2 border-[#00C4B4]">
         <div className="space-y-3">
-          <p className="font-bold text-[16px] text-[#FFFFFF]">
+          <p className="font-bold text-[16px] text-[#D7E4E3]">
             Duration: 45 minutes
           </p>
-          <p className="font-bold text-[16px] text-[#FFFFFF]">
+          <p className="font-bold text-[16px] text-[#D7E4E3]">
             Exercises Completed: 8
           </p>
-          <p className="font-bold text-[16px] text-[#FFFFFF]">
+          <p className="font-bold text-[16px] text-[#D7E4E3]">
             Calories Burned: 250 kcal
           </p>
         </div>
 
         <div className="mt-4 pt-4 border-t border-[#2D2D2F]">
-          <h3 className="font-semibold text-[16px] text-[#FFFFFF] mb-2">
+          <h3 className="font-semibold text-[16px] text-[#D7E4E3] mb-2">
             Exercise Log
           </h3>
 

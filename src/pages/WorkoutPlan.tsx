@@ -121,7 +121,7 @@ const WorkoutPlan = () => {
             onClick={() => startExercise(exercise.id)}
           >
             <div>
-              <h3 className="font-semibold text-[16px] text-[#FFFFFF]">
+              <h3 className="font-semibold text-[16px] text-[#D7E4E3]">
                 {exercise.name}
               </h3>
               <p className="font-normal text-[14px] text-[#9CA3AF]">

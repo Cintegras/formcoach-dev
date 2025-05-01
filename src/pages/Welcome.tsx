@@ -20,32 +20,32 @@ const Welcome = () => {
           </p>
           
           <div className="bg-[#1C1C1E] rounded-lg p-6 mb-8">
-            <h2 className="font-semibold text-[20px] text-[#FFFFFF] mb-4">
+            <h2 className="font-semibold text-[20px] text-[#D7E4E3] mb-4">
               FormCoach helps you:
             </h2>
             
             <ul className="space-y-3">
               <li className="flex items-start">
                 <span className="text-[#00C4B4] mr-2">•</span>
-                <span className="font-normal text-[14px] text-[#FFFFFF]">
+                <span className="font-normal text-[14px] text-[#D7E4E3]">
                   Perfect your exercise form to prevent injuries
                 </span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#00C4B4] mr-2">•</span>
-                <span className="font-normal text-[14px] text-[#FFFFFF]">
+                <span className="font-normal text-[14px] text-[#D7E4E3]">
                   Track your progress with detailed workout logs
                 </span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#00C4B4] mr-2">•</span>
-                <span className="font-normal text-[14px] text-[#FFFFFF]">
+                <span className="font-normal text-[14px] text-[#D7E4E3]">
                   Get customized workouts that adapt to your abilities
                 </span>
               </li>
               <li className="flex items-start">
                 <span className="text-[#00C4B4] mr-2">•</span>
-                <span className="font-normal text-[14px] text-[#FFFFFF]">
+                <span className="font-normal text-[14px] text-[#D7E4E3]">
                   Receive guidance for chronic conditions & injuries
                 </span>
               </li>

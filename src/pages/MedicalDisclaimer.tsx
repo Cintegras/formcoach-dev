@@ -48,13 +48,13 @@ const MedicalDisclaimer = () => {
             </li>
             <li className="flex items-start">
               <span className="text-[#00C4B4] mr-2">•</span>
-              <span className="font-normal text-[14px] text-[#FFFFFF]">
+              <span className="font-normal text-[14px] text-[#D7E4E3]">
                 Stop exercising immediately if you experience pain, dizziness, or discomfort
               </span>
             </li>
             <li className="flex items-start">
               <span className="text-[#00C4B4] mr-2">•</span>
-              <span className="font-normal text-[14px] text-[#FFFFFF]">
+              <span className="font-normal text-[14px] text-[#D7E4E3]">
                 Always prioritize your safety during workouts
               </span>
             </li>
@@ -69,7 +69,7 @@ const MedicalDisclaimer = () => {
             }`}>
               {isAgreed && <Check size={16} className="text-black" />}
             </div>
-            <span className="font-normal text-[14px] text-[#FFFFFF]">
+            <span className="font-normal text-[14px] text-[#D7E4E3]">
               I understand and agree to these terms
             </span>
           </div>
