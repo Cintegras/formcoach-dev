@@ -21,12 +21,16 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
 }) => {
   const baseClass = `
     w-full 
+    h-[50px] 
     text-center 
-    rounded-full
+    rounded-lg
     bg-[#00C4B4] 
-    text-black
+    text-[#000000]
     font-semibold 
-    px-4 py-3 
+    text-[16px]
+    flex
+    items-center
+    justify-center
     hover:opacity-90 
     transition 
     duration-200 

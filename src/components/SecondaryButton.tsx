@@ -21,12 +21,18 @@ const SecondaryButton: React.FC<SecondaryButtonProps> = ({
 }) => {
   const baseClass = `
     w-full 
+    h-[50px]
     text-center 
-    rounded-full
-    bg-[#00C4B4] 
-    text-black
+    rounded-lg
+    bg-transparent
+    border
+    border-[#00C4B4]
+    text-[#00C4B4]
     font-semibold 
-    px-4 py-3 
+    text-[16px]
+    flex
+    items-center
+    justify-center
     hover:opacity-90 
     transition 
     duration-200 

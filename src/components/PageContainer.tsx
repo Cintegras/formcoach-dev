@@ -11,7 +11,7 @@ const PageContainer: React.FC<PageContainerProps> = ({ children, className = "" 
     <div
       className={`min-h-screen px-4 py-8 bg-[#020D0C] text-white font-poppins ${className}`}
     >
-      <div className="max-w-md mx-auto">{children}</div>
+      <div className="max-w-[375px] mx-auto">{children}</div>
     </div>
   );
 };
