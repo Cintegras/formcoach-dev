@@ -5,7 +5,7 @@ import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import SecondaryButton from '@/components/SecondaryButton';
 import { Input } from '@/components/ui/input';
-import { Check } from 'lucide-react';
+import { toast } from "@/hooks/use-toast";
 
 interface SetData {
   label: string;
@@ -18,7 +18,8 @@ const LogWorkout = () => {
   const navigate = useNavigate();
   const { exercise } = useParams<{ exercise: string }>();
 
-  const exerciseName = exercise ? exercise.replace(/-/g, ' ') : 'Leg Press';
+  // Make sure we have a default exercise and properly format it
+  const exerciseName = exercise ? decodeURIComponent(exercise).replace(/-/g, ' ') : 'Leg Press';
 
   // Format the exercise name to look nicer
   const formattedExerciseName = exerciseName
@@ -84,6 +85,11 @@ const LogWorkout = () => {
 
   const nextExercise = () => {
     // Logic to determine next exercise based on current one
+    toast({
+      title: "Workout saved",
+      description: `${formattedExerciseName} has been logged`,
+    });
+    
     switch (exerciseName.toLowerCase()) {
       case 'leg press':
         navigate('/workout-tracking/seated-leg-curl');
@@ -113,7 +119,7 @@ const LogWorkout = () => {
           Log Workout
         </h1>
         <p className="font-normal text-[14px] text-[#A4B1B7] text-center mt-2">
-          Log your sets below
+          {formattedExerciseName}
         </p>
       </div>
       
@@ -132,7 +138,6 @@ const LogWorkout = () => {
                   value={set.weight}
                   onChange={(e) => updateSet(index, 'weight', e.target.value)}
                   placeholder="Weight"
-                  //className="bg-[#000F0E] border-0 rounded-md text-[#B0BEE3] py-[13px] px-[13.5px] w-full h-auto font-semibold text-[18px]"
                   className="rounded-md w-full h-auto px-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
                   style={{
                     backgroundColor: "rgba(176, 232, 227, 0.12)", // #B0E8E3 @ 12%
@@ -147,7 +152,6 @@ const LogWorkout = () => {
                   value={set.reps}
                   onChange={(e) => updateSet(index, 'reps', e.target.value)}
                   placeholder="Reps"
-                  //className="bg-[#000F0E] border-0 rounded-md text-[#B0BEE3] py-[13px] px-[13.5px] w-full h-auto font-semibold text-[18px]"
                   className="rounded-md w-full h-auto px-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
                   style={{
                     backgroundColor: "rgba(176, 232, 227, 0.12)", // #B0E8E3 @ 12%
