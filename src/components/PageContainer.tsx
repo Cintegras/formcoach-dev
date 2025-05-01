@@ -1,5 +1,4 @@
-
-import React from 'react';
+import React from "react";
 
 interface PageContainerProps {
   children: React.ReactNode;
@@ -8,8 +7,10 @@ interface PageContainerProps {
 
 const PageContainer: React.FC<PageContainerProps> = ({ children, className = "" }) => {
   return (
-    <div className={`formcoach-container ${className}`}>
-      {children}
+    <div
+      className={`min-h-screen px-4 py-8 bg-formcoach-background text-formcoach-text ${className}`}
+    >
+      <div className="max-w-3xl mx-auto">{children}</div>
     </div>
   );
 };
