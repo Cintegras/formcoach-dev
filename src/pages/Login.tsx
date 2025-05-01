@@ -49,10 +49,10 @@ const Login = () => {
     <PageContainer>
       <div className="flex flex-col items-center justify-center min-h-[80vh] font-inter">
         <div className="mb-10">
-          <h1 className="font-bold text-[32px] text-center text-[#D7E4E3]">
+          <h1 className="font-bold text-[32px] text-center text-[#A4B1B7]">
             FormCoach
           </h1>
-          <p className="text-[16px] text-[#9CA3AF] text-center mt-2">
+          <p className="text-[16px] text-[#A4B1B7] text-center mt-2">
             Sign in to continue your fitness journey
           </p>
         </div>
@@ -65,7 +65,7 @@ const Login = () => {
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#D7E4E3] text-[17px] font-normal font-inter">
+                    <FormLabel className="text-[#A4B1B7] text-[17px] font-normal font-inter">
                       Email
                     </FormLabel>
                     <FormControl>
@@ -90,7 +90,7 @@ const Login = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#D7E4E3] text-[17px] font-normal font-inter">
+                    <FormLabel className="text-[#A4B1B7] text-[17px] font-normal font-inter">
                       Password
                     </FormLabel>
                     <FormControl>
