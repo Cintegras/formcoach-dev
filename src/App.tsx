@@ -17,6 +17,8 @@ import CardioTypeSelect from "./pages/CardioTypeSelect";
 import WorkoutConfirmation from "./pages/WorkoutConfirmation";
 import CardioWarmUp from "./pages/CardioWarmUp";
 import WorkoutReview from "./pages/WorkoutReview";
+import TrendsPage from "./pages/TrendsPage";
+import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 import ForgotPassword from "./pages/ForgotPassword";
 
@@ -59,6 +61,10 @@ const App = () => {
               <Route path="/cardio-warmup" element={<CardioWarmUp />} />
               <Route path="/workout-tracking/:exercise" element={<LogWorkout />} />
               <Route path="/workout-review" element={<WorkoutReview />} />
+              
+              {/* New Routes */}
+              <Route path="/trends" element={<TrendsPage />} />
+              <Route path="/profile" element={<ProfilePage />} />
               
               {/* Catch-all 404 page */}
               <Route path="*" element={<NotFound />} />
