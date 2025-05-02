@@ -1,0 +1,92 @@
+
+import React from 'react';
+import { User, Ruler, Scale, Calendar } from 'lucide-react';
+
+interface SummaryStepProps {
+  firstName: string;
+  height: { feet: number; inches: number };
+  weight: number;
+  age: number;
+  sex: "male" | "female" | "other" | undefined;
+  bmi: number;
+}
+
+const SummaryStep: React.FC<SummaryStepProps> = ({
+  firstName,
+  height,
+  weight,
+  age,
+  sex,
+  bmi
+}) => {
+  const getBmiCategory = (bmi: number): string => {
+    if (bmi < 18.5) return "Underweight";
+    if (bmi < 25) return "Normal weight";
+    if (bmi < 30) return "Overweight";
+    return "Obesity";
+  };
+
+  const getBmiCategoryColor = (bmi: number): string => {
+    if (bmi < 18.5) return "text-yellow-400";
+    if (bmi < 25) return "text-green-400";
+    if (bmi < 30) return "text-orange-400";
+    return "text-red-400";
+  };
+
+  return (
+    <div className="space-y-6 animate-fade-in">
+      <h1 className="text-2xl font-bold text-center text-white">
+        Your Profile Summary
+      </h1>
+      
+      <div className="mt-8 space-y-6">
+        <div className="flex items-center">
+          <User size={20} className="text-[#00C4B4] mr-3" />
+          <span className="text-[#A4B1B7]">Name:</span>
+          <span className="ml-2 text-white">{firstName}</span>
+        </div>
+        
+        <div className="flex items-center">
+          <Ruler size={20} className="text-[#00C4B4] mr-3" />
+          <span className="text-[#A4B1B7]">Height:</span>
+          <span className="ml-2 text-white">{height.feet}'{height.inches}"</span>
+        </div>
+        
+        <div className="flex items-center">
+          <Scale size={20} className="text-[#00C4B4] mr-3" />
+          <span className="text-[#A4B1B7]">Weight:</span>
+          <span className="ml-2 text-white">{weight} lbs</span>
+        </div>
+        
+        <div className="flex items-center">
+          <Calendar size={20} className="text-[#00C4B4] mr-3" />
+          <span className="text-[#A4B1B7]">Age:</span>
+          <span className="ml-2 text-white">{age} years</span>
+        </div>
+        
+        <div className="flex items-center">
+          <span className="text-[#A4B1B7] ml-8">Sex:</span>
+          <span className="ml-2 text-white capitalize">{sex}</span>
+        </div>
+        
+        <div className="mt-8 p-4 rounded-lg bg-[rgba(176,232,227,0.08)]">
+          <div className="flex items-center justify-between">
+            <span className="text-[#A4B1B7]">Your BMI:</span>
+            <span className="text-2xl font-bold text-[#00C4B4]">{bmi.toFixed(1)}</span>
+          </div>
+          <div className="flex items-center justify-between mt-2">
+            <span className="text-[#A4B1B7]">Status:</span>
+            <span className={`font-semibold ${getBmiCategoryColor(bmi)}`}>
+              {getBmiCategory(bmi)}
+            </span>
+          </div>
+          <div className="mt-4 text-xs text-[#A4B1B7] text-center">
+            AI-calculated based on your height and weight
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SummaryStep;

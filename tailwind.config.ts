@@ -106,6 +106,10 @@ export default {
 				countdown: {
 					'0%': { strokeDashoffset: '0' },
 					'100%': { strokeDashoffset: '440' }
+				},
+				'fade-in': {
+					'0%': { opacity: '0', transform: 'translateY(10px)' },
+					'100%': { opacity: '1', transform: 'translateY(0)' }
 				}
 			},
 			animation: {
@@ -114,7 +118,8 @@ export default {
 				'confetti-slow': 'confetti 4s ease-out forwards',
 				'confetti-medium': 'confetti 3s ease-out forwards',
 				'confetti-fast': 'confetti 2s ease-out forwards',
-				'countdown': 'countdown 300s linear forwards'
+				'countdown': 'countdown 300s linear forwards',
+				'fade-in': 'fade-in 0.5s ease-out'
 			}
 		}
 	},
