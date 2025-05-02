@@ -23,11 +23,11 @@ const SecondaryButton: React.FC<SecondaryButtonProps> = ({
     w-full 
     h-[50px]
     text-center 
-    rounded-2xl
-    bg-transparent
+    rounded-full
+    bg-[#1C1C1E]
     border
-    border-[#8E9196]
-    text-[#8E9196]
+    border-[#3A3A3C]
+    text-white
     font-medium 
     text-[17px]
     flex

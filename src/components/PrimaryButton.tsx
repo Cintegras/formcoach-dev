@@ -23,9 +23,9 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
     w-full 
     h-[50px] 
     text-center 
-    rounded-2xl
-    bg-[#00C4B4] 
-    text-[#000000]
+    rounded-full
+    bg-[#0A84FF] 
+    text-white
     font-medium 
     text-[17px]
     flex
