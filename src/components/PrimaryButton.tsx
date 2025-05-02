@@ -23,8 +23,8 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({
     w-full 
     h-[50px] 
     text-center 
-    rounded-xl
-    bg-[#00C4B4] 
+    rounded-full
+    bg-[#0A84FF] 
     text-white
     font-medium 
     text-[17px]
