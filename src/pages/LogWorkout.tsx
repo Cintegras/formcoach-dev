@@ -1,11 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import SecondaryButton from '@/components/SecondaryButton';
 import { Input } from '@/components/ui/input';
-import { toast } from "@/hooks/use-toast";
 
 interface SetData {
   label: string;
@@ -100,12 +98,6 @@ const LogWorkout = () => {
   };
 
   const nextExercise = () => {
-    // Show success toast for the current exercise
-    toast({
-      title: "Workout saved",
-      description: `${formattedExerciseName} has been logged`,
-    });
-    
     // If we have custom exercises and there's a next exercise in the array
     if (exercises.length > 0 && currentIndex < exercises.length - 1) {
       // Go to the next exercise in the custom order

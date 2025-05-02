@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
-import { useToast } from '@/hooks/use-toast';
-import { GripVertical, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
+import { GripVertical } from 'lucide-react';
 
 interface ExerciseItem {
   id: string;
@@ -21,11 +20,17 @@ interface ExerciseItem {
 const WorkoutConfirmation = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { toast } = useToast();
   
-  // Get the selected exercises from location state
+  // Get the selected exercises from location state with proper IDs
   const initialExercises = location.state?.selectedExercises || [];
-  const [exercises, setExercises] = useState<ExerciseItem[]>(initialExercises);
+  
+  // Ensure each exercise has a unique string ID
+  const processedExercises = initialExercises.map((exercise: ExerciseItem, index: number) => ({
+    ...exercise,
+    id: exercise.id || `exercise-${index}`
+  }));
+  
+  const [exercises, setExercises] = useState<ExerciseItem[]>(processedExercises);
   
   // Function to reorder exercises after drag and drop
   const onDragEnd = (result: DropResult) => {
@@ -43,8 +48,14 @@ const WorkoutConfirmation = () => {
     // Find the first exercise
     const firstExercise = exercises[0];
     
+    // If there are no exercises, go to home
+    if (!firstExercise) {
+      navigate('/');
+      return;
+    }
+    
     // If the first exercise is the cardio warmup, go there first
-    if (firstExercise.id === 'cardio-warmup') {
+    if (firstExercise.isCardio) {
       navigate('/cardio-warmup', { state: { exercises, currentIndex: 0 } });
     } else {
       // Otherwise, go to the first strength training exercise
@@ -71,7 +82,7 @@ const WorkoutConfirmation = () => {
       </div>
       
       <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="exercises">
+        <Droppable droppableId="droppable-exercises">
           {(provided) => (
             <div 
               {...provided.droppableProps}
@@ -79,7 +90,11 @@ const WorkoutConfirmation = () => {
               className="space-y-3 min-h-[200px]"
             >
               {exercises.map((exercise, index) => (
-                <Draggable key={exercise.id} draggableId={exercise.id} index={index}>
+                <Draggable 
+                  key={exercise.id} 
+                  draggableId={exercise.id} 
+                  index={index}
+                >
                   {(provided) => (
                     <div
                       ref={provided.innerRef}
