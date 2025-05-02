@@ -21,6 +21,7 @@ import TrendsPage from "./pages/TrendsPage";
 import ProfilePage from "./pages/ProfilePage";
 import NotFound from "./pages/NotFound";
 import ForgotPassword from "./pages/ForgotPassword";
+import Home from "./pages/Home";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -41,8 +42,9 @@ const App = () => {
           <Sonner />
           <BrowserRouter>
             <Routes>
-              {/* Splash */}
-              <Route path="/" element={<Splash />} />
+              {/* Splash and Home */}
+              <Route path="/splash" element={<Splash />} />
+              <Route path="/" element={<Home />} />
               
               {/* Auth Routes */}
               <Route path="/login" element={<Login />} />
@@ -62,7 +64,7 @@ const App = () => {
               <Route path="/workout-tracking/:exercise" element={<LogWorkout />} />
               <Route path="/workout-review" element={<WorkoutReview />} />
               
-              {/* New Routes */}
+              {/* Main App Routes */}
               <Route path="/trends" element={<TrendsPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               
