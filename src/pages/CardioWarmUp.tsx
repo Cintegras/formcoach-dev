@@ -5,7 +5,7 @@ import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import SecondaryButton from '@/components/SecondaryButton';
 import { useToast } from "@/hooks/use-toast";
-import { Play, Pause, Stop, Clock } from 'lucide-react';
+import { Play, Pause, StopCircle, Clock } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -286,7 +286,7 @@ const CardioWarmUp = () => {
                   onClick={stopTimer}
                   className="flex items-center justify-center text-red-500 text-lg py-2 px-4 bg-[#1C1C1E] rounded-full border border-red-500"
                 >
-                  <Stop size={24} />
+                  <StopCircle size={24} />
                 </button>
               </div>
             )}

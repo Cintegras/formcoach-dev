@@ -97,20 +97,9 @@ const ProfileSetupPage = () => {
     localStorage.setItem('userData', JSON.stringify(userData));
     setIsLoading(false);
     
-    // Animated welcome toast with user's name
-    const profileImage = document.createElement('div');
-    profileImage.className = "w-8 h-8 rounded-full bg-[#00C4B4] flex items-center justify-center text-black text-xl font-bold";
-    profileImage.textContent = values.firstName.charAt(0);
-    
+    // Fixed toast with proper string title instead of JSX element
     toast({
-      title: (
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-[#00C4B4] flex items-center justify-center text-black text-xl font-bold">
-            {values.firstName.charAt(0)}
-          </div>
-          <span>Welcome, {values.firstName}!</span>
-        </div>
-      ),
+      title: `Welcome, ${values.firstName}!`,
       description: "Your profile has been set up successfully.",
       duration: 3000,
     });
