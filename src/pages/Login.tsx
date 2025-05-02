@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
@@ -14,6 +15,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Eye, EyeOff } from 'lucide-react';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -25,6 +27,7 @@ type LoginValues = z.infer<typeof loginSchema>;
 const Login = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -45,34 +48,30 @@ const Login = () => {
     alert("Forgot password functionality would be implemented here");
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
   return (
     <PageContainer>
-      <div className="flex flex-col items-center justify-center min-h-[80vh] font-inter">
+      <div className="flex flex-col items-center justify-center min-h-[80vh] font-sans">
         <div className="mb-10">
-          <h1 className="font-bold text-[32px] text-center text-[#A4B1B7]">
+          <h1 className="font-bold text-[32px] text-center text-white">
             FormCoach
           </h1>
-          <p className="text-[16px] text-[#A4B1B7] text-center mt-2">
+          <p className="text-[16px] text-[#8E8E93] text-center mt-2">
             Sign in to continue your fitness journey
           </p>
       </div>
-      {/*
-        <div
-          className="w-full rounded-lg p-6 border-2 border-[#00C4B4]"
-          style={{ backgroundColor: "rgba(176, 232, 227, 0.12)" }}
-        >
-          ...
-        </div>
-        */}
-        <div className="w-full rounded-lg p-6 bg-black">
+        <div className="w-full space-y-6">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-5">
               <FormField
                 control={form.control}
                 name="email"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#A4B1B7] text-[17px] font-normal font-inter">
+                    <FormLabel className="text-white text-[15px] font-medium mb-1 block">
                       Email
                     </FormLabel>
                     <FormControl>
@@ -80,14 +79,10 @@ const Login = () => {
                         {...field}
                         placeholder="yourname@example.com"
                         type="email"
-                        className="rounded-md w-full h-auto px-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
-                        style={{
-                          backgroundColor: "rgba(176, 232, 227, 0.12)", // #B0E8E3 @ 12%
-                          color: "rgba(209, 235, 233, 0.62)"           // #D1EBE9 @ 62%
-                        }}
+                        className="rounded-xl w-full h-12"
                       />
                     </FormControl>
-                    <FormMessage className="text-[#FF4D4F]" />
+                    <FormMessage className="text-[#FF453A] mt-1 text-[13px]" />
                   </FormItem>
                 )}
               />
@@ -97,22 +92,27 @@ const Login = () => {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-[#A4B1B7] text-[17px] font-normal font-inter">
+                    <FormLabel className="text-white text-[15px] font-medium mb-1 block">
                       Password
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="******"
-                        type="password"
-                        className="rounded-md w-full h-auto px-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
-                        style={{
-                          backgroundColor: "rgba(176, 232, 227, 0.12)", // #B0E8E3 @ 12%
-                          color: "rgba(209, 235, 233, 0.62)"           // #D1EBE9 @ 62%
-                        }}
-                      />
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          placeholder="Enter your password"
+                          type={showPassword ? "text" : "password"}
+                          className="rounded-xl w-full h-12 pr-10"
+                        />
+                        <button 
+                          type="button"
+                          onClick={togglePasswordVisibility}
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-[#8E8E93]"
+                        >
+                          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                        </button>
+                      </div>
                     </FormControl>
-                    <FormMessage className="text-[#FF4D4F]" />
+                    <FormMessage className="text-[#FF453A] mt-1 text-[13px]" />
                   </FormItem>
                 )}
               />
@@ -121,24 +121,24 @@ const Login = () => {
                 <button
                   type="button"
                   onClick={handleForgotPassword}
-                  className="text-[#A4B1B7] text-[14px] hover:underline"
+                  className="text-[#0A84FF] text-[14px] hover:underline"
                 >
                   Forgot Password?
                 </button>
               </div>
 
-              <PrimaryButton type="submit" disabled={isLoading}>
+              <PrimaryButton type="submit" disabled={isLoading} className="mt-6">
                 {isLoading ? 'Signing in...' : 'Sign In'}
               </PrimaryButton>
             </form>
           </Form>
 
           <div className="mt-6 text-center">
-            <p className="text-[14px] text-[#A4B1B7]">
-              Don’t have an account?{' '}
+            <p className="text-[15px] text-[#8E8E93]">
+              Don't have an account?{' '}
               <button
                 onClick={() => navigate('/signup')}
-                className="text-[#A4B1B7] hover:underline"
+                className="text-[#0A84FF] hover:underline"
               >
                 Sign Up
               </button>
