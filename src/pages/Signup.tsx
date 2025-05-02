@@ -8,6 +8,7 @@ import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Mail, Lock, User } from 'lucide-react';
 
 const signupSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -67,16 +68,19 @@ const Signup = () => {
                   <FormItem>
                     <FormLabel className="text-[#A4B1B7] text-[17px] font-normal font-inter">Email</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="yourname@example.com"
-                        type="email"
-                        className="rounded-md w-full h-auto px-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
-                        style={{
-                          backgroundColor: "rgba(176, 232, 227, 0.12)",
-                          color: "rgba(209, 235, 233, 0.62)"
-                        }}
-                      />
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          placeholder="yourname@example.com"
+                          type="email"
+                          className="rounded-md w-full h-auto pl-[42px] pr-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
+                          style={{
+                            backgroundColor: "rgba(176, 232, 227, 0.12)",
+                            color: "rgba(209, 235, 233, 0.62)"
+                          }}
+                        />
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A4B1B7]" size={20} />
+                      </div>
                     </FormControl>
                     <FormMessage className="text-[#FF4D4F]" />
                   </FormItem>
@@ -90,16 +94,19 @@ const Signup = () => {
                   <FormItem>
                     <FormLabel className="text-[#A4B1B7] text-[17px] font-normal font-inter">Password</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="******"
-                        type="password"
-                        className="rounded-md w-full h-auto px-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
-                        style={{
-                          backgroundColor: "rgba(176, 232, 227, 0.12)",
-                          color: "rgba(209, 235, 233, 0.62)"
-                        }}
-                      />
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          placeholder="******"
+                          type="password"
+                          className="rounded-md w-full h-auto pl-[42px] pr-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
+                          style={{
+                            backgroundColor: "rgba(176, 232, 227, 0.12)",
+                            color: "rgba(209, 235, 233, 0.62)"
+                          }}
+                        />
+                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A4B1B7]" size={20} />
+                      </div>
                     </FormControl>
                     <FormMessage className="text-[#FF4D4F]" />
                   </FormItem>
@@ -113,23 +120,26 @@ const Signup = () => {
                   <FormItem>
                     <FormLabel className="text-[#A4B1B7] text-[17px] font-normal font-inter">Confirm Password</FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="******"
-                        type="password"
-                        className="rounded-md w-full h-auto px-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
-                        style={{
-                          backgroundColor: "rgba(176, 232, 227, 0.12)",
-                          color: "rgba(209, 235, 233, 0.62)"
-                        }}
-                      />
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          placeholder="******"
+                          type="password"
+                          className="rounded-md w-full h-auto pl-[42px] pr-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
+                          style={{
+                            backgroundColor: "rgba(176, 232, 227, 0.12)",
+                            color: "rgba(209, 235, 233, 0.62)"
+                          }}
+                        />
+                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A4B1B7]" size={20} />
+                      </div>
                     </FormControl>
                     <FormMessage className="text-[#FF4D4F]" />
                   </FormItem>
                 )}
               />
 
-              <PrimaryButton type="submit" disabled={isLoading}>
+              <PrimaryButton type="submit" disabled={isLoading} className="hover:scale-[1.02] transition-transform duration-200">
                 {isLoading ? 'Creating Account...' : 'Create Account'}
               </PrimaryButton>
             </form>
@@ -140,7 +150,7 @@ const Signup = () => {
               Already have an account?{' '}
               <button 
                 onClick={() => navigate('/login')}
-                className="text-[#A4B1B7] hover:underline"
+                className="text-[#A4B1B7] hover:underline transition-all duration-200"
               >
                 Sign In
               </button>

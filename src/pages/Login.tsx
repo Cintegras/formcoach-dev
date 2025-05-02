@@ -15,6 +15,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Mail, Lock } from 'lucide-react';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -56,16 +57,9 @@ const Login = () => {
           <p className="text-[16px] text-[#A4B1B7] text-center mt-2">
             Sign in to continue your fitness journey
           </p>
-      </div>
-      {/*
-        <div
-          className="w-full rounded-lg p-6 border-2 border-[#00C4B4]"
-          style={{ backgroundColor: "rgba(176, 232, 227, 0.12)" }}
-        >
-          ...
         </div>
-        */}
-        <div className="w-full rounded-lg p-6 bg-black">
+
+        <div className="w-full rounded-lg p-6" style={{ backgroundColor: "rgba(176, 232, 227, 0.12)" }}>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
@@ -77,16 +71,19 @@ const Login = () => {
                       Email
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="yourname@example.com"
-                        type="email"
-                        className="rounded-md w-full h-auto px-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
-                        style={{
-                          backgroundColor: "rgba(176, 232, 227, 0.12)", // #B0E8E3 @ 12%
-                          color: "rgba(209, 235, 233, 0.62)"           // #D1EBE9 @ 62%
-                        }}
-                      />
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          placeholder="yourname@example.com"
+                          type="email"
+                          className="rounded-md w-full h-auto pl-[42px] pr-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
+                          style={{
+                            backgroundColor: "rgba(176, 232, 227, 0.12)", 
+                            color: "rgba(209, 235, 233, 0.62)"
+                          }}
+                        />
+                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A4B1B7]" size={20} />
+                      </div>
                     </FormControl>
                     <FormMessage className="text-[#FF4D4F]" />
                   </FormItem>
@@ -102,16 +99,19 @@ const Login = () => {
                       Password
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        {...field}
-                        placeholder="******"
-                        type="password"
-                        className="rounded-md w-full h-auto px-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
-                        style={{
-                          backgroundColor: "rgba(176, 232, 227, 0.12)", // #B0E8E3 @ 12%
-                          color: "rgba(209, 235, 233, 0.62)"           // #D1EBE9 @ 62%
-                        }}
-                      />
+                      <div className="relative">
+                        <Input
+                          {...field}
+                          placeholder="******"
+                          type="password"
+                          className="rounded-md w-full h-auto pl-[42px] pr-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
+                          style={{
+                            backgroundColor: "rgba(176, 232, 227, 0.12)",
+                            color: "rgba(209, 235, 233, 0.62)"
+                          }}
+                        />
+                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-[#A4B1B7]" size={20} />
+                      </div>
                     </FormControl>
                     <FormMessage className="text-[#FF4D4F]" />
                   </FormItem>
@@ -122,13 +122,13 @@ const Login = () => {
                 <button
                   type="button"
                   onClick={handleForgotPassword}
-                  className="text-[#A4B1B7] text-[14px] hover:underline"
+                  className="text-[#A4B1B7] text-[14px] hover:underline transition-all duration-200"
                 >
                   Forgot Password?
                 </button>
               </div>
 
-              <PrimaryButton type="submit" disabled={isLoading}>
+              <PrimaryButton type="submit" disabled={isLoading} className="hover:scale-[1.02] transition-transform duration-200">
                 {isLoading ? 'Signing in...' : 'Sign In'}
               </PrimaryButton>
             </form>
@@ -139,7 +139,7 @@ const Login = () => {
               Don't have an account?{' '}
               <button
                 onClick={() => navigate('/signup')}
-                className="text-[#A4B1B7] hover:underline"
+                className="text-[#A4B1B7] hover:underline transition-all duration-200"
               >
                 Sign Up
               </button>

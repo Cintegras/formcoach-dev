@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
+import SecondaryButton from '@/components/SecondaryButton';
 import { Input } from '@/components/ui/input';
 import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
@@ -62,7 +63,7 @@ const ForgotPassword = () => {
           </p>
         </div>
 
-        <div className="w-full rounded-lg p-6 bg-black">
+        <div className="w-full rounded-lg p-6" style={{ backgroundColor: "rgba(176, 232, 227, 0.12)" }}>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
@@ -93,23 +94,21 @@ const ForgotPassword = () => {
                 )}
               />
 
-              <PrimaryButton type="submit" disabled={isLoading}>
-                {isLoading ? 'Sending...' : 'Send Reset Link'}
-              </PrimaryButton>
+              <div className="flex flex-col gap-3">
+                <PrimaryButton type="submit" disabled={isLoading} className="hover:scale-[1.02] transition-transform duration-200">
+                  {isLoading ? 'Sending...' : 'Send Reset Link'}
+                </PrimaryButton>
+                
+                <SecondaryButton 
+                  type="button" 
+                  onClick={() => navigate('/login')}
+                  className="hover:scale-[1.02] transition-transform duration-200"
+                >
+                  Back to Login
+                </SecondaryButton>
+              </div>
             </form>
           </Form>
-
-          <div className="mt-6 text-center">
-            <p className="text-[14px] text-[#A4B1B7]">
-              Remember your password?{' '}
-              <button
-                onClick={() => navigate('/login')}
-                className="text-[#A4B1B7] hover:underline"
-              >
-                Back to Login
-              </button>
-            </p>
-          </div>
         </div>
       </div>
     </PageContainer>
