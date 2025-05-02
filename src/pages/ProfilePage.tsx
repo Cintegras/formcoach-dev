@@ -9,18 +9,30 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogDescription,
   DialogFooter
 } from '@/components/ui/dialog';
-import { Mail, Lock, LogOut, User, Scale, Activity } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import { Mail, Lock, LogOut, User, Scale, Activity, Trash2 } from 'lucide-react';
+import { useToast } from '@/hooks/use-toast';
 import { format } from 'date-fns';
+import { 
+  LineChart, 
+  Line, 
+  XAxis, 
+  YAxis, 
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip
+} from 'recharts';
+import { Slider } from '@/components/ui/slider';
 
 interface UserData {
   firstName: string;
   email: string;
   weight: string;
-  height: string;
+  height: {
+    feet: number;
+    inches: number;
+  };
   age: string;
   sex: string;
   weightHistory?: { date: string; weight: string }[];
@@ -31,6 +43,7 @@ const ProfilePage = () => {
   const { toast } = useToast();
   const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
   const [isWeightDialogOpen, setIsWeightDialogOpen] = useState(false);
+  const [isClearCacheDialogOpen, setIsClearCacheDialogOpen] = useState(false);
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [newWeight, setNewWeight] = useState("");
@@ -38,7 +51,10 @@ const ProfilePage = () => {
     firstName: '',
     email: 'user@example.com',
     weight: '0',
-    height: '0',
+    height: {
+      feet: 5,
+      inches: 10
+    },
     age: '0',
     sex: ''
   });
@@ -47,7 +63,18 @@ const ProfilePage = () => {
   useEffect(() => {
     const userData = localStorage.getItem('userData');
     if (userData) {
-      setUser(JSON.parse(userData));
+      const parsedData = JSON.parse(userData);
+      
+      // Convert old height format if needed
+      if (typeof parsedData.height === 'string' || !parsedData.height) {
+        const heightInInches = parseInt(parsedData.height) || 70; // Default to 5'10"
+        parsedData.height = {
+          feet: Math.floor(heightInInches / 12),
+          inches: heightInInches % 12
+        };
+      }
+      
+      setUser(parsedData);
     } else {
       // If no user data found, redirect to profile setup
       const userEmail = localStorage.getItem('userEmail');
@@ -115,9 +142,20 @@ const ProfilePage = () => {
     localStorage.setItem('userData', JSON.stringify(updatedUser));
     setUser(updatedUser);
     
+    // Show success toast with animation
+    const weightDiff = Number(newWeight) - Number(user.weight);
+    const changeText = weightDiff > 0 ? `+${weightDiff}` : `${weightDiff}`;
+    
     toast({
-      title: "Success",
-      description: "Weight updated successfully"
+      title: "Weight Updated",
+      description: (
+        <div className="flex items-center">
+          <span className="text-lg font-bold">{newWeight} lbs</span>
+          <span className={`ml-2 ${weightDiff > 0 ? 'text-red-400' : 'text-green-400'}`}>
+            ({changeText} lbs)
+          </span>
+        </div>
+      )
     });
     
     setIsWeightDialogOpen(false);
@@ -132,6 +170,40 @@ const ProfilePage = () => {
       description: "You have been signed out successfully"
     });
     navigate('/login');
+  };
+
+  const handleClearCache = () => {
+    // Clear all localStorage data except for essential auth data
+    const userEmail = localStorage.getItem('userEmail');
+    localStorage.clear();
+    
+    if (userEmail) {
+      localStorage.setItem('userEmail', userEmail);
+    }
+    
+    setIsClearCacheDialogOpen(false);
+    
+    toast({
+      title: "Cache Cleared",
+      description: "All app data has been reset. Redirecting to setup...",
+    });
+    
+    // Short delay before redirecting
+    setTimeout(() => {
+      navigate('/profile-setup');
+    }, 1500);
+  };
+
+  // Format weight history data for chart
+  const formatWeightData = () => {
+    if (!user.weightHistory || user.weightHistory.length <= 1) {
+      return [];
+    }
+    
+    return user.weightHistory.map(entry => ({
+      date: format(new Date(entry.date), 'MMM d'),
+      weight: Number(entry.weight)
+    }));
   };
 
   return (
@@ -156,10 +228,41 @@ const ProfilePage = () => {
         
         {/* User Stats */}
         <div className="flex gap-4 mb-8 text-sm text-[#A4B1B7]">
-          <div>Height: {user.height}″</div>
+          <div>Height: {user.height?.feet || 0}'{user.height?.inches || 0}"</div>
           <div>Weight: {user.weight} lbs</div>
           <div>Age: {user.age}</div>
         </div>
+
+        {/* Weight trend chart if available */}
+        {user.weightHistory && user.weightHistory.length > 1 && (
+          <div className="w-full max-w-[300px] mb-8 bg-[rgba(176,232,227,0.08)] rounded-lg p-4">
+            <h3 className="text-[#B0E8E3] text-lg mb-2">Weight Trend</h3>
+            <div className="h-[200px] w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={formatWeightData()}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#243137" />
+                  <XAxis dataKey="date" stroke="#A4B1B7" />
+                  <YAxis stroke="#A4B1B7" domain={['dataMin - 10', 'dataMax + 10']} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: '#0C1518', 
+                      borderColor: '#243137',
+                      color: '#FFFFFF'
+                    }}
+                    labelStyle={{ color: '#FFFFFF' }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="weight" 
+                    stroke="#00C4B4" 
+                    strokeWidth={2} 
+                    dot={{ fill: '#00C4B4' }} 
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          </div>
+        )}
 
         {/* Account Settings */}
         <div className="w-full max-w-[300px] space-y-4">
@@ -180,6 +283,15 @@ const ProfilePage = () => {
             <Lock className="mr-2 text-[#00C4B4]" size={18} />
             Change Password
           </Button>
+
+          <Button 
+            variant="outline" 
+            className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
+            onClick={() => setIsClearCacheDialogOpen(true)}
+          >
+            <Trash2 className="mr-2 text-[#00C4B4]" size={18} />
+            Clear App Data (Dev)
+          </Button>
           
           <Button 
             variant="outline" 
@@ -190,25 +302,6 @@ const ProfilePage = () => {
             <span className="text-red-500">Sign Out</span>
           </Button>
         </div>
-        
-        {/* Weight history if available */}
-        {user.weightHistory && user.weightHistory.length > 1 && (
-          <div className="w-full max-w-[300px] mt-8">
-            <h3 className="text-[#B0E8E3] text-lg mb-2">Weight History</h3>
-            <div className="bg-[rgba(176,232,227,0.12)] rounded-lg p-4">
-              <div className="space-y-2">
-                {user.weightHistory.slice().reverse().slice(0, 5).map((entry, index) => (
-                  <div key={index} className="flex justify-between text-sm">
-                    <span className="text-[#A4B1B7]">
-                      {format(new Date(entry.date), 'MMM d, yyyy')}
-                    </span>
-                    <span className="text-white">{entry.weight} lbs</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
       </div>
 
       {/* Password Change Dialog */}
@@ -216,9 +309,6 @@ const ProfilePage = () => {
         <DialogContent className="bg-[#0C1518] border-[#243137] text-white">
           <DialogHeader>
             <DialogTitle className="text-[#B0E8E3]">Change Password</DialogTitle>
-            <DialogDescription className="text-[#A4B1B7]">
-              Enter your new password below.
-            </DialogDescription>
           </DialogHeader>
           
           <div className="space-y-4 py-4">
@@ -268,14 +358,30 @@ const ProfilePage = () => {
         <DialogContent className="bg-[#0C1518] border-[#243137] text-white">
           <DialogHeader>
             <DialogTitle className="text-[#B0E8E3]">Update Weight</DialogTitle>
-            <DialogDescription className="text-[#A4B1B7]">
-              Enter your current weight below.
-            </DialogDescription>
           </DialogHeader>
           
-          <div className="space-y-4 py-4">
+          <div className="space-y-6 py-4">
+            <div className="text-center text-4xl font-bold text-[#B0E8E3]">
+              {newWeight || user.weight} <span className="text-lg">lbs</span>
+            </div>
+            
+            <div className="px-4">
+              <Slider
+                defaultValue={[Number(user.weight)]}
+                min={60}
+                max={300}
+                step={1}
+                onValueChange={(val) => setNewWeight(String(val[0]))}
+                className="bg-[#1C1C1E]"
+              />
+              <div className="flex justify-between mt-1 text-xs text-[#A4B1B7]">
+                <span>60</span>
+                <span>300</span>
+              </div>
+            </div>
+            
             <div className="space-y-2">
-              <label className="text-sm text-[#A4B1B7]">Weight (lbs)</label>
+              <label className="text-sm text-[#A4B1B7]">Or enter exact weight:</label>
               <Input 
                 type="number" 
                 placeholder={user.weight || "150"}
@@ -299,6 +405,40 @@ const ProfilePage = () => {
               className="bg-[#00C4B4] text-black hover:bg-[#00C4B4]/80"
             >
               Update Weight
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Clear Cache Dialog */}
+      <Dialog open={isClearCacheDialogOpen} onOpenChange={setIsClearCacheDialogOpen}>
+        <DialogContent className="bg-[#0C1518] border-[#243137] text-white">
+          <DialogHeader>
+            <DialogTitle className="text-red-400">Clear App Data</DialogTitle>
+          </DialogHeader>
+          
+          <div className="py-4">
+            <p className="text-[#A4B1B7]">
+              This will reset all app data and return you to the profile setup screen. Your email will remain saved.
+            </p>
+            <p className="text-[#A4B1B7] mt-2">
+              This action cannot be undone.
+            </p>
+          </div>
+          
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsClearCacheDialogOpen(false)}
+              className="border-[#243137] text-[#A4B1B7] hover:bg-[#243137]"
+            >
+              Cancel
+            </Button>
+            <Button 
+              onClick={handleClearCache}
+              variant="destructive"
+            >
+              Clear All Data
             </Button>
           </DialogFooter>
         </DialogContent>
