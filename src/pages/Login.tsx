@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
@@ -42,7 +43,7 @@ const Login = () => {
   };
 
   const handleForgotPassword = () => {
-    alert("Forgot password functionality would be implemented here");
+    navigate('/forgot-password');
   };
 
   return (
@@ -135,7 +136,7 @@ const Login = () => {
 
           <div className="mt-6 text-center">
             <p className="text-[14px] text-[#A4B1B7]">
-              Don’t have an account?{' '}
+              Don't have an account?{' '}
               <button
                 onClick={() => navigate('/signup')}
                 className="text-[#A4B1B7] hover:underline"

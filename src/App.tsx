@@ -15,6 +15,7 @@ import WorkoutPlan from "./pages/WorkoutPlan";
 import CardioWarmUp from "./pages/CardioWarmUp";
 import WorkoutReview from "./pages/WorkoutReview";
 import NotFound from "./pages/NotFound";
+import ForgotPassword from "./pages/ForgotPassword";
 
 // Create a client
 const queryClient = new QueryClient({
@@ -41,6 +42,7 @@ const App = () => {
               {/* Auth Routes */}
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
               
               {/* Onboarding Routes */}
               <Route path="/welcome" element={<Welcome />} />
