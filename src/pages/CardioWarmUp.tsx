@@ -4,8 +4,8 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import SecondaryButton from '@/components/SecondaryButton';
-import { toast } from "@/hooks/use-toast";
-import { Play } from 'lucide-react';
+import { useToast } from "@/hooks/use-toast";
+import { Play, Timer } from 'lucide-react';
 
 interface ExerciseItem {
   id: string;
@@ -21,18 +21,28 @@ interface ExerciseItem {
 const CardioWarmUp = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { toast } = useToast();
   
-  // Get the exercises array and current index from location state
+  // Get the exercises array, current index, and cardio type from location state
   const exercises: ExerciseItem[] = location.state?.exercises || [];
   const currentIndex: number = location.state?.currentIndex || 0;
-
+  const cardioType: string = location.state?.cardioType || "Treadmill";
+  
+  // Determine if this is a dedicated cardio workout or a warm-up
+  const isDedicatedCardio = cardioType && currentIndex === 0 && exercises.length === 1;
+  
   // Timer states
   const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const [timeRemaining, setTimeRemaining] = useState(300); // 5 minutes in seconds
+  const [timeRemaining, setTimeRemaining] = useState(isDedicatedCardio ? 1800 : 300); // 30 mins for dedicated, 5 mins for warm-up
   const [timerCompleted, setTimerCompleted] = useState(false);
+  
+  // Duration selection for dedicated cardio (only shown for dedicated cardio workouts)
+  const [selectedDuration, setSelectedDuration] = useState(isDedicatedCardio ? 30 : 5);
 
-  // Warm-up intensity state
-  const [intensity, setIntensity] = useState("Medium");
+  useEffect(() => {
+    // Update timer when duration changes
+    setTimeRemaining(selectedDuration * 60);
+  }, [selectedDuration]);
 
   useEffect(() => {
     let timer: number;
@@ -68,14 +78,14 @@ const CardioWarmUp = () => {
 
   const resetTimer = () => {
     setIsTimerRunning(false);
-    setTimeRemaining(300); // Reset to 5 minutes
+    setTimeRemaining(selectedDuration * 60);
     setTimerCompleted(false);
   };
 
   const nextExercise = () => {
     toast({
       title: "Cardio completed",
-      description: "Cardio warm-up has been logged",
+      description: isDedicatedCardio ? `${cardioType} workout has been logged` : "Cardio warm-up has been logged",
     });
     
     // If we have custom exercises and there's a next exercise in the array
@@ -117,10 +127,12 @@ const CardioWarmUp = () => {
     <PageContainer>
       <div className="mt-8 mb-6">
         <h1 className="font-bold text-[28px] text-center text-[#A4B1B7]">
-          Cardio Warm-Up
+          {isDedicatedCardio ? `${cardioType} Workout` : "Cardio Warm-Up"}
         </h1>
         <p className="font-normal text-[14px] text-[#A4B1B7] text-center mt-2">
-          5 minute warm-up to prepare your muscles
+          {isDedicatedCardio 
+            ? `Track your ${cardioType.toLowerCase()} workout` 
+            : "5 minute warm-up to prepare your muscles"}
         </p>
         {exercises.length > 0 && (
           <p className="font-normal text-[12px] text-[#A4B1B7] text-center mt-1">
@@ -129,11 +141,48 @@ const CardioWarmUp = () => {
         )}
       </div>
 
+      {isDedicatedCardio && (
+        <div className="mb-6 w-full rounded-lg p-4" style={{ backgroundColor: "rgba(176, 232, 227, 0.12)" }}>
+          <p className="font-semibold text-[16px] text-[#A4B1B7] mb-3">
+            Select Duration
+          </p>
+          <div className="grid grid-cols-3 gap-2">
+            <button 
+              className={`p-3 rounded ${selectedDuration === 15 ? "bg-[#00C4B4] text-black" : "bg-[#1C1C1E] text-[#A4B1B7]"}`}
+              onClick={() => {
+                setSelectedDuration(15);
+                if (!isTimerRunning) setTimeRemaining(15 * 60);
+              }}
+            >
+              15 min
+            </button>
+            <button 
+              className={`p-3 rounded ${selectedDuration === 30 ? "bg-[#00C4B4] text-black" : "bg-[#1C1C1E] text-[#A4B1B7]"}`}
+              onClick={() => {
+                setSelectedDuration(30);
+                if (!isTimerRunning) setTimeRemaining(30 * 60);
+              }}
+            >
+              30 min
+            </button>
+            <button 
+              className={`p-3 rounded ${selectedDuration === 45 ? "bg-[#00C4B4] text-black" : "bg-[#1C1C1E] text-[#A4B1B7]"}`}
+              onClick={() => {
+                setSelectedDuration(45);
+                if (!isTimerRunning) setTimeRemaining(45 * 60);
+              }}
+            >
+              45 min
+            </button>
+          </div>
+        </div>
+      )}
+
       <div 
         className="w-full rounded-lg p-6 flex flex-col items-center"
         style={{ backgroundColor: "rgba(176, 232, 227, 0.12)" }}
       >
-        <div className="w-48 h-48 rounded-full flex items-center justify-center bg-[#1C1C1E] border-4 border-[#00C4B4] mb-6">
+        <div className="w-64 h-64 rounded-full flex items-center justify-center bg-[#1C1C1E] border-4 border-[#00C4B4] mb-6">
           <div className="text-center">
             <div className="text-[40px] font-bold text-[#A4B1B7]">
               {formatTime(timeRemaining)}
@@ -141,79 +190,23 @@ const CardioWarmUp = () => {
             {!isTimerRunning && !timerCompleted && (
               <button 
                 onClick={toggleTimer}
-                className="flex items-center justify-center mt-2 text-[#00C4B4]"
+                className="flex items-center justify-center mt-4 text-[#00C4B4] text-lg py-2 px-4 bg-[#1C1C1E] rounded-full border border-[#00C4B4]"
               >
-                <Play size={24} className="mr-1" />
-                <span>Start</span>
+                <Play size={28} className="mr-2" />
+                <span>Start Timer</span>
               </button>
             )}
             {isTimerRunning && (
               <button 
                 onClick={toggleTimer}
-                className="mt-2 text-[#00C4B4]"
+                className="mt-4 text-[#00C4B4] text-lg py-2 px-6 bg-[#1C1C1E] rounded-full border border-[#00C4B4]"
               >
                 Pause
               </button>
             )}
             {timerCompleted && (
-              <div className="text-[#00C4B4] mt-2">Complete!</div>
+              <div className="text-[#00C4B4] text-lg mt-4">Complete!</div>
             )}
-          </div>
-        </div>
-        
-        <div className="w-full">
-          <div className="mb-4">
-            <p className="font-semibold text-[16px] text-[#A4B1B7] mb-2">
-              Intensity
-            </p>
-            <div className="grid grid-cols-3 gap-2">
-              <button 
-                className={`p-2 rounded ${intensity === "Low" ? "bg-[#00C4B4] text-black" : "bg-[#1C1C1E] text-[#A4B1B7]"}`}
-                onClick={() => setIntensity("Low")}
-              >
-                Low
-              </button>
-              <button 
-                className={`p-2 rounded ${intensity === "Medium" ? "bg-[#00C4B4] text-black" : "bg-[#1C1C1E] text-[#A4B1B7]"}`}
-                onClick={() => setIntensity("Medium")}
-              >
-                Medium
-              </button>
-              <button 
-                className={`p-2 rounded ${intensity === "High" ? "bg-[#00C4B4] text-black" : "bg-[#1C1C1E] text-[#A4B1B7]"}`}
-                onClick={() => setIntensity("High")}
-              >
-                High
-              </button>
-            </div>
-          </div>
-          
-          <div>
-            <p className="font-semibold text-[16px] text-[#A4B1B7] mb-2">
-              Equipment
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              <button 
-                className="p-2 rounded bg-[#00C4B4] text-black"
-              >
-                Treadmill
-              </button>
-              <button 
-                className="p-2 rounded bg-[#1C1C1E] text-[#A4B1B7]"
-              >
-                Elliptical
-              </button>
-              <button 
-                className="p-2 rounded bg-[#1C1C1E] text-[#A4B1B7]"
-              >
-                Bike
-              </button>
-              <button 
-                className="p-2 rounded bg-[#1C1C1E] text-[#A4B1B7]"
-              >
-                Rowing
-              </button>
-            </div>
           </div>
         </div>
       </div>
@@ -226,9 +219,11 @@ const CardioWarmUp = () => {
           Complete & Continue
         </PrimaryButton>
         
-        <SecondaryButton onClick={skipWarmUp}>
-          Skip Warm-Up
-        </SecondaryButton>
+        {!isDedicatedCardio && (
+          <SecondaryButton onClick={skipWarmUp}>
+            Skip Warm-Up
+          </SecondaryButton>
+        )}
         
         {(timerCompleted || timeRemaining === 0) && (
           <button 

@@ -2,8 +2,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
-import PrimaryButton from '@/components/PrimaryButton';
-import SecondaryButton from '@/components/SecondaryButton';
 import { ArrowLeft } from 'lucide-react';
 
 const CardioTypeSelect = () => {
