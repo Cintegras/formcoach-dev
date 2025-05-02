@@ -9,9 +9,9 @@ interface PageContainerProps {
 const PageContainer: React.FC<PageContainerProps> = ({ children, className = "" }) => {
   return (
     <div
-      className={`min-h-screen px-5 py-8 bg-[#000000] text-white ${className}`}
+      className={`min-h-screen px-4 py-8 bg-[#020D0C] text-white font-inter ${className}`}
     >
-      <div className="max-w-[400px] mx-auto">{children}</div>
+      <div className="max-w-[375px] mx-auto">{children}</div>
     </div>
   );
 };

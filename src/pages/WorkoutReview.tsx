@@ -30,10 +30,10 @@ const WorkoutReview = () => {
   return (
     <PageContainer>
       <div className="mt-8 mb-6">
-        <h1 className="font-bold text-[32px] text-center text-[#A4B1B7]">
+        <h1 className="font-bold text-[32px] text-center text-[#D7E4E3]">
           Great Job! 🎉
         </h1>
-        <p className="font-normal text-[16px] text-[#A4B1B7] text-center mt-2">
+        <p className="font-normal text-[16px] text-[#9CA3AF] text-center mt-2">
           You've completed today's workout!
         </p>
       </div>
@@ -48,41 +48,28 @@ const WorkoutReview = () => {
           </div>
         </div>
       </div>
-      <div
-        className="w-full rounded-lg p-6 border-2 border-[#00C4B4]"
-        style={{ backgroundColor: "rgba(176, 232, 227, 0.12)" }}
-      >
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-semibold text-[20px] text-[#A4B1B7]">
-            Workout Summary
-          </h2>
-          <button
-            onClick={() => handleEditExercise('Workout')}
-            className="font-normal text-[12px] text-[#00C4B4]"
-          >
-            <Edit size={12} className="inline mr-1" /> Edit
-          </button>
-        </div>
+      
+      <div className="bg-[#1C1C1E] rounded-lg p-4 mb-6 border-2 border-[#00C4B4]">
         <div className="space-y-3">
-          <p className="font-bold text-[16px] text-[#A4B1B7]">
+          <p className="font-bold text-[16px] text-[#D7E4E3]">
             Duration: 45 minutes
           </p>
-          <p className="font-bold text-[16px] text-[#A4B1B7]">
+          <p className="font-bold text-[16px] text-[#D7E4E3]">
             Exercises Completed: 8
           </p>
-          <p className="font-bold text-[16px] text-[#A4B1B7]">
+          <p className="font-bold text-[16px] text-[#D7E4E3]">
             Calories Burned: 250 kcal
           </p>
         </div>
 
         <div className="mt-4 pt-4 border-t border-[#2D2D2F]">
-          <h3 className="font-semibold text-[16px] text-[#A4B1B7] mb-2">
+          <h3 className="font-semibold text-[16px] text-[#D7E4E3] mb-2">
             Exercise Log
           </h3>
 
           <div className="space-y-2">
             <div className="flex justify-between">
-              <p className="font-normal text-[14px] text-[#A4B1B7]">
+              <p className="font-normal text-[14px] text-[#9CA3AF]">
                 Cardio Warm-Up: 5 minutes
               </p>
               <button
@@ -94,7 +81,7 @@ const WorkoutReview = () => {
             </div>
 
             <div className="flex justify-between">
-              <p className="font-normal text-[14px] text-[#A4B1B7]">
+              <p className="font-normal text-[14px] text-[#9CA3AF]">
                 Leg Press: Warm-up 10 reps @ 20 lbs, Set 1: 10 reps @ 30 lbs, Set 2: 10 reps @ 30 lbs, Set 3: 10 reps @ 30 lbs
               </p>
               <button
@@ -106,7 +93,7 @@ const WorkoutReview = () => {
             </div>
 
             <div className="flex justify-between">
-              <p className="font-normal text-[14px] text-[#A4B1B7]">
+              <p className="font-normal text-[14px] text-[#9CA3AF]">
                 Seated Leg Curl: Warm-up 10 reps @ 15 lbs, Set 1: 10 reps @ 25 lbs, Set 2: 10 reps @ 25 lbs, Set 3: 10 reps @ 25 lbs
               </p>
               <button
@@ -118,7 +105,7 @@ const WorkoutReview = () => {
             </div>
 
             <div className="flex justify-between">
-              <p className="font-normal text-[14px] text-[#A4B1B7]">
+              <p className="font-normal text-[14px] text-[#9CA3AF]">
                 Chest Press: Warm-up 10 reps @ 20 lbs, Set 1: 10 reps @ 30 lbs, Set 2: 10 reps @ 30 lbs, Set 3: 8 reps @ 35 lbs
               </p>
               <button
@@ -132,7 +119,7 @@ const WorkoutReview = () => {
         </div>
       </div>
 
-      <p className="font-normal text-[16px] text-[#A4B1B7] text-center my-6">
+      <p className="font-normal text-[16px] text-[#9CA3AF] text-center my-6">
         You're making amazing progress—keep it up!
       </p>
 

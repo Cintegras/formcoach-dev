@@ -23,13 +23,13 @@ const SecondaryButton: React.FC<SecondaryButtonProps> = ({
     w-full 
     h-[50px]
     text-center 
-    rounded-2xl
+    rounded-lg
     bg-transparent
     border
-    border-[#8E9196]
-    text-[#8E9196]
-    font-medium 
-    text-[17px]
+    border-[#00C4B4]
+    text-[#00C4B4]
+    font-semibold 
+    text-[16px]
     flex
     items-center
     justify-center
@@ -38,6 +38,7 @@ const SecondaryButton: React.FC<SecondaryButtonProps> = ({
     duration-200 
     disabled:opacity-50 
     disabled:cursor-not-allowed
+    font-inter
   `;
 
   const finalClass = `${baseClass} ${className}`.trim();
