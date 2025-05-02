@@ -13,6 +13,7 @@ interface ExerciseItem {
   isCardio?: boolean;
   duration?: string;
   completed: boolean;
+  selected: boolean;
 }
 
 const WorkoutPlan = () => {
@@ -24,63 +25,72 @@ const WorkoutPlan = () => {
       name: 'Cardio Warm-Up', 
       isCardio: true,
       duration: '5 minutes',
-      completed: false 
+      completed: false,
+      selected: true
     },
     { 
       id: 'leg-press', 
       name: 'Leg Press', 
       sets: 3, 
       reps: '10', 
-      completed: false 
+      completed: false,
+      selected: true
     },
     { 
       id: 'seated-leg-curl', 
       name: 'Seated Leg Curl', 
       sets: 3, 
       reps: '10', 
-      completed: false 
+      completed: false,
+      selected: true
     },
     { 
       id: 'leg-extension', 
       name: 'Leg Extension', 
       sets: 3, 
       reps: '10', 
-      completed: false 
+      completed: false,
+      selected: true
     },
     { 
       id: 'chest-press', 
       name: 'Chest Press', 
       sets: 3, 
       reps: '10', 
-      completed: false 
+      completed: false,
+      selected: true
     },
     { 
       id: 'lat-pulldown', 
       name: 'Lat Pulldown', 
       sets: 3, 
       reps: '10', 
-      completed: false 
+      completed: false,
+      selected: true
     },
     { 
       id: 'seated-row', 
       name: 'Seated Row', 
       sets: 3, 
       reps: '10', 
-      completed: false 
+      completed: false,
+      selected: true
     },
     { 
       id: 'triceps-pushdown', 
       name: 'Triceps Pushdown', 
       sets: 3, 
       reps: '10', 
-      completed: false 
+      completed: false,
+      selected: true
     },
     { 
       id: 'biceps-curl', 
       name: 'Biceps Curl', 
       sets: 3, 
       reps: '10', 
-      completed: false 
+      completed: false,
+      selected: true
     }
   ]);
 
@@ -94,11 +104,35 @@ const WorkoutPlan = () => {
     );
   };
 
+  const toggleExerciseSelection = (id: string) => {
+    setExercises(prevExercises => 
+      prevExercises.map(exercise => 
+        exercise.id === id 
+          ? { ...exercise, selected: !exercise.selected } 
+          : exercise
+      )
+    );
+  };
+
   const startExercise = (id: string) => {
     if (id === 'cardio-warmup') {
       navigate('/cardio-warmup');
     } else {
       navigate(`/workout-tracking/${id}`);
+    }
+  };
+
+  const handleContinue = () => {
+    const selectedExercises = exercises.filter(exercise => exercise.selected);
+    
+    if (selectedExercises.length > 0) {
+      // Pass the selected exercises to the confirmation page
+      navigate('/workout-confirmation', { 
+        state: { selectedExercises } 
+      });
+    } else {
+      // If no exercises are selected, show an error or feedback
+      alert('Please select at least one exercise');
     }
   };
 
@@ -109,7 +143,7 @@ const WorkoutPlan = () => {
           Today's Workout
         </h1>
         <p className="font-normal text-[14px] text-[#A4B1B7] text-center mt-2">
-          Start with a warm-up, then complete each exercise
+          Select exercises for your workout
         </p>
       </div>
       
@@ -121,7 +155,7 @@ const WorkoutPlan = () => {
             style={{
               backgroundColor: "rgba(176, 232, 227, 0.12)",
             }}
-            onClick={() => startExercise(exercise.id)}
+            onClick={() => toggleExerciseSelection(exercise.id)}
           >
             <div>
               <h3 className="font-semibold text-[16px] text-[#A4B1B7]">
@@ -137,16 +171,16 @@ const WorkoutPlan = () => {
             
             <button 
               className={`w-6 h-6 rounded border ${
-                exercise.completed 
+                exercise.selected 
                   ? 'bg-[#00C4B4] border-[#00C4B4]' 
                   : 'bg-transparent border-[#9CA3AF]'
               } flex items-center justify-center`}
               onClick={(e) => {
                 e.stopPropagation();
-                toggleExercise(exercise.id);
+                toggleExerciseSelection(exercise.id);
               }}
             >
-              {exercise.completed && <Check size={16} className="text-black" />}
+              {exercise.selected && <Check size={16} className="text-black" />}
             </button>
           </div>
         ))}
@@ -154,11 +188,11 @@ const WorkoutPlan = () => {
 
       <div className="mt-8">
         <PrimaryButton 
-          onClick={() => navigate('/workout-review')}
-          disabled={exercises.some(exercise => !exercise.completed)}
+          onClick={handleContinue}
+          disabled={!exercises.some(exercise => exercise.selected)}
           className="bg-[#00C4B4] text-[#000000]"
         >
-          Choose Exercises
+          Continue
         </PrimaryButton>
       </div>
     </PageContainer>

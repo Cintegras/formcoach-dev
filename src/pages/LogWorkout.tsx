@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import SecondaryButton from '@/components/SecondaryButton';
@@ -14,9 +14,25 @@ interface SetData {
   isWarmup?: boolean;
 }
 
+interface ExerciseItem {
+  id: string;
+  name: string;
+  sets?: number;
+  reps?: string;
+  isCardio?: boolean;
+  duration?: string;
+  completed: boolean;
+  selected: boolean;
+}
+
 const LogWorkout = () => {
   const navigate = useNavigate();
   const { exercise } = useParams<{ exercise: string }>();
+  const location = useLocation();
+  
+  // Get the exercises array and current index from location state
+  const exercises: ExerciseItem[] = location.state?.exercises || [];
+  const currentIndex: number = location.state?.currentIndex || 0;
 
   // Make sure we have a default exercise and properly format it
   const exerciseName = exercise ? decodeURIComponent(exercise).replace(/-/g, ' ') : 'Leg Press';
@@ -84,27 +100,30 @@ const LogWorkout = () => {
   };
 
   const nextExercise = () => {
-    // Logic to determine next exercise based on current one
+    // Show success toast for the current exercise
     toast({
       title: "Workout saved",
       description: `${formattedExerciseName} has been logged`,
     });
     
-    switch (exerciseName.toLowerCase()) {
-      case 'leg press':
-        navigate('/workout-tracking/seated-leg-curl');
-        break;
-      case 'seated leg curl':
-        navigate('/workout-tracking/chest-press');
-        break;
-      case 'chest press':
-        navigate('/workout-tracking/lat-pulldown');
-        break;
-      case 'lat pulldown':
-        navigate('/workout-review');
-        break;
-      default:
-        navigate('/workout-review');
+    // If we have custom exercises and there's a next exercise in the array
+    if (exercises.length > 0 && currentIndex < exercises.length - 1) {
+      // Go to the next exercise in the custom order
+      const nextIndex = currentIndex + 1;
+      const nextExerciseData = exercises[nextIndex];
+      
+      if (nextExerciseData.isCardio) {
+        navigate('/cardio-warmup', { 
+          state: { exercises, currentIndex: nextIndex } 
+        });
+      } else {
+        navigate(`/workout-tracking/${nextExerciseData.id}`, { 
+          state: { exercises, currentIndex: nextIndex } 
+        });
+      }
+    } else {
+      // If this was the last exercise or we don't have custom order data, go to the review page
+      navigate('/workout-review');
     }
   };
 
@@ -121,6 +140,11 @@ const LogWorkout = () => {
         <p className="font-normal text-[14px] text-[#A4B1B7] text-center mt-2">
           {formattedExerciseName}
         </p>
+        {exercises.length > 0 && (
+          <p className="font-normal text-[12px] text-[#A4B1B7] text-center mt-1">
+            Exercise {currentIndex + 1} of {exercises.length}
+          </p>
+        )}
       </div>
       
       <div className="w-full rounded-lg p-6" style={{ backgroundColor: "rgba(176, 232, 227, 0.12)" }}>
