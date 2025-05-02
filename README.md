@@ -1,119 +1,73 @@
-# 🏋️‍♂️ FormCoach
+# Welcome to your Lovable project
 
-FormCoach is an AI-assisted fitness planner focused on helping users build better form, track workouts safely, and adapt routines in real-time. It integrates form video analysis, soreness-aware adjustments, and equipment-aware routines for gym and home users.
+## Project info
 
-🧠 This project is part of the **Adaptive Wellness System**, a broader initiative that includes nutrition tracking, symptom modeling, wearable sync, and real-life activity planning.
+**URL**: https://lovable.dev/projects/42f59d51-67bf-443d-9192-c1f0e4342039
 
----
+## How can I edit this code?
 
-## 🔧 Key Features
+There are several ways of editing your application.
 
-- 🏋️ Machine-based, personalized workout planner
-- 🧠 AI form critique via user-uploaded videos
-- 🔁 Smart set adjustment based on fatigue & performance
-- 💬 Conversational interface (via ChatGPT, Copilot, Cascade)
-- 📊 Trends, soreness tracking, and gym/home adaptability
+**Use Lovable**
 
----
+Simply visit the [Lovable Project](https://lovable.dev/projects/42f59d51-67bf-443d-9192-c1f0e4342039) and start prompting.
 
-## 🚀 Getting Started
+Changes made via Lovable will be committed automatically to this repo.
 
-### 1. Clone the Repo
+**Use your preferred IDE**
 
-```bash
-git clone https://github.com/Cintegras/formcoach.git
-cd formcoach
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+
+The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+
+Follow these steps:
+
+```sh
+# Step 1: Clone the repository using the project's Git URL.
+git clone <YOUR_GIT_URL>
+
+# Step 2: Navigate to the project directory.
+cd <YOUR_PROJECT_NAME>
+
+# Step 3: Install the necessary dependencies.
+npm i
+
+# Step 4: Start the development server with auto-reloading and an instant preview.
+npm run dev
 ```
 
-### 2. Start the App
+**Edit a file directly in GitHub**
 
-```bash
-./run.sh
-```
+- Navigate to the desired file(s).
+- Click the "Edit" button (pencil icon) at the top right of the file view.
+- Make your changes and commit the changes.
 
-Stop all processes:
+**Use GitHub Codespaces**
 
-```bash
-./stop.sh
-```
+- Navigate to the main page of your repository.
+- Click on the "Code" button (green button) near the top right.
+- Select the "Codespaces" tab.
+- Click on "New codespace" to launch a new Codespace environment.
+- Edit files directly within the Codespace and commit and push your changes once you're done.
 
-> 💡 Requires: Python 3.9+, Node.js, `uvicorn`, and `npm`.
+## What technologies are used for this project?
 
----
+This project is built with:
 
-## 📁 Folder Structure
+- Vite
+- TypeScript
+- React
+- shadcn-ui
+- Tailwind CSS
 
-```
-formcoach/
-├── backend/           # FastAPI (main.py, venv, API logic)
-├── frontend/          # Vite + React + Tailwind UI
-├── docs/              # Dev environment guides
-├── run.sh             # Launch backend + frontend
-├── stop.sh            # Stop all running processes
-└── README.md          # You're here
-```
+## How can I deploy this project?
 
----
+Simply open [Lovable](https://lovable.dev/projects/42f59d51-67bf-443d-9192-c1f0e4342039) and click on Share -> Publish.
 
-## 🧭 Dev Environments & Docs
+## Can I connect a custom domain to my Lovable project?
 
-FormCoach is developed across multiple tools. Each has its own setup guide:
+Yes, you can!
 
-| Environment           | Purpose                                     | Doc                                |
-|-----------------------|---------------------------------------------|-------------------------------------|
-| 🌀 Windsurf           | AI-in-editor via Cascade + Git workflows    | [WINDSURF.md](docs/WINDSURF.md)     |
-| 🎨 Lovable            | Prompt-based UI generation (React/Tailwind) | [LOVABLE.md](docs/LOVABLE.md)       |
-| 💻 VS Code            | Microsoft Copilot testing + hybrid editing  | [VSCODE.md](docs/VSCODE.md)         |
-| 🧠 PyCharm            | Python + FastAPI backend development        | [PYCHARM.md](docs/PYCHARM.md)       |
-| 🖼 Figma              | UI/UX asset layout and component planning   | [FIGMA.md](docs/FIGMA.md)           |
-| 📦 Visual Assets     | Mobbin, Envato, Adobe Stock, Unsplash       | [VISUAL_ASSETS.md](docs/VISUAL_ASSETS.md) |
-| 🤖 AI Assistants     | ChatGPT, Junie, Grok usage strategy         | [AI_ASSISTANTS.md](docs/AI_ASSISTANTS.md) |
+To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
 
----
-
-## 🧠 AI + Prompt Strategy
-
-FormCoach uses a multi-AI approach for development:
-
-| Tool         | Role                                 |
-|--------------|--------------------------------------|
-| **ChatGPT**  | Docs, prompt writing, refactoring    |
-| **Junie**    | React + Next.js + Supabase scaffolds |
-| **Cascade**  | Component generation inside Windsurf |
-| **Copilot**  | Local AI coding testbed in VS Code   |
-| **Grok**     | Quick answers, syntax checks         |
-
-Prompts are structured and stored in `prompt_library/` (WIP).
-
----
-
-## 🛠 Tools Used
-
-- ⚙️ FastAPI (backend)
-- ⚛️ React + Vite (frontend)
-- 🎨 Tailwind CSS + shadcn/ui
-- 🧪 pytest, ESLint, Prettier
-- 🧱 MongoDB planned for future DB work
-- 🔗 Integrated with GitHub, Windsurf, and Microsoft Copilot Chat
-
----
-
-## 🌱 Roadmap
-
-- [x] Build machine-based 4-day workout planner
-- [x] Add AI-generated form critique cards
-- [ ] Sync with wearables (Apple Watch, Whoop, Oura)
-- [ ] Auto-adjust sets based on fatigue metrics
-- [ ] Weekly muscle group planner
-- [ ] Nutrition + symptom crossover (via Adaptive Wellness)
-- [ ] Mobile-first design refinement
-
----
-
-## 📜 License
-
-© 2025 Cintegras LLC. All rights reserved. This is part of the Adaptive Wellness development system and is not yet open source.
-
----
-
-_Last updated: May 1, 2025_
+Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)

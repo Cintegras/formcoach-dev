@@ -6,7 +6,6 @@ import PrimaryButton from '@/components/PrimaryButton';
 import SecondaryButton from '@/components/SecondaryButton';
 import { Input } from '@/components/ui/input';
 import { toast } from "@/hooks/use-toast";
-import { Card, CardContent } from "@/components/ui/card";
 
 interface SetData {
   label: string;
@@ -116,58 +115,56 @@ const LogWorkout = () => {
   return (
     <PageContainer>
       <div className="mt-8 mb-6">
-        <h1 className="font-medium text-[28px] text-center text-white">
+        <h1 className="font-bold text-[28px] text-center text-[#A4B1B7]">
           Log Workout
         </h1>
-        <p className="font-normal text-[16px] text-[#8E9196] text-center mt-2">
+        <p className="font-normal text-[14px] text-[#A4B1B7] text-center mt-2">
           {formattedExerciseName}
         </p>
       </div>
       
-      <Card className="bg-[#1C1C1E]/80 backdrop-blur-sm border-0 rounded-2xl shadow-lg">
-        <CardContent className="p-6">
-          {sets.map((set, index) => (
-            <div key={index} className="mb-6 last:mb-0">
-              <p className="font-normal text-[16px] text-[#8E9196] mb-2">
-                {set.label} – {set.reps} reps @ {set.weight} lbs (Recommended)
-              </p>
+      <div className="w-full rounded-lg p-6" style={{ backgroundColor: "rgba(176, 232, 227, 0.12)" }}>
+        {sets.map((set, index) => (
+          <div key={index} className="mb-6 last:mb-0">
+            <p className="font-normal text-[16px] text-[#A4B1B7] mb-2">
+              {set.label} – {set.reps} reps @ {set.weight} lbs (Recommended)
+            </p>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block font-normal text-[14px] text-[#8E9196] mb-1">Weight</label>
-                  <Input
-                    type="text"
-                    value={set.weight}
-                    onChange={(e) => updateSet(index, 'weight', e.target.value)}
-                    placeholder="Weight"
-                    className="rounded-xl w-full h-auto px-[16px] py-[14px] border-0 text-[17px] font-normal"
-                    style={{
-                      backgroundColor: "rgba(60, 60, 67, 0.29)",
-                      color: "#ffffff"
-                    }}
-                  />
-                </div>
-                <div>
-                  <label className="block font-normal text-[14px] text-[#8E9196] mb-1">Reps</label>
-                  <Input
-                    type="text"
-                    value={set.reps}
-                    onChange={(e) => updateSet(index, 'reps', e.target.value)}
-                    placeholder="Reps"
-                    className="rounded-xl w-full h-auto px-[16px] py-[14px] border-0 text-[17px] font-normal"
-                    style={{
-                      backgroundColor: "rgba(60, 60, 67, 0.29)",
-                      color: "#ffffff"
-                    }}
-                  />
-                </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block font-normal text-[14px] text-[#A4B1B7] mb-1">Weight</label>
+                <Input
+                  type="text"
+                  value={set.weight}
+                  onChange={(e) => updateSet(index, 'weight', e.target.value)}
+                  placeholder="Weight"
+                  className="rounded-md w-full h-auto px-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
+                  style={{
+                    backgroundColor: "rgba(176, 232, 227, 0.12)", // #B0E8E3 @ 12%
+                    color: "rgba(209, 235, 233, 0.62)"           // #D1EBE9 @ 62%
+                  }}
+                />
+              </div>
+              <div>
+                <label className="block font-normal text-[14px] text-[#A4B1B7] mb-1">Reps</label>
+                <Input
+                  type="text"
+                  value={set.reps}
+                  onChange={(e) => updateSet(index, 'reps', e.target.value)}
+                  placeholder="Reps"
+                  className="rounded-md w-full h-auto px-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
+                  style={{
+                    backgroundColor: "rgba(176, 232, 227, 0.12)", // #B0E8E3 @ 12%
+                    color: "rgba(209, 235, 233, 0.62)"           // #D1EBE9 @ 62%
+                  }}
+                />
               </div>
             </div>
-          ))}
-        </CardContent>
-      </Card>
+          </div>
+        ))}
+      </div>
 
-      <div className="mt-8 space-y-4">
+      <div className="mt-8 space-y-2">
         <PrimaryButton onClick={nextExercise}>
           Save and Continue
         </PrimaryButton>
