@@ -42,8 +42,8 @@ const Signup = () => {
 
     setIsLoading(false);
 
-    // Redirect to welcome screen after signup
-    navigate('/welcome');
+    // Redirect to workout category select screen after signup
+    navigate('/workout-category-select');
   };
 
   return (

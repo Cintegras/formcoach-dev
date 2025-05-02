@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
@@ -27,7 +28,7 @@ const WorkoutConfirmation = () => {
   const [exercises, setExercises] = useState<ExerciseItem[]>(initialExercises);
   
   // Function to reorder exercises after drag and drop
-  const reorderExercises = (result: DropResult) => {
+  const onDragEnd = (result: DropResult) => {
     if (!result.destination) return;
     
     const items = Array.from(exercises);
@@ -69,13 +70,13 @@ const WorkoutConfirmation = () => {
         </p>
       </div>
       
-      <DragDropContext onDragEnd={reorderExercises}>
+      <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="exercises">
           {(provided) => (
             <div 
               {...provided.droppableProps}
               ref={provided.innerRef}
-              className="space-y-3"
+              className="space-y-3 min-h-[200px]"
             >
               {exercises.map((exercise, index) => (
                 <Draggable key={exercise.id} draggableId={exercise.id} index={index}>
@@ -89,7 +90,7 @@ const WorkoutConfirmation = () => {
                         backgroundColor: "rgba(176, 232, 227, 0.12)",
                       }}
                     >
-                      <div className="flex items-center">
+                      <div className="flex items-center w-full">
                         <div 
                           {...provided.dragHandleProps}
                           className="mr-3 cursor-grab"

@@ -40,7 +40,7 @@ const Login = () => {
     setIsLoading(true);
     await new Promise(resolve => setTimeout(resolve, 1000));
     setIsLoading(false);
-    navigate('/workout-plan');
+    navigate('/workout-category-select');
   };
 
   const handleForgotPassword = () => {
