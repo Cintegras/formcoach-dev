@@ -53,6 +53,14 @@ const WorkoutPlan = () => {
       selected: true
     },
     { 
+      id: 'calf-raises', 
+      name: 'Calf Raises', 
+      sets: 3, 
+      reps: '15', 
+      completed: false,
+      selected: true
+    },
+    { 
       id: 'chest-press', 
       name: 'Chest Press', 
       sets: 3, 

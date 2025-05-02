@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import SecondaryButton from '@/components/SecondaryButton';
@@ -28,7 +28,7 @@ const WorkoutConfirmation = () => {
   const [exercises, setExercises] = useState<ExerciseItem[]>(initialExercises);
   
   // Function to reorder exercises after drag and drop
-  const reorderExercises = (result: any) => {
+  const reorderExercises = (result: DropResult) => {
     if (!result.destination) return;
     
     const items = Array.from(exercises);
@@ -38,13 +38,14 @@ const WorkoutConfirmation = () => {
     setExercises(items);
   };
 
-  // Save workout as preset
-  const saveAsPreset = () => {
-    // In a real app, this would save to a database or local storage
-    // For now, we'll just show a toast notification
+  // Preview workout flow
+  const previewWorkoutFlow = () => {
+    const exerciseNames = exercises.map(ex => ex.name).join(' → ');
+    
     toast({
-      title: "Workout saved",
-      description: "Your custom workout has been saved as a preset",
+      title: "Workout Flow",
+      description: exerciseNames,
+      duration: 5000,
     });
   };
 
@@ -69,17 +70,6 @@ const WorkoutConfirmation = () => {
     navigate('/workout-plan');
   };
 
-  // Show a preview of the workout flow
-  const previewWorkoutFlow = () => {
-    const exerciseNames = exercises.map(ex => ex.name).join(' → ');
-    
-    toast({
-      title: "Workout Flow",
-      description: exerciseNames,
-      duration: 5000,
-    });
-  };
-
   return (
     <PageContainer>
       <div className="mt-8 mb-6">
@@ -89,10 +79,6 @@ const WorkoutConfirmation = () => {
         <p className="font-normal text-[14px] text-[#A4B1B7] text-center mt-2">
           Drag and drop to reorder exercises
         </p>
-      </div>
-
-      <div className="mb-6 text-center">
-        <p className="text-[16px] text-[#A4B1B7]">Is this correct?</p>
       </div>
       
       <DragDropContext onDragEnd={reorderExercises}>
@@ -157,10 +143,6 @@ const WorkoutConfirmation = () => {
         
         <SecondaryButton onClick={previewWorkoutFlow}>
           Preview Workout Flow
-        </SecondaryButton>
-        
-        <SecondaryButton onClick={saveAsPreset}>
-          Save as Preset
         </SecondaryButton>
         
         <button 
