@@ -94,4 +94,48 @@ VS Code will be used alongside other tools to:
 
 ---
 
+🔌 Recommended Extensions
+
+🧠 AI & GitHub
+	•	GitHub Copilot
+In-editor AI code suggestions to boost productivity across frontend and backend.
+	•	GitHub Copilot Chat
+Chat with Copilot inside VS Code to explain code, generate snippets, or fix bugs.
+	•	GitHub Repositories
+Browse and edit GitHub repos directly from VS Code without cloning them locally.
+	•	Remote Repositories
+Alternative for accessing and previewing GitHub projects without full checkout.
+
+⸻
+
+⚙️ Python & Backend
+	•	Python
+Core Python support including linting, IntelliSense, and environment management.
+	•	Pylance
+Fast, intelligent type-checking and code analysis for Python (especially FastAPI).
+	•	Python Debugger
+Breakpoints, step-through debugging, and variable inspection for Python projects.
+
+⸻
+
+🎨 Frontend (React, Tailwind, Vite)
+	•	ESLint
+Catches errors and enforces clean, consistent JavaScript/TypeScript code.
+	•	Prettier - Code Formatter
+Automatically formats code on save for consistency across teams.
+	•	Tailwind CSS IntelliSense
+Autocompletes Tailwind classes and shows real-time styling hints.
+	•	Path Intellisense
+Autocompletes file paths in your import statements.
+
+⸻
+
+📝 Documentation & UI Polish
+	•	Markdown All in One
+Enhances Markdown editing with preview, shortcuts, and auto-generated TOC.
+	•	Error Lens
+Visually highlights errors and warnings inline for immediate feedback.
+	•	CodeSnap
+Take beautiful screenshots of code blocks for documentation or sharing.
+
 _Last updated: May 1, 2025_
