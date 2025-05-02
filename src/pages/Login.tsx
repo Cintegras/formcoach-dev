@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
@@ -16,6 +16,7 @@ import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Mail, Lock } from 'lucide-react';
+import { useToast } from '@/components/ui/use-toast';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -27,6 +28,7 @@ type LoginValues = z.infer<typeof loginSchema>;
 const Login = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const { toast } = useToast();
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -38,9 +40,33 @@ const Login = () => {
 
   const onSubmit = async (values: LoginValues) => {
     setIsLoading(true);
+    
+    // Simulate API call
     await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Check if a user with this email exists in our mock storage
+    const userData = localStorage.getItem('userData');
+    
+    if (userData) {
+      const user = JSON.parse(userData);
+      // Update the email if it's changed
+      if (user.email !== values.email) {
+        user.email = values.email;
+        localStorage.setItem('userData', JSON.stringify(user));
+      }
+    } else {
+      // First time login, store just the email for now
+      localStorage.setItem('userEmail', values.email);
+      // Redirect to profile setup
+      setIsLoading(false);
+      navigate('/profile-setup');
+      return;
+    }
+    
     setIsLoading(false);
-    navigate('/workout-category-select');
+    
+    // If we have user data, go to home
+    navigate('/');
   };
 
   const handleForgotPassword = () => {

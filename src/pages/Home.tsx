@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { useNavigate } from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
@@ -10,6 +10,22 @@ const Home = () => {
   const navigate = useNavigate();
   const today = new Date();
   const formattedDate = format(today, 'EEEE, MMMM d, yyyy');
+  const [firstName, setFirstName] = useState('');
+
+  useEffect(() => {
+    // Get user data from localStorage
+    const userData = localStorage.getItem('userData');
+    if (userData) {
+      const user = JSON.parse(userData);
+      setFirstName(user.firstName || '');
+    } else {
+      // If no user data, check if we need to redirect to profile setup
+      const userEmail = localStorage.getItem('userEmail');
+      if (userEmail) {
+        navigate('/profile-setup');
+      }
+    }
+  }, [navigate]);
 
   return (
     <PageContainer>
@@ -20,7 +36,9 @@ const Home = () => {
         </div>
 
         <div className="w-full max-w-[300px] mx-auto mt-12 text-center">
-          <h1 className="font-bold text-[32px] text-[#B0E8E3] mb-3">Welcome Back</h1>
+          <h1 className="font-bold text-[32px] text-[#B0E8E3] mb-3">
+            {firstName ? `Welcome, ${firstName}!` : 'Welcome Back'}
+          </h1>
           <p className="text-[#A4B1B7] mb-8">Ready for your workout today?</p>
           
           <PrimaryButton 

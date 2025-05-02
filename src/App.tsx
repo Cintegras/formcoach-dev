@@ -8,6 +8,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Splash from "./pages/Splash";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
+import ProfileSetupPage from "./pages/ProfileSetupPage";
 import Welcome from "./pages/Welcome";
 import MedicalDisclaimer from "./pages/MedicalDisclaimer";
 import LogWorkout from "./pages/LogWorkout";
@@ -50,6 +51,7 @@ const App = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/profile-setup" element={<ProfileSetupPage />} />
               
               {/* Onboarding Routes */}
               <Route path="/welcome" element={<Welcome />} />
