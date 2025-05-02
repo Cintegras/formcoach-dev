@@ -3,7 +3,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
-import { Dumbbell, Run, Body } from 'lucide-react';
+import { Dumbbell, Running, Heart } from 'lucide-react';
 
 const WorkoutCategorySelect = () => {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const WorkoutCategorySelect = () => {
           className="bg-[rgba(176,232,227,0.12)] p-6 rounded-lg flex flex-col items-center cursor-pointer"
           onClick={() => handleCategorySelect('cardio')}
         >
-          <Run size={48} className="text-[#00C4B4] mb-3" />
+          <Running size={48} className="text-[#00C4B4] mb-3" />
           <h2 className="font-bold text-[20px] text-[#A4B1B7]">Cardio</h2>
           <p className="text-[14px] text-[#A4B1B7] text-center mt-2">
             Treadmill, swimming, or cycling
@@ -50,7 +50,7 @@ const WorkoutCategorySelect = () => {
           className="bg-[rgba(176,232,227,0.12)] p-6 rounded-lg flex flex-col items-center cursor-pointer"
           onClick={() => handleCategorySelect('lower')}
         >
-          <Body size={48} className="text-[#00C4B4] mb-3" />
+          <Dumbbell size={48} className="text-[#00C4B4] mb-3" rotate={90} />
           <h2 className="font-bold text-[20px] text-[#A4B1B7]">Lower Body</h2>
           <p className="text-[14px] text-[#A4B1B7] text-center mt-2">
             Legs and core focused workout
@@ -61,7 +61,7 @@ const WorkoutCategorySelect = () => {
           className="bg-[rgba(176,232,227,0.12)] p-6 rounded-lg flex flex-col items-center cursor-pointer"
           onClick={() => handleCategorySelect('full')}
         >
-          <Body size={48} className="text-[#00C4B4] mb-3" />
+          <Heart size={48} className="text-[#00C4B4] mb-3" />
           <h2 className="font-bold text-[20px] text-[#A4B1B7]">Full Body</h2>
           <p className="text-[14px] text-[#A4B1B7] text-center mt-2">
             Complete workout targeting all muscle groups
