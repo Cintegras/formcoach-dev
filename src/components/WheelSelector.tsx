@@ -35,6 +35,8 @@ const WheelSelector: React.FC<WheelSelectorProps> = ({
   const handleTouchStart = (e: React.TouchEvent<HTMLDivElement>) => {
     setIsDragging(true);
     setStartY(e.touches[0].clientY);
+    // Prevent page scrolling
+    e.preventDefault();
   };
   
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -49,6 +51,8 @@ const WheelSelector: React.FC<WheelSelectorProps> = ({
     const deltaY = e.touches[0].clientY - startY;
     handleScroll(deltaY);
     setStartY(e.touches[0].clientY);
+    // Prevent page scrolling
+    e.preventDefault();
   };
   
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -110,6 +114,8 @@ const WheelSelector: React.FC<WheelSelectorProps> = ({
       onMouseMove={handleMouseMove}
       onMouseUp={handleEnd}
       onMouseLeave={handleEnd}
+      // Prevent page scrolling when wheel is used
+      onWheel={(e) => e.preventDefault()}
     >
       <div 
         ref={containerRef}

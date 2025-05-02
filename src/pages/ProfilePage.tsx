@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
@@ -173,24 +172,19 @@ const ProfilePage = () => {
   };
 
   const handleClearCache = () => {
-    // Clear all localStorage data except for essential auth data
-    const userEmail = localStorage.getItem('userEmail');
+    // Clear all localStorage data
     localStorage.clear();
-    
-    if (userEmail) {
-      localStorage.setItem('userEmail', userEmail);
-    }
     
     setIsClearCacheDialogOpen(false);
     
     toast({
       title: "Cache Cleared",
-      description: "All app data has been reset. Redirecting to setup...",
+      description: "All app data has been reset. Redirecting to signup...",
     });
     
-    // Short delay before redirecting
+    // Short delay before redirecting to signup page instead of profile setup
     setTimeout(() => {
-      navigate('/profile-setup');
+      navigate('/signup');
     }, 1500);
   };
 

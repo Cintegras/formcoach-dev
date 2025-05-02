@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { User, Ruler, Scale, Calendar } from 'lucide-react';
+import { User, Ruler, Scale, Calendar, Info } from 'lucide-react';
 
 interface SummaryStepProps {
   firstName: string;
@@ -80,7 +80,13 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
               {getBmiCategory(bmi)}
             </span>
           </div>
-          <div className="mt-4 text-xs text-[#A4B1B7] text-center">
+          <div className="flex items-center mt-4 text-xs text-[#A4B1B7] text-center">
+            <Info size={14} className="mr-1 flex-shrink-0" />
+            <span>
+              BMI is a basic health indicator and may not be accurate for athletes or those with high muscle mass.
+            </span>
+          </div>
+          <div className="mt-2 text-xs text-[#A4B1B7] text-center">
             AI-calculated based on your height and weight
           </div>
         </div>
