@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { DragDropContext, Droppable, Draggable, DropResult } from 'react-beautiful-dnd';
 import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
-import SecondaryButton from '@/components/SecondaryButton';
 import { useToast } from '@/hooks/use-toast';
 import { GripVertical, ArrowLeft } from 'lucide-react';
 
@@ -36,17 +35,6 @@ const WorkoutConfirmation = () => {
     items.splice(result.destination.index, 0, reorderedItem);
     
     setExercises(items);
-  };
-
-  // Preview workout flow
-  const previewWorkoutFlow = () => {
-    const exerciseNames = exercises.map(ex => ex.name).join(' → ');
-    
-    toast({
-      title: "Workout Flow",
-      description: exerciseNames,
-      duration: 5000,
-    });
   };
 
   // Start the workout
@@ -140,10 +128,6 @@ const WorkoutConfirmation = () => {
         >
           Start Workout
         </PrimaryButton>
-        
-        <SecondaryButton onClick={previewWorkoutFlow}>
-          Preview Workout Flow
-        </SecondaryButton>
         
         <button 
           onClick={goBack}

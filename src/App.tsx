@@ -12,6 +12,8 @@ import Welcome from "./pages/Welcome";
 import MedicalDisclaimer from "./pages/MedicalDisclaimer";
 import LogWorkout from "./pages/LogWorkout";
 import WorkoutPlan from "./pages/WorkoutPlan";
+import WorkoutCategorySelect from "./pages/WorkoutCategorySelect";
+import CardioTypeSelect from "./pages/CardioTypeSelect";
 import WorkoutConfirmation from "./pages/WorkoutConfirmation";
 import CardioWarmUp from "./pages/CardioWarmUp";
 import WorkoutReview from "./pages/WorkoutReview";
@@ -50,6 +52,8 @@ const App = () => {
               <Route path="/medical-disclaimer" element={<MedicalDisclaimer />} />
               
               {/* Workout Routes */}
+              <Route path="/workout-category-select" element={<WorkoutCategorySelect />} />
+              <Route path="/cardio-type-select" element={<CardioTypeSelect />} />
               <Route path="/workout-plan" element={<WorkoutPlan />} />
               <Route path="/workout-confirmation" element={<WorkoutConfirmation />} />
               <Route path="/cardio-warmup" element={<CardioWarmUp />} />
