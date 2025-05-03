@@ -11,6 +11,7 @@ This directory contains the configuration and setup files for our Supabase integ
 
 - `/docs`: Documentation related to Supabase
     - `RLS_POLICY_GUIDE.md`: Comprehensive guide on Row Level Security policies
+  - `ENVIRONMENT_SETUP.md`: Guide for managing development, staging, and production environments
 
 ## Getting Started
 
@@ -36,6 +37,18 @@ supabase db reset
 # Generate types based on your database schema
 supabase gen types typescript --local > src/types/supabase.ts
 ```
+
+## Environment Management
+
+We use an environment column approach to manage multiple environments (dev, stage, prod) within our Supabase projects:
+
+- Development and Staging environments share the `formcoach-dev` Supabase project
+- Production uses the separate `formcoach` Supabase project
+- All tables include an `environment` column to isolate data between environments
+- All queries and RLS policies include environment filtering
+
+For detailed implementation instructions for formcoach-dev and formcoach-stage, see
+the [Environment Setup Guide](docs/ENVIRONMENT_SETUP.md).
 
 ## Migrations
 

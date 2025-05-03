@@ -16,6 +16,7 @@ CREATE TABLE profiles
     weight        NUMERIC,
     fitness_level TEXT,
     goals         TEXT[],
+    environment TEXT NOT NULL DEFAULT 'dev',
     created_at    TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at    TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -30,6 +31,7 @@ CREATE TABLE exercises
     equipment               TEXT[],
     difficulty_level        TEXT,
     demonstration_video_url TEXT,
+    environment TEXT NOT NULL DEFAULT 'dev',
     created_at              TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -43,6 +45,7 @@ CREATE TABLE workout_plans
     frequency      TEXT,
     duration_weeks INTEGER,
     is_active      BOOLEAN                  DEFAULT true,
+    environment TEXT NOT NULL DEFAULT 'dev',
     created_at     TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at     TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -59,6 +62,7 @@ CREATE TABLE workout_plan_exercises
     rest_seconds    INTEGER,
     notes           TEXT,
     order_index     INTEGER,
+    environment TEXT NOT NULL DEFAULT 'dev',
     created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 

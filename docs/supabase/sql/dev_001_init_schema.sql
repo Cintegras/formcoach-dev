@@ -16,6 +16,7 @@ CREATE TABLE profiles
     weight        NUMERIC,
     fitness_level TEXT,
     goals         TEXT[],
+    environment TEXT NOT NULL DEFAULT 'dev',
     created_at    TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at    TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -30,6 +31,7 @@ CREATE TABLE exercises
     equipment               TEXT[],
     difficulty_level        TEXT,
     demonstration_video_url TEXT,
+    environment TEXT NOT NULL DEFAULT 'dev',
     created_at              TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -43,6 +45,7 @@ CREATE TABLE workout_plans
     frequency      TEXT,
     duration_weeks INTEGER,
     is_active      BOOLEAN                  DEFAULT true,
+    environment TEXT NOT NULL DEFAULT 'dev',
     created_at     TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at     TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -59,6 +62,7 @@ CREATE TABLE workout_plan_exercises
     rest_seconds    INTEGER,
     notes           TEXT,
     order_index     INTEGER,
+    environment TEXT NOT NULL DEFAULT 'dev',
     created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -72,6 +76,7 @@ CREATE TABLE workout_sessions
     end_time        TIMESTAMP WITH TIME ZONE,
     notes           TEXT,
     overall_feeling TEXT,
+    environment TEXT NOT NULL DEFAULT 'dev',
     created_at      TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -87,6 +92,7 @@ CREATE TABLE exercise_logs
     video_url          TEXT,
     form_feedback      TEXT,
     soreness_rating    INTEGER,
+    environment TEXT NOT NULL DEFAULT 'dev',
     created_at         TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -102,6 +108,7 @@ CREATE TABLE form_analyses
     detected_issues         TEXT[],
     improvement_suggestions TEXT[],
     joint_angles            JSON,
+    environment TEXT NOT NULL DEFAULT 'dev',
     created_at              TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at              TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
@@ -115,6 +122,7 @@ CREATE TABLE progress_metrics
     metric_value  NUMERIC,
     recorded_date DATE                     DEFAULT CURRENT_DATE,
     notes         TEXT,
+    environment TEXT NOT NULL DEFAULT 'dev',
     created_at    TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
@@ -125,13 +133,13 @@ CREATE
 POLICY "Users can view their own profile"
   ON profiles FOR
 SELECT
-    USING (auth.uid() = id);
+    USING (auth.uid() = id AND environment = 'dev');
 
 CREATE
 POLICY "Users can update their own profile"
   ON profiles FOR
 UPDATE
-    USING (auth.uid() = id);
+    USING (auth.uid() = id AND environment = 'dev');
 
 -- Workout plans RLS
 ALTER TABLE workout_plans ENABLE ROW LEVEL SECURITY;
@@ -140,23 +148,23 @@ CREATE
 POLICY "Users can view their own workout plans"
   ON workout_plans FOR
 SELECT
-    USING (auth.uid() = user_id);
+    USING (auth.uid() = user_id AND environment = 'dev');
 
 CREATE
 POLICY "Users can create their own workout plans"
   ON workout_plans FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
+    WITH CHECK (auth.uid() = user_id AND environment = 'dev');
 
 CREATE
 POLICY "Users can update their own workout plans"
   ON workout_plans FOR
 UPDATE
-    USING (auth.uid() = user_id);
+    USING (auth.uid() = user_id AND environment = 'dev');
 
 CREATE
 POLICY "Users can delete their own workout plans"
   ON workout_plans FOR DELETE
-USING (auth.uid() = user_id);
+USING (auth.uid() = user_id AND environment = 'dev');
 
 -- Workout plan exercises RLS
 ALTER TABLE workout_plan_exercises ENABLE ROW LEVEL SECURITY;
@@ -167,16 +175,14 @@ POLICY "Users can view their own workout plan exercises"
 SELECT
     USING (auth.uid() IN (
     SELECT user_id FROM workout_plans wp
-    WHERE wp.id = workout_plan_exercises.workout_plan_id
-    ));
+    WHERE wp.id = workout_plan_exercises.workout_plan_id) AND environment = 'dev');
 
 CREATE
 POLICY "Users can create their own workout plan exercises"
   ON workout_plan_exercises FOR INSERT
   WITH CHECK (auth.uid() IN (
     SELECT user_id FROM workout_plans wp 
-    WHERE wp.id = workout_plan_exercises.workout_plan_id
-  ));
+    WHERE wp.id = workout_plan_exercises.workout_plan_id) AND environment = 'dev');
 
 CREATE
 POLICY "Users can update their own workout plan exercises"
@@ -184,16 +190,14 @@ POLICY "Users can update their own workout plan exercises"
 UPDATE
     USING (auth.uid() IN (
     SELECT user_id FROM workout_plans wp
-    WHERE wp.id = workout_plan_exercises.workout_plan_id
-    ));
+    WHERE wp.id = workout_plan_exercises.workout_plan_id) AND environment = 'dev');
 
 CREATE
 POLICY "Users can delete their own workout plan exercises"
   ON workout_plan_exercises FOR DELETE
 USING (auth.uid() IN (
     SELECT user_id FROM workout_plans wp 
-    WHERE wp.id = workout_plan_exercises.workout_plan_id
-  ));
+    WHERE wp.id = workout_plan_exercises.workout_plan_id) AND environment = 'dev');
 
 -- Workout sessions RLS
 ALTER TABLE workout_sessions ENABLE ROW LEVEL SECURITY;
@@ -202,23 +206,23 @@ CREATE
 POLICY "Users can view their own workout sessions"
   ON workout_sessions FOR
 SELECT
-    USING (auth.uid() = user_id);
+    USING (auth.uid() = user_id AND environment = 'dev');
 
 CREATE
 POLICY "Users can create their own workout sessions"
   ON workout_sessions FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
+    WITH CHECK (auth.uid() = user_id AND environment = 'dev');
 
 CREATE
 POLICY "Users can update their own workout sessions"
   ON workout_sessions FOR
 UPDATE
-    USING (auth.uid() = user_id);
+    USING (auth.uid() = user_id AND environment = 'dev');
 
 CREATE
 POLICY "Users can delete their own workout sessions"
   ON workout_sessions FOR DELETE
-USING (auth.uid() = user_id);
+USING (auth.uid() = user_id AND environment = 'dev');
 
 -- Exercise logs RLS
 ALTER TABLE exercise_logs ENABLE ROW LEVEL SECURITY;
@@ -229,16 +233,14 @@ POLICY "Users can view their own exercise logs"
 SELECT
     USING (auth.uid() IN (
     SELECT user_id FROM workout_sessions ws
-    WHERE ws.id = exercise_logs.workout_session_id
-    ));
+    WHERE ws.id = exercise_logs.workout_session_id) AND environment = 'dev');
 
 CREATE
 POLICY "Users can create their own exercise logs"
   ON exercise_logs FOR INSERT
   WITH CHECK (auth.uid() IN (
     SELECT user_id FROM workout_sessions ws 
-    WHERE ws.id = exercise_logs.workout_session_id
-  ));
+    WHERE ws.id = exercise_logs.workout_session_id) AND environment = 'dev');
 
 CREATE
 POLICY "Users can update their own exercise logs"
@@ -246,16 +248,14 @@ POLICY "Users can update their own exercise logs"
 UPDATE
     USING (auth.uid() IN (
     SELECT user_id FROM workout_sessions ws
-    WHERE ws.id = exercise_logs.workout_session_id
-    ));
+    WHERE ws.id = exercise_logs.workout_session_id) AND environment = 'dev');
 
 CREATE
 POLICY "Users can delete their own exercise logs"
   ON exercise_logs FOR DELETE
 USING (auth.uid() IN (
     SELECT user_id FROM workout_sessions ws 
-    WHERE ws.id = exercise_logs.workout_session_id
-  ));
+    WHERE ws.id = exercise_logs.workout_session_id) AND environment = 'dev');
 
 -- Form analyses RLS
 ALTER TABLE form_analyses ENABLE ROW LEVEL SECURITY;
@@ -267,8 +267,7 @@ SELECT
     USING (auth.uid() IN (
     SELECT ws.user_id FROM workout_sessions ws
     JOIN exercise_logs el ON ws.id = el.workout_session_id
-    WHERE el.id = form_analyses.exercise_log_id
-    ));
+    WHERE el.id = form_analyses.exercise_log_id) AND environment = 'dev');
 
 -- Progress metrics RLS
 ALTER TABLE progress_metrics ENABLE ROW LEVEL SECURITY;
@@ -277,23 +276,23 @@ CREATE
 POLICY "Users can view their own progress metrics"
   ON progress_metrics FOR
 SELECT
-    USING (auth.uid() = user_id);
+    USING (auth.uid() = user_id AND environment = 'dev');
 
 CREATE
 POLICY "Users can create their own progress metrics"
   ON progress_metrics FOR INSERT
-  WITH CHECK (auth.uid() = user_id);
+    WITH CHECK (auth.uid() = user_id AND environment = 'dev');
 
 CREATE
 POLICY "Users can update their own progress metrics"
   ON progress_metrics FOR
 UPDATE
-    USING (auth.uid() = user_id);
+    USING (auth.uid() = user_id AND environment = 'dev');
 
 CREATE
 POLICY "Users can delete their own progress metrics"
   ON progress_metrics FOR DELETE
-USING (auth.uid() = user_id);
+USING (auth.uid() = user_id AND environment = 'dev');
 
 -- Exercises table (public read access, admin-only write)
 ALTER TABLE exercises ENABLE ROW LEVEL SECURITY;
@@ -302,7 +301,7 @@ CREATE
 POLICY "Exercises are viewable by all users"
   ON exercises FOR
 SELECT
-    USING (true);
+    USING (environment = 'dev');
 
 -- Function to update updated_at timestamp
 CREATE
