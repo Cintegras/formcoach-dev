@@ -116,9 +116,8 @@ async function promoteDevToStage() {
 
     // Check if destination directory exists
     if (!await fs.pathExists(destinationDir)) {
-        console.error(`\x1b[31mError: Destination directory '${destinationDir}' does not exist.\x1b[0m`);
-        console.log('Please create the formcoach-stage directory first.');
-        process.exit(1);
+        console.warn(`⚠️ Destination directory '${destinationDir}' not found. Creating it.`);
+        await fs.ensureDir(destinationDir);
     }
 
     const promotedFiles = [];

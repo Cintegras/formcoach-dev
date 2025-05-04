@@ -40,15 +40,21 @@ jobs:
           cd formcoach-dev
           npm install fs-extra
 
+      - name: Ensure stage directory exists
+        run: mkdir -p ../formcoach-stage
+
       - name: Make CI script executable
+        run: chmod +x formcoach-dev/scripts/promote_dev_to_stage_ci.cjs
+
+      - name: Debug resolved paths
         run: |
-          cd formcoach-dev
-          chmod +x scripts/promote_dev_to_stage_ci.cjs
+          echo "Source Directory: $(pwd)/formcoach-dev"
+          echo "Destination Directory: $(pwd)/formcoach-stage"
 
       - name: Run promotion script
         run: |
           cd formcoach-dev
-          node scripts/promote_dev_to_stage_ci.cjs
+          node scripts/promote_dev_to_stage_ci.cjs || { echo '❌ Promotion script failed'; exit 1; }
 
       - name: Run staging verification
         run: |
