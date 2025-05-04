@@ -10,6 +10,22 @@
 const fs = require('fs-extra');
 const path = require('path');
 
+// Retry operation helper function
+async function retryOperation(operation, retries = 3) {
+    for (let i = 0; i < retries; i++) {
+        try {
+            return await operation();
+        } catch (err) {
+            console.warn(`Retry ${i + 1}/${retries} failed: ${err.message}`);
+            if (i === retries - 1) {
+                throw err; // Rethrow the error after all retries have failed
+            }
+            // Wait a bit before retrying (exponential backoff)
+            await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i)));
+        }
+    }
+}
+
 // Get the source and destination directories
 const sourceDir = path.resolve(__dirname, '..'); // formcoach-dev directory
 const destinationDir = path.resolve(sourceDir, '..', 'formcoach-stage'); // formcoach-stage directory
@@ -77,7 +93,9 @@ async function savePromotionSummary() {
     const logFile = path.join(logDir, 'PROMOTION_LOG_STAGE.md');
 
     // Create the directory if it doesn't exist
-    await fs.ensureDir(logDir);
+    await retryOperation(async () => {
+        await fs.ensureDir(logDir);
+    });
 
     // Create the log entry
     const timestamp = formatDate();
@@ -88,10 +106,18 @@ async function savePromotionSummary() {
 
     // Append to the log file or create it if it doesn't exist
     try {
-        if (await fs.pathExists(logFile)) {
-            await fs.appendFile(logFile, logEntry);
+        const fileExists = await retryOperation(async () => {
+            return await fs.pathExists(logFile);
+        });
+
+        if (fileExists) {
+            await retryOperation(async () => {
+                await fs.appendFile(logFile, logEntry);
+            });
         } else {
-            await fs.writeFile(logFile, `# Promotion Log - Stage Environment\n${logEntry}`);
+            await retryOperation(async () => {
+                await fs.writeFile(logFile, `# Promotion Log - Stage Environment\n${logEntry}`);
+            });
         }
         console.log(`\n✅ Promotion summary saved to ${logFile}`);
     } catch (err) {
@@ -147,8 +173,10 @@ async function promoteDevToStage() {
                             const fileDestPath = path.join(destinationDir, relativePath);
 
                             try {
-                                await fs.ensureDir(path.dirname(fileDestPath));
-                                await fs.copy(file, fileDestPath, {overwrite: true});
+                                await retryOperation(async () => {
+                                    await fs.ensureDir(path.dirname(fileDestPath));
+                                    await fs.copy(file, fileDestPath, {overwrite: true});
+                                });
                                 promotedFiles.push(relativePath);
                                 console.log(`✅ Copied: ${relativePath}`);
                             } catch (err) {
@@ -163,7 +191,9 @@ async function promoteDevToStage() {
                 } else {
                     // For individual files
                     try {
-                        await fs.copy(sourcePath, destPath, {overwrite: true});
+                        await retryOperation(async () => {
+                            await fs.copy(sourcePath, destPath, {overwrite: true});
+                        });
                         promotedFiles.push(item);
                         console.log(`✅ Copied: ${item}`);
                     } catch (err) {
@@ -186,7 +216,9 @@ async function promoteDevToStage() {
                 try {
                     const stats = await fs.stat(sourcePath);
                     if (stats.isFile()) {
-                        await fs.copy(sourcePath, destPath, {overwrite: true});
+                        await retryOperation(async () => {
+                            await fs.copy(sourcePath, destPath, {overwrite: true});
+                        });
                         promotedFiles.push(file);
                         console.log(`✅ Copied: ${file}`);
                     }
@@ -250,8 +282,21 @@ promoteDevToStage().then(result => {
     process.exit(1);
 });
 
-// Debugging Info
-console.debug('Debug Info:', {sourceDir, destinationDir});
+// Enhanced Debugging Info
+console.debug('Debug Info:', {
+    sourceDir,
+    destinationDir,
+    nodeVersion: process.version,
+    platform: process.platform,
+    arch: process.arch,
+    cwd: process.cwd(),
+    env: {
+        NODE_ENV: process.env.NODE_ENV,
+        CI: process.env.CI
+    },
+    includedItems,
+    excludedItems
+});
 
 // Export key helpers for testability
 module.exports = {shouldInclude, getAllFiles};
