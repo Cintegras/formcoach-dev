@@ -7,10 +7,13 @@
  * It's designed to be used in GitHub Actions workflows for automated promotion from dev to stage.
  */
 
-const fs = require('fs-extra');
-const path = require('path');
+import fs from 'fs-extra';
+import path from 'path';
+import {fileURLToPath} from 'url';
 
 // Get the source and destination directories
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const sourceDir = path.resolve(__dirname, '..'); // formcoach-dev directory
 const destinationDir = path.resolve(sourceDir, '..', 'formcoach-stage'); // formcoach-stage directory
 
@@ -255,4 +258,4 @@ promoteDevToStage().then(result => {
 console.debug('Debug Info:', {sourceDir, destinationDir});
 
 // Export key helpers for testability
-module.exports = {shouldInclude, getAllFiles};
+export {shouldInclude, getAllFiles};
