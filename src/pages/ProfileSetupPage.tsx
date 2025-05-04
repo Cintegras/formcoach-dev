@@ -1,11 +1,10 @@
-
-import React, { useState, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useMemo, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import SecondaryButton from '@/components/SecondaryButton';
-import { useToast } from '@/hooks/use-toast';
-import { z } from 'zod';
+import {useToast} from '@/hooks/use-toast';
+import {z} from 'zod';
 import StepIndicator from '@/components/StepIndicator';
 import NameStep from '@/components/profile-setup/NameStep';
 import HeightStep from '@/components/profile-setup/HeightStep';
@@ -13,7 +12,7 @@ import WeightStep from '@/components/profile-setup/WeightStep';
 import AgeStep from '@/components/profile-setup/AgeStep';
 import SexStep from '@/components/profile-setup/SexStep';
 import SummaryStep from '@/components/profile-setup/SummaryStep';
-import { ArrowLeft } from 'lucide-react';
+import {ArrowLeft} from 'lucide-react';
 
 const profileSchema = z.object({
   firstName: z.string().min(1, { message: 'First name is required' }),
@@ -21,7 +20,7 @@ const profileSchema = z.object({
   heightInches: z.number().min(0, { message: 'Height inches must be at least 0' }).max(11, { message: 'Height inches must be at most 11' }),
   weight: z.number().min(80, { message: 'Weight must be at least 80 lbs' }).max(300, { message: 'Weight must be at most 300 lbs' }),
   age: z.number().min(18, { message: 'Age must be at least 18' }).max(90, { message: 'Age must be at most 90' }),
-  sex: z.enum(["male", "female", "other"], { message: 'Please select your sex' }),
+  sex: z.enum(["male", "female", "other"], {message: 'Please select your sex'}).optional(),
 });
 
 type ProfileValues = z.infer<typeof profileSchema>;
@@ -30,10 +29,10 @@ const ProfileSetupPage = () => {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
-  
+
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 6; // 5 input steps + 1 summary step
-  
+
   const [formValues, setFormValues] = useState<ProfileValues>({
     firstName: '',
     heightFeet: 5,
@@ -42,28 +41,31 @@ const ProfileSetupPage = () => {
     age: 30,
     sex: undefined,
   });
-  
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
-  
+
+  const [errors, setErrors] = useState<{ [key: string]: string | undefined }>({});
+
   const updateFormValue = <K extends keyof ProfileValues>(key: K, value: ProfileValues[K]) => {
     setFormValues(prev => ({
       ...prev,
       [key]: value
     }));
-    
+
     // Clear error when field is updated
     if (errors[key]) {
-      setErrors(prev => ({ ...prev, [key]: undefined }));
+      setErrors(prev => {
+        const {[key]: _, ...rest} = prev;
+        return rest;
+      });
     }
   };
-  
+
   // Calculate BMI
   const bmi = useMemo(() => {
     const heightInches = (formValues.heightFeet * 12) + formValues.heightInches;
     const heightMeters = heightInches * 0.0254;
     return formValues.weight * 0.453592 / (heightMeters * heightMeters);
   }, [formValues.heightFeet, formValues.heightInches, formValues.weight]);
-  
+
   const validateCurrentStep = (): boolean => {
     try {
       switch (currentStep) {
@@ -80,7 +82,7 @@ const ProfileSetupPage = () => {
           z.number().min(18, { message: 'Age must be at least 18' }).max(90, { message: 'Age must be at most 90' }).parse(formValues.age);
           break;
         case 5:
-          z.enum(["male", "female", "other"], { message: 'Please select your sex' }).parse(formValues.sex);
+          z.enum(["male", "female", "other"], {message: 'Please select your sex'}).optional().parse(formValues.sex);
           break;
       }
       return true;
@@ -96,7 +98,7 @@ const ProfileSetupPage = () => {
       return false;
     }
   };
-  
+
   const handleNextStep = () => {
     if (validateCurrentStep()) {
       if (currentStep < totalSteps) {
@@ -104,23 +106,27 @@ const ProfileSetupPage = () => {
       }
     }
   };
-  
+
   const handlePreviousStep = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
     }
   };
-  
+
   const handleSubmit = async () => {
     try {
       // Final validation of the whole form
-      profileSchema.parse(formValues);
-      
+      // Create a submission schema that requires sex to be selected
+      const submissionSchema = profileSchema.extend({
+        sex: z.enum(["male", "female", "other"], {message: 'Please select your sex'})
+      });
+      submissionSchema.parse(formValues);
+
       setIsLoading(true);
 
       // Simulate API call - would save to backend in a real app
       await new Promise(resolve => setTimeout(resolve, 1000));
-      
+
       // Save user data to localStorage for now
       const userData = {
         firstName: formValues.firstName,
@@ -134,10 +140,10 @@ const ProfileSetupPage = () => {
         sex: formValues.sex,
         weightHistory: [{ date: new Date().toISOString(), weight: formValues.weight }]
       };
-      
+
       localStorage.setItem('userData', JSON.stringify(userData));
       setIsLoading(false);
-      
+
       toast({
         title: `Welcome, ${formValues.firstName}!`,
         description: "Your profile has been set up successfully.",
@@ -146,7 +152,7 @@ const ProfileSetupPage = () => {
 
       // Redirect to home after profile setup
       navigate('/');
-      
+
     } catch (error) {
       setIsLoading(false);
       if (error instanceof z.ZodError) {
@@ -156,7 +162,7 @@ const ProfileSetupPage = () => {
           newErrors[path] = err.message;
         });
         setErrors(newErrors);
-        
+
         // Navigate to the step with the first error
         if (error.errors[0]?.path[0] === 'firstName') setCurrentStep(1);
         else if (error.errors[0]?.path[0] === 'heightFeet' || error.errors[0]?.path[0] === 'heightInches') setCurrentStep(2);
@@ -237,12 +243,12 @@ const ProfileSetupPage = () => {
             Back
           </button>
         )}
-        
+
         <StepIndicator currentStep={currentStep} totalSteps={totalSteps} />
-        
+
         <div className="w-full px-4 py-8 rounded-lg" style={{ backgroundColor: "rgba(176, 232, 227, 0.08)" }}>
           {renderStep()}
-          
+
           <div className="mt-12 space-y-4">
             {currentStep < totalSteps ? (
               <PrimaryButton onClick={handleNextStep} className="hover:scale-[1.02] transition-transform duration-200">
@@ -264,7 +270,7 @@ const ProfileSetupPage = () => {
                 )}
               </PrimaryButton>
             )}
-            
+
             {currentStep > 1 && currentStep < totalSteps && (
               <SecondaryButton onClick={handlePreviousStep}>
                 Back

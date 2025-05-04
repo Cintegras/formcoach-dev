@@ -9,7 +9,313 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+        profiles: {
+            Row: {
+                id: string
+                username: string | null
+                full_name: string | null
+                avatar_url: string | null
+                height: number | null
+                weight: number | null
+                fitness_level: string | null
+                goals: string[] | null
+                environment: string
+                created_at: string
+                updated_at: string | null
+            }
+            Insert: {
+                id: string
+                username?: string | null
+                full_name?: string | null
+                avatar_url?: string | null
+                height?: number | null
+                weight?: number | null
+                fitness_level?: string | null
+                goals?: string[] | null
+                environment?: string
+                created_at?: string
+                updated_at?: string | null
+            }
+            Update: {
+                id?: string
+                username?: string | null
+                full_name?: string | null
+                avatar_url?: string | null
+                height?: number | null
+                weight?: number | null
+                fitness_level?: string | null
+                goals?: string[] | null
+                environment?: string
+                created_at?: string
+                updated_at?: string | null
+            }
+        }
+        exercises: {
+            Row: {
+                id: string
+                name: string
+                description: string | null
+                muscle_groups: string[] | null
+                equipment: string[] | null
+                difficulty_level: string | null
+                demonstration_video_url: string | null
+                environment: string
+                created_at: string
+            }
+            Insert: {
+                id?: string
+                name: string
+                description?: string | null
+                muscle_groups?: string[] | null
+                equipment?: string[] | null
+                difficulty_level?: string | null
+                demonstration_video_url?: string | null
+                environment?: string
+                created_at?: string
+            }
+            Update: {
+                id?: string
+                name?: string
+                description?: string | null
+                muscle_groups?: string[] | null
+                equipment?: string[] | null
+                difficulty_level?: string | null
+                demonstration_video_url?: string | null
+                environment?: string
+                created_at?: string
+            }
+        }
+        workout_plans: {
+            Row: {
+                id: string
+                user_id: string
+                name: string
+                description: string | null
+                frequency: string | null
+                duration_weeks: number | null
+                is_active: boolean | null
+                environment: string
+                created_at: string
+                updated_at: string
+            }
+            Insert: {
+                id?: string
+                user_id: string
+                name: string
+                description?: string | null
+                frequency?: string | null
+                duration_weeks?: number | null
+                is_active?: boolean | null
+                environment?: string
+                created_at?: string
+                updated_at?: string
+            }
+            Update: {
+                id?: string
+                user_id?: string
+                name?: string
+                description?: string | null
+                frequency?: string | null
+                duration_weeks?: number | null
+                is_active?: boolean | null
+                environment?: string
+                created_at?: string
+                updated_at?: string
+            }
+        }
+        workout_plan_exercises: {
+            Row: {
+                id: string
+                workout_plan_id: string
+                exercise_id: string
+                day_of_week: string | null
+                sets: number | null
+                reps: string | null
+                rest_seconds: number | null
+                notes: string | null
+                order_index: number | null
+                environment: string
+                created_at: string
+            }
+            Insert: {
+                id?: string
+                workout_plan_id: string
+                exercise_id: string
+                day_of_week?: string | null
+                sets?: number | null
+                reps?: string | null
+                rest_seconds?: number | null
+                notes?: string | null
+                order_index?: number | null
+                environment?: string
+                created_at?: string
+            }
+            Update: {
+                id?: string
+                workout_plan_id?: string
+                exercise_id?: string
+                day_of_week?: string | null
+                sets?: number | null
+                reps?: string | null
+                rest_seconds?: number | null
+                notes?: string | null
+                order_index?: number | null
+                environment?: string
+                created_at?: string
+            }
+        }
+        workout_sessions: {
+            Row: {
+                id: string
+                user_id: string
+                workout_plan_id: string | null
+                start_time: string
+                end_time: string | null
+                notes: string | null
+                overall_feeling: string | null
+                environment: string
+                created_at: string
+            }
+            Insert: {
+                id?: string
+                user_id: string
+                workout_plan_id?: string | null
+                start_time?: string
+                end_time?: string | null
+                notes?: string | null
+                overall_feeling?: string | null
+                environment?: string
+                created_at?: string
+            }
+            Update: {
+                id?: string
+                user_id?: string
+                workout_plan_id?: string | null
+                start_time?: string
+                end_time?: string | null
+                notes?: string | null
+                overall_feeling?: string | null
+                environment?: string
+                created_at?: string
+            }
+        }
+        exercise_logs: {
+            Row: {
+                id: string
+                workout_session_id: string
+                exercise_id: string | null
+                sets_completed: number | null
+                reps_completed: number[] | null
+                weights_used: number[] | null
+                video_url: string | null
+                form_feedback: string | null
+                soreness_rating: number | null
+                environment: string
+                created_at: string
+            }
+            Insert: {
+                id?: string
+                workout_session_id: string
+                exercise_id?: string | null
+                sets_completed?: number | null
+                reps_completed?: number[] | null
+                weights_used?: number[] | null
+                video_url?: string | null
+                form_feedback?: string | null
+                soreness_rating?: number | null
+                environment?: string
+                created_at?: string
+            }
+            Update: {
+                id?: string
+                workout_session_id?: string
+                exercise_id?: string | null
+                sets_completed?: number | null
+                reps_completed?: number[] | null
+                weights_used?: number[] | null
+                video_url?: string | null
+                form_feedback?: string | null
+                soreness_rating?: number | null
+                environment?: string
+                created_at?: string
+            }
+        }
+        form_analyses: {
+            Row: {
+                id: string
+                exercise_log_id: string
+                video_url: string | null
+                analysis_status: string | null
+                form_score: number | null
+                feedback: string | null
+                detected_issues: string[] | null
+                improvement_suggestions: string[] | null
+                joint_angles: Json | null
+                environment: string
+                created_at: string
+                updated_at: string
+            }
+            Insert: {
+                id?: string
+                exercise_log_id: string
+                video_url?: string | null
+                analysis_status?: string | null
+                form_score?: number | null
+                feedback?: string | null
+                detected_issues?: string[] | null
+                improvement_suggestions?: string[] | null
+                joint_angles?: Json | null
+                environment?: string
+                created_at?: string
+                updated_at?: string
+            }
+            Update: {
+                id?: string
+                exercise_log_id?: string
+                video_url?: string | null
+                analysis_status?: string | null
+                form_score?: number | null
+                feedback?: string | null
+                detected_issues?: string[] | null
+                improvement_suggestions?: string[] | null
+                joint_angles?: Json | null
+                environment?: string
+                created_at?: string
+                updated_at?: string
+            }
+        }
+        progress_metrics: {
+            Row: {
+                id: string
+                user_id: string
+                metric_type: string | null
+                metric_value: number | null
+                recorded_date: string | null
+                notes: string | null
+                environment: string
+                created_at: string
+            }
+            Insert: {
+                id?: string
+                user_id: string
+                metric_type?: string | null
+                metric_value?: number | null
+                recorded_date?: string | null
+                notes?: string | null
+                environment?: string
+                created_at?: string
+            }
+            Update: {
+                id?: string
+                user_id?: string
+                metric_type?: string | null
+                metric_value?: number | null
+                recorded_date?: string | null
+                notes?: string | null
+                environment?: string
+                created_at?: string
+            }
+        }
     }
     Views: {
       [_ in never]: never

@@ -33,16 +33,36 @@ FormCoach uses a multi-AI strategy to assist with UI generation, code scaffoldin
 - AI code generation and frontend scaffolding
 - Tailwind/React UI layout with reusable components
 - Next.js and Supabase integration
+- Environment-aware assistant with automatic INIT.md parsing
 
 ### Use cases:
 - Creating full UI screens based on prompt input
 - Translating Notion or figma screen requirements into actual code
 - Scaffolding backend endpoints with Typescript handlers
+- Providing environment-aware assistance based on INIT.md
 
 ### When to use:
 - You need real deployable code from prompts
 - Working inside the Junie CLI or Supabase context
 - Bridging database logic with user-facing screens
+- When you need environment-aware assistance
+
+### INIT Protocol:
+
+Junie automatically loads and parses `docs/INIT.md` at the start of every session to understand:
+
+- The current environment (dev, stage, or prod)
+- The correct Supabase project, URL, and key setup
+- The active PyCharm project (formcoach-dev, formcoach-stage, or formcoach)
+
+When initialized, Junie displays a confirmation message:
+
+```
+✅ INIT.md loaded and parsed. Environment: [dev/stage/prod]. Project: [formcoach-dev/formcoach-stage/formcoach].
+```
+
+This ensures that Junie always has the correct context for the current environment and can provide appropriate
+assistance.
 
 ---
 
@@ -103,4 +123,4 @@ FormCoach uses a multi-AI strategy to assist with UI generation, code scaffoldin
 
 ---
 
-_Last updated: May 1, 2025_
+_Last updated: May 3, 2025_

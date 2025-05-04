@@ -5,13 +5,24 @@ This directory contains the configuration and setup files for our Supabase integ
 ## Directory Structure
 
 - `/sql`: Contains SQL migration files for database setup
-    - `001_init_schema.sql`: Initial schema setup with core tables
-    - `002_profiles_table.sql`: Creates and configures the profiles table
-    - `003_rls_profiles.sql`: Sets up Row Level Security policies for the profiles table
+  - `dev_001_init_schema.sql`: Initial schema setup for development environment
+  - `stage_001_init_schema.sql`: Initial schema setup for staging environment
 
 - `/docs`: Documentation related to Supabase
     - `RLS_POLICY_GUIDE.md`: Comprehensive guide on Row Level Security policies
   - `ENVIRONMENT_SETUP.md`: Guide for managing development, staging, and production environments
+
+- Verification Files:
+  - `SEED_VERIFICATION_LESSONS.md`: Documentation of key failures found in seed scripts
+  - `data_verification_report.sql`: SQL queries for data verification
+  - `data_verification_summary.md`: Summary of data verification findings
+  - `exercise_reference_check.sql`: SQL queries for checking exercise references
+  - `exercise_reference_findings.md`: Findings from exercise reference checks
+  - `verification_script.sql`: Main verification script for data integrity
+  - `verification_results.md`: Results from verification script runs
+  - `run_verification.js`: Script to run verification SQL and check data integrity
+  - `workout_history.sql`: SQL queries for workout history
+  - `WORKOUT_HISTORY_VERIFICATION.md`: Verification of workout history data
 
 ## Getting Started
 
@@ -31,12 +42,25 @@ supabase start
 # Stop Supabase services
 supabase stop
 
-# Reset the database to a clean state
+# Reset the database to a clean state (recommended approach for local development)
 supabase db reset
 
 # Generate types based on your database schema
-supabase gen types typescript --local > src/types/supabase.ts
+supabase gen types typescript --local > src/integrations/supabase/types.ts
 ```
+
+### Using `supabase db reset` vs `supabase db push`
+
+For local development, we recommend using `supabase db reset` instead of `supabase db push`:
+
+- `supabase db reset` provides a clean slate for testing
+- It ensures consistent schema across all developer environments
+- It's faster than incremental migrations during rapid development
+- Using it with the environment-specific schema files (e.g., `dev_001_init_schema.sql`) ensures proper environment
+  defaults
+
+**Note:** Only use this approach in local development. For staging and production environments, use proper migrations
+with `supabase db push`.
 
 ## Environment Management
 
@@ -47,8 +71,25 @@ We use an environment column approach to manage multiple environments (dev, stag
 - All tables include an `environment` column to isolate data between environments
 - All queries and RLS policies include environment filtering
 
+### Environment Variables
+
+We use `.env` files for local development to store environment-specific configuration. A `.env.example` template is
+provided in the repository root.
+
+### Environment Filtering Utility
+
+To ensure consistent environment filtering in all queries, use the provided utility function:
+
+```typescript
+import { withEnvironmentFilter } from '@/lib/supabase-utils';
+
+const { data } = await withEnvironmentFilter(
+  supabase.from('profiles').select('*')
+);
+```
+
 For detailed implementation instructions for formcoach-dev and formcoach-stage, see
-the [Environment Setup Guide](docs/ENVIRONMENT_SETUP.md).
+the [Environment Setup Guide](ENVIRONMENT_SETUP.md).
 
 ## Migrations
 
@@ -72,7 +113,7 @@ See the [Supabase Auth documentation](https://supabase.com/docs/guides/auth) for
 ## Row Level Security
 
 We use Row Level Security (RLS) to control access to data in our tables. For more information, see
-the [RLS Policy Guide](docs/RLS_POLICY_GUIDE.md).
+the [RLS Policy Guide](RLS_POLICY_GUIDE.md).
 
 ## Resources
 
