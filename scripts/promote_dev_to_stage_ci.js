@@ -251,5 +251,8 @@ promoteDevToStage().then(result => {
     process.exit(1);
 });
 
+// Debugging Info
+console.debug('Debug Info:', {sourceDir, destinationDir});
+
 // Export key helpers for testability
 module.exports = {shouldInclude, getAllFiles};

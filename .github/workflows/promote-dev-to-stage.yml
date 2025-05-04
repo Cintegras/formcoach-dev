@@ -31,6 +31,10 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Verify promotion script exists
+        run: |
+          test -f formcoach-dev/scripts/promote_dev_to_stage_ci.js || exit 1
+
       - name: Install dependencies
         run: |
           cd formcoach-dev
