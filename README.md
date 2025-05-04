@@ -1,3 +1,6 @@
+[![Promote to Stage](https://github.com/${{ github.repository }}/actions/workflows/promote-to-stage.yml/badge.svg)](https://github.com/${{
+github.repository }}/actions/workflows/promote-to-stage.yml)
+
 # 🏋️‍♂️ FormCoach
 
 FormCoach is an AI-assisted fitness planner focused on helping users build better form, track workouts safely, and adapt routines in real-time. It integrates form video analysis, soreness-aware adjustments, and equipment-aware routines for gym and home users.

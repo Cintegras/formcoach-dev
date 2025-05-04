@@ -1,0 +1,76 @@
+name: Promote Dev to Stage
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type "yes" to confirm promotion from dev to stage'
+        required: true
+        default: 'no'
+
+jobs:
+  promote-to-stage:
+    runs-on: ubuntu-latest
+    if: github.event.inputs.confirm == 'yes'
+
+    steps:
+      - name: Checkout dev repository
+        uses: actions/checkout@v3
+        with:
+          path: formcoach-dev
+
+      - name: Checkout stage repository
+        uses: actions/checkout@v3
+        with:
+          repository: ${{ github.repository_owner }}/formcoach-stage
+          token: ${{ secrets.REPO_ACCESS_TOKEN }}
+          path: formcoach-stage
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd formcoach-dev
+          npm install fs-extra
+
+      - name: Make CI script executable
+        run: |
+          cd formcoach-dev
+          chmod +x scripts/promote_dev_to_stage_ci.js
+
+      - name: Run promotion script
+        run: |
+          cd formcoach-dev
+          node scripts/promote_dev_to_stage_ci.js
+
+      - name: Run staging verification
+        run: |
+          cd formcoach-stage
+          node docs/supabase/run_verification_stage.js
+
+      - name: Commit changes to stage repository
+        run: |
+          cd formcoach-stage
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+          git add .
+          git diff --staged --quiet || git commit -m "Promote dev to stage via GitHub Actions"
+          git push
+
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "✅ Successfully promoted formcoach-dev to formcoach-stage"
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "❌ Failed to promote formcoach-dev to formcoach-stage"
+
+# Note: You'll need to set up the following secret in your GitHub repository:
+# - REPO_ACCESS_TOKEN: A personal access token with permissions to push to the formcoach-stage repository
+
+# TODO: Enable branch protection on formcoach-stage/main to block direct pushes
