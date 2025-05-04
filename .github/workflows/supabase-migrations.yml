@@ -1,0 +1,68 @@
+name: Supabase Migrations
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/supabase/sql/**'
+  workflow_dispatch:
+
+jobs:
+  deploy-migrations:
+    runs-on: ubuntu-latest
+    environment: staging
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Supabase CLI
+        run: npm install -g supabase
+
+      - name: Setup Supabase project
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          supabase link --project-ref $SUPABASE_PROJECT_ID
+
+      - name: Apply migrations
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          echo "Applying migrations to staging environment..."
+          supabase db push
+
+      - name: Verify migrations
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          echo "Verifying migrations..."
+          supabase db diff
+
+      - name: Notify on success
+        if: success()
+        run: |
+          echo "Migrations applied successfully to staging environment"
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "Failed to apply migrations to staging environment"
+
+# Note: This is a basic example. You'll need to:
+# 1. Set up the following secrets in your GitHub repository:
+#    - SUPABASE_ACCESS_TOKEN: Your Supabase access token
+#    - SUPABASE_DB_PASSWORD: Your Supabase database password
+#    - SUPABASE_PROJECT_ID: Your Supabase project ID
+# 2. Customize the workflow to fit your specific needs
+# 3. Consider adding additional steps for testing, validation, etc.
