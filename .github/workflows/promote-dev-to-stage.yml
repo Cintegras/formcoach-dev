@@ -57,6 +57,21 @@ jobs:
           cd formcoach-dev
           node scripts/promote_dev_to_stage_ci.cjs || { echo '❌ Promotion script failed'; exit 1; }
 
+      - name: Install dependencies in stage directory
+        run: |
+          cd formcoach-stage
+          npm install
+
+      - name: Verify dependencies
+        run: |
+          cd formcoach-stage
+          npm ls dotenv || { echo "❌ Missing required dependency: dotenv"; exit 1; }
+
+      - name: List installed modules (for debugging)
+        run: |
+          cd formcoach-stage
+          npm ls --depth=0
+
       - name: Run staging verification
         run: |
           cd formcoach-stage
