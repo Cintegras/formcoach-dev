@@ -33,7 +33,7 @@ jobs:
 
       - name: Verify promotion script exists
         run: |
-          test -f formcoach-dev/scripts/promote_dev_to_stage_ci.js || exit 1
+          test -f formcoach-dev/scripts/promote_dev_to_stage_ci.cjs || exit 1
 
       - name: Install dependencies
         run: |
@@ -43,12 +43,12 @@ jobs:
       - name: Make CI script executable
         run: |
           cd formcoach-dev
-          chmod +x scripts/promote_dev_to_stage_ci.js
+          chmod +x scripts/promote_dev_to_stage_ci.cjs
 
       - name: Run promotion script
         run: |
           cd formcoach-dev
-          node scripts/promote_dev_to_stage_ci.js
+          node scripts/promote_dev_to_stage_ci.cjs
 
       - name: Run staging verification
         run: |
