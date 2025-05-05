@@ -9,313 +9,428 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-        profiles: {
-            Row: {
-                id: string
-                username: string | null
-                full_name: string | null
-                avatar_url: string | null
-                height: number | null
-                weight: number | null
-                fitness_level: string | null
-                goals: string[] | null
-                environment: string
-                created_at: string
-                updated_at: string | null
-            }
-            Insert: {
-                id: string
-                username?: string | null
-                full_name?: string | null
-                avatar_url?: string | null
-                height?: number | null
-                weight?: number | null
-                fitness_level?: string | null
-                goals?: string[] | null
-                environment?: string
-                created_at?: string
-                updated_at?: string | null
-            }
-            Update: {
-                id?: string
-                username?: string | null
-                full_name?: string | null
-                avatar_url?: string | null
-                height?: number | null
-                weight?: number | null
-                fitness_level?: string | null
-                goals?: string[] | null
-                environment?: string
-                created_at?: string
-                updated_at?: string | null
-            }
+      equipment: {
+        Row: {
+          brand: string | null
+          environment: string | null
+          id: string
+          image_url: string | null
+          name: string
         }
-        exercises: {
-            Row: {
-                id: string
-                name: string
-                description: string | null
-                muscle_groups: string[] | null
-                equipment: string[] | null
-                difficulty_level: string | null
-                demonstration_video_url: string | null
-                environment: string
-                created_at: string
-            }
-            Insert: {
-                id?: string
-                name: string
-                description?: string | null
-                muscle_groups?: string[] | null
-                equipment?: string[] | null
-                difficulty_level?: string | null
-                demonstration_video_url?: string | null
-                environment?: string
-                created_at?: string
-            }
-            Update: {
-                id?: string
-                name?: string
-                description?: string | null
-                muscle_groups?: string[] | null
-                equipment?: string[] | null
-                difficulty_level?: string | null
-                demonstration_video_url?: string | null
-                environment?: string
-                created_at?: string
-            }
+        Insert: {
+          brand?: string | null
+          environment?: string | null
+          id: string
+          image_url?: string | null
+          name: string
         }
-        workout_plans: {
-            Row: {
-                id: string
-                user_id: string
-                name: string
-                description: string | null
-                frequency: string | null
-                duration_weeks: number | null
-                is_active: boolean | null
-                environment: string
-                created_at: string
-                updated_at: string
-            }
-            Insert: {
-                id?: string
-                user_id: string
-                name: string
-                description?: string | null
-                frequency?: string | null
-                duration_weeks?: number | null
-                is_active?: boolean | null
-                environment?: string
-                created_at?: string
-                updated_at?: string
-            }
-            Update: {
-                id?: string
-                user_id?: string
-                name?: string
-                description?: string | null
-                frequency?: string | null
-                duration_weeks?: number | null
-                is_active?: boolean | null
-                environment?: string
-                created_at?: string
-                updated_at?: string
-            }
+        Update: {
+          brand?: string | null
+          environment?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
         }
-        workout_plan_exercises: {
-            Row: {
-                id: string
-                workout_plan_id: string
-                exercise_id: string
-                day_of_week: string | null
-                sets: number | null
-                reps: string | null
-                rest_seconds: number | null
-                notes: string | null
-                order_index: number | null
-                environment: string
-                created_at: string
-            }
-            Insert: {
-                id?: string
-                workout_plan_id: string
-                exercise_id: string
-                day_of_week?: string | null
-                sets?: number | null
-                reps?: string | null
-                rest_seconds?: number | null
-                notes?: string | null
-                order_index?: number | null
-                environment?: string
-                created_at?: string
-            }
-            Update: {
-                id?: string
-                workout_plan_id?: string
-                exercise_id?: string
-                day_of_week?: string | null
-                sets?: number | null
-                reps?: string | null
-                rest_seconds?: number | null
-                notes?: string | null
-                order_index?: number | null
-                environment?: string
-                created_at?: string
-            }
+        Relationships: []
+      }
+      exercise_logs: {
+        Row: {
+          created_at: string | null
+          environment: string | null
+          exercise_id: string | null
+          form_feedback: string | null
+          id: string
+          reps_completed: number[] | null
+          sets_completed: number | null
+          soreness_rating: number | null
+          video_url: string | null
+          weights_used: number[] | null
+          workout_session_id: string | null
         }
-        workout_sessions: {
-            Row: {
-                id: string
-                user_id: string
-                workout_plan_id: string | null
-                start_time: string
-                end_time: string | null
-                notes: string | null
-                overall_feeling: string | null
-                environment: string
-                created_at: string
-            }
-            Insert: {
-                id?: string
-                user_id: string
-                workout_plan_id?: string | null
-                start_time?: string
-                end_time?: string | null
-                notes?: string | null
-                overall_feeling?: string | null
-                environment?: string
-                created_at?: string
-            }
-            Update: {
-                id?: string
-                user_id?: string
-                workout_plan_id?: string | null
-                start_time?: string
-                end_time?: string | null
-                notes?: string | null
-                overall_feeling?: string | null
-                environment?: string
-                created_at?: string
-            }
+        Insert: {
+          created_at?: string | null
+          environment?: string | null
+          exercise_id?: string | null
+          form_feedback?: string | null
+          id?: string
+          reps_completed?: number[] | null
+          sets_completed?: number | null
+          soreness_rating?: number | null
+          video_url?: string | null
+          weights_used?: number[] | null
+          workout_session_id?: string | null
         }
-        exercise_logs: {
-            Row: {
-                id: string
-                workout_session_id: string
-                exercise_id: string | null
-                sets_completed: number | null
-                reps_completed: number[] | null
-                weights_used: number[] | null
-                video_url: string | null
-                form_feedback: string | null
-                soreness_rating: number | null
-                environment: string
-                created_at: string
-            }
-            Insert: {
-                id?: string
-                workout_session_id: string
-                exercise_id?: string | null
-                sets_completed?: number | null
-                reps_completed?: number[] | null
-                weights_used?: number[] | null
-                video_url?: string | null
-                form_feedback?: string | null
-                soreness_rating?: number | null
-                environment?: string
-                created_at?: string
-            }
-            Update: {
-                id?: string
-                workout_session_id?: string
-                exercise_id?: string | null
-                sets_completed?: number | null
-                reps_completed?: number[] | null
-                weights_used?: number[] | null
-                video_url?: string | null
-                form_feedback?: string | null
-                soreness_rating?: number | null
-                environment?: string
-                created_at?: string
-            }
+        Update: {
+          created_at?: string | null
+          environment?: string | null
+          exercise_id?: string | null
+          form_feedback?: string | null
+          id?: string
+          reps_completed?: number[] | null
+          sets_completed?: number | null
+          soreness_rating?: number | null
+          video_url?: string | null
+          weights_used?: number[] | null
+          workout_session_id?: string | null
         }
-        form_analyses: {
-            Row: {
-                id: string
-                exercise_log_id: string
-                video_url: string | null
-                analysis_status: string | null
-                form_score: number | null
-                feedback: string | null
-                detected_issues: string[] | null
-                improvement_suggestions: string[] | null
-                joint_angles: Json | null
-                environment: string
-                created_at: string
-                updated_at: string
-            }
-            Insert: {
-                id?: string
-                exercise_log_id: string
-                video_url?: string | null
-                analysis_status?: string | null
-                form_score?: number | null
-                feedback?: string | null
-                detected_issues?: string[] | null
-                improvement_suggestions?: string[] | null
-                joint_angles?: Json | null
-                environment?: string
-                created_at?: string
-                updated_at?: string
-            }
-            Update: {
-                id?: string
-                exercise_log_id?: string
-                video_url?: string | null
-                analysis_status?: string | null
-                form_score?: number | null
-                feedback?: string | null
-                detected_issues?: string[] | null
-                improvement_suggestions?: string[] | null
-                joint_angles?: Json | null
-                environment?: string
-                created_at?: string
-                updated_at?: string
-            }
+        Relationships: [
+          {
+            foreignKeyName: "exercise_logs_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "exercise_logs_workout_session_id_fkey"
+            columns: ["workout_session_id"]
+            isOneToOne: false
+            referencedRelation: "workout_sessions"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      exercises: {
+        Row: {
+          created_at: string | null
+          demonstration_video_url: string | null
+          description: string | null
+          difficulty_level: string | null
+          environment: string
+          equipment: string[] | null
+          equipment_id: string | null
+          id: string
+          muscle_groups: string[] | null
+          name: string
+          target_muscles: string | null
         }
-        progress_metrics: {
-            Row: {
-                id: string
-                user_id: string
-                metric_type: string | null
-                metric_value: number | null
-                recorded_date: string | null
-                notes: string | null
-                environment: string
-                created_at: string
-            }
-            Insert: {
-                id?: string
-                user_id: string
-                metric_type?: string | null
-                metric_value?: number | null
-                recorded_date?: string | null
-                notes?: string | null
-                environment?: string
-                created_at?: string
-            }
-            Update: {
-                id?: string
-                user_id?: string
-                metric_type?: string | null
-                metric_value?: number | null
-                recorded_date?: string | null
-                notes?: string | null
-                environment?: string
-                created_at?: string
-            }
+        Insert: {
+          created_at?: string | null
+          demonstration_video_url?: string | null
+          description?: string | null
+          difficulty_level?: string | null
+          environment?: string
+          equipment?: string[] | null
+          equipment_id?: string | null
+          id?: string
+          muscle_groups?: string[] | null
+          name: string
+          target_muscles?: string | null
         }
+        Update: {
+          created_at?: string | null
+          demonstration_video_url?: string | null
+          description?: string | null
+          difficulty_level?: string | null
+          environment?: string
+          equipment?: string[] | null
+          equipment_id?: string | null
+          id?: string
+          muscle_groups?: string[] | null
+          name?: string
+          target_muscles?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "exercises_equipment_id_fkey"
+            columns: ["equipment_id"]
+            isOneToOne: false
+            referencedRelation: "equipment"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      form_analyses: {
+        Row: {
+          analysis_status: string | null
+          created_at: string | null
+          detected_issues: string[] | null
+          environment: string | null
+          exercise_log_id: string | null
+          feedback: string | null
+          form_score: number | null
+          id: string
+          improvement_suggestions: string[] | null
+          joint_angles: Json | null
+          updated_at: string | null
+          video_url: string | null
+        }
+        Insert: {
+          analysis_status?: string | null
+          created_at?: string | null
+          detected_issues?: string[] | null
+          environment?: string | null
+          exercise_log_id?: string | null
+          feedback?: string | null
+          form_score?: number | null
+          id?: string
+          improvement_suggestions?: string[] | null
+          joint_angles?: Json | null
+          updated_at?: string | null
+          video_url?: string | null
+        }
+        Update: {
+          analysis_status?: string | null
+          created_at?: string | null
+          detected_issues?: string[] | null
+          environment?: string | null
+          exercise_log_id?: string | null
+          feedback?: string | null
+          form_score?: number | null
+          id?: string
+          improvement_suggestions?: string[] | null
+          joint_angles?: Json | null
+          updated_at?: string | null
+          video_url?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "form_analyses_exercise_log_id_fkey"
+            columns: ["exercise_log_id"]
+            isOneToOne: false
+            referencedRelation: "exercise_logs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          environment: string
+          fitness_level: string | null
+          full_name: string | null
+          goals: string[] | null
+          height: number | null
+          id: string
+          updated_at: string | null
+          username: string | null
+          weight: number | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          environment?: string
+          fitness_level?: string | null
+          full_name?: string | null
+          goals?: string[] | null
+          height?: number | null
+          id: string
+          updated_at?: string | null
+          username?: string | null
+          weight?: number | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          environment?: string
+          fitness_level?: string | null
+          full_name?: string | null
+          goals?: string[] | null
+          height?: number | null
+          id?: string
+          updated_at?: string | null
+          username?: string | null
+          weight?: number | null
+        }
+        Relationships: []
+      }
+      progress_metrics: {
+        Row: {
+          created_at: string | null
+          environment: string | null
+          id: string
+          metric_type: string | null
+          metric_value: number | null
+          notes: string | null
+          recorded_date: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          environment?: string | null
+          id?: string
+          metric_type?: string | null
+          metric_value?: number | null
+          notes?: string | null
+          recorded_date?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          environment?: string | null
+          id?: string
+          metric_type?: string | null
+          metric_value?: number | null
+          notes?: string | null
+          recorded_date?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "progress_metrics_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workout_plan_exercises: {
+        Row: {
+          created_at: string | null
+          day_of_week: string | null
+          environment: string
+          exercise_id: string | null
+          id: string
+          notes: string | null
+          order_index: number | null
+          reps: string | null
+          rest_seconds: number | null
+          sets: number | null
+          workout_plan_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          day_of_week?: string | null
+          environment?: string
+          exercise_id?: string | null
+          id?: string
+          notes?: string | null
+          order_index?: number | null
+          reps?: string | null
+          rest_seconds?: number | null
+          sets?: number | null
+          workout_plan_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          day_of_week?: string | null
+          environment?: string
+          exercise_id?: string | null
+          id?: string
+          notes?: string | null
+          order_index?: number | null
+          reps?: string | null
+          rest_seconds?: number | null
+          sets?: number | null
+          workout_plan_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_plan_exercises_exercise_id_fkey"
+            columns: ["exercise_id"]
+            isOneToOne: false
+            referencedRelation: "exercises"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workout_plan_exercises_workout_plan_id_fkey"
+            columns: ["workout_plan_id"]
+            isOneToOne: false
+            referencedRelation: "workout_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workout_plans: {
+        Row: {
+          created_at: string | null
+          description: string | null
+          duration_weeks: number | null
+          environment: string
+          frequency: string | null
+          id: string
+          is_active: boolean | null
+          name: string
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          description?: string | null
+          duration_weeks?: number | null
+          environment?: string
+          frequency?: string | null
+          id?: string
+          is_active?: boolean | null
+          name: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          description?: string | null
+          duration_weeks?: number | null
+          environment?: string
+          frequency?: string | null
+          id?: string
+          is_active?: boolean | null
+          name?: string
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_plans_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      workout_sessions: {
+        Row: {
+          created_at: string | null
+          end_time: string | null
+          environment: string | null
+          id: string
+          notes: string | null
+          overall_feeling: string | null
+          start_time: string | null
+          user_id: string | null
+          workout_plan_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          end_time?: string | null
+          environment?: string | null
+          id?: string
+          notes?: string | null
+          overall_feeling?: string | null
+          start_time?: string | null
+          user_id?: string | null
+          workout_plan_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          end_time?: string | null
+          environment?: string | null
+          id?: string
+          notes?: string | null
+          overall_feeling?: string | null
+          start_time?: string | null
+          user_id?: string | null
+          workout_plan_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workout_sessions_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workout_sessions_workout_plan_id_fkey"
+            columns: ["workout_plan_id"]
+            isOneToOne: false
+            referencedRelation: "workout_plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
