@@ -1,14 +1,12 @@
-
 import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import SecondaryButton from '@/components/SecondaryButton';
 import {AlertCircle, Clock, Dumbbell, Edit, Flame, ThumbsUp, Video} from 'lucide-react';
-import {useWorkoutSessions} from '@/hooks/useWorkoutSessions';
-import {useExerciseLogs} from '@/hooks/useExerciseLogs';
+import {useExerciseLogs, useWorkoutSessions} from '@/hooks';
 import {differenceInMinutes} from 'date-fns';
-import { safeParseDate } from '@/utils/dateUtils';
+import {safeParseDate} from '@/utils/dateUtils';
 
 interface ExerciseDisplay {
     id: string;
@@ -46,7 +44,7 @@ const WorkoutReview = () => {
                             JSON.parse(log.reps_completed) as number[] : 
                             log.reps_completed as number[]) : 
                         [];
-                        
+
                     const weightsUsed = log.weights_used ? 
                         (typeof log.weights_used === 'string' ? 
                             JSON.parse(log.weights_used) as number[] : 

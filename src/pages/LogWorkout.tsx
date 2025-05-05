@@ -5,8 +5,7 @@ import PrimaryButton from '@/components/PrimaryButton';
 import SecondaryButton from '@/components/SecondaryButton';
 import {Input} from '@/components/ui/input';
 import {AlertCircle, Camera, Video} from 'lucide-react';
-import {useWorkoutSessions} from '@/hooks/useWorkoutSessions';
-import {useExerciseLogs} from '@/hooks/useExerciseLogs';
+import {useExerciseLogs, useWorkoutSessions} from '@/hooks';
 
 interface SetData {
   label: string;
@@ -118,7 +117,7 @@ const LogWorkout = () => {
                           JSON.parse(existingLog.reps_completed) as number[] : 
                           existingLog.reps_completed as number[]) : 
                       [];
-                      
+
                   const weightsUsed = existingLog.weights_used ? 
                       (typeof existingLog.weights_used === 'string' ? 
                           JSON.parse(existingLog.weights_used) as number[] : 
