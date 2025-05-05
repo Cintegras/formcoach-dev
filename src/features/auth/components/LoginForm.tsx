@@ -1,16 +1,16 @@
-
-import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { z } from 'zod';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { AlertCircle, Lock, Mail } from 'lucide-react';
-import { Input } from '@/components/ui/input';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import React, {useState} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
+import {z} from 'zod';
+import {useForm} from 'react-hook-form';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {AlertCircle, Lock, Mail} from 'lucide-react';
+import {Input} from '@/components/ui/input';
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form';
+import {Alert, AlertDescription, AlertTitle} from '@/components/ui/alert';
 import PrimaryButton from '@/components/PrimaryButton';
-import { useToast } from '@/components/ui/use-toast';
-import { useAuth } from '@/features/auth/hooks/useAuth';
+import {useToast} from '@/components/ui/use-toast';
+import {useAuth} from '@/features/auth/hooks/useAuth';
+import {getProfile} from '@/services/supabase';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -65,7 +65,27 @@ const LoginForm: React.FC<LoginFormProps> = ({ onVerification }) => {
         return;
       }
 
-      // If successful, navigate to the redirect path
+        // Check if user has a profile
+        if (data?.user) {
+            try {
+                const profile = await getProfile(data.user.id);
+
+                // If no profile exists, store email in localStorage and redirect to welcome page
+                if (!profile) {
+                    localStorage.setItem('userEmail', values.email);
+                    navigate('/welcome');
+                    return;
+                }
+            } catch (profileError) {
+                console.error("Error checking profile:", profileError);
+                // If there's an error checking the profile, we'll assume the user needs to set up their profile
+                localStorage.setItem('userEmail', values.email);
+                navigate('/welcome');
+                return;
+            }
+        }
+
+        // If successful and profile exists, navigate to the redirect path
       navigate(from);
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : "Failed to sign in";

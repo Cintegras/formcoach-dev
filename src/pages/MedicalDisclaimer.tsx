@@ -1,17 +1,16 @@
-
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import SecondaryButton from '@/components/SecondaryButton';
-import { Check } from 'lucide-react';
+import {Check} from 'lucide-react';
 
 const MedicalDisclaimer = () => {
   const navigate = useNavigate();
   const [isAgreed, setIsAgreed] = useState(false);
 
   const handleAgree = () => {
-    navigate('/workout-frequency');
+      navigate('/profile-setup');
   };
 
   const handleBack = () => {
@@ -29,17 +28,17 @@ const MedicalDisclaimer = () => {
             Please read before continuing
           </p>
         </div>
-        
-        <div className="bg-[#1C1C1E] rounded-lg p-6 mb-8">
+
+          <div className="bg-[#1C1C1E] rounded-lg p-6 mb-8">
           <p className="font-normal text-[14px] text-[#D7E4E3] mb-4">
             FormCoach is designed to assist with workout guidance but is not a substitute for professional medical advice, diagnosis, or treatment.
           </p>
-          
-          <p className="font-normal text-[14px] text-[#D7E4E3] mb-4">
+
+              <p className="font-normal text-[14px] text-[#D7E4E3] mb-4">
             Before beginning any exercise program:
           </p>
-          
-          <ul className="space-y-3 mb-6">
+
+              <ul className="space-y-3 mb-6">
             <li className="flex items-start">
               <span className="text-[#00C4B4] mr-2">•</span>
               <span className="font-normal text-[14px] text-[#D7E4E3]">
@@ -59,8 +58,8 @@ const MedicalDisclaimer = () => {
               </span>
             </li>
           </ul>
-          
-          <div 
+
+              <div
             className="flex items-center mb-4 cursor-pointer"
             onClick={() => setIsAgreed(!isAgreed)}
           >
@@ -79,8 +78,8 @@ const MedicalDisclaimer = () => {
           <PrimaryButton onClick={handleAgree} disabled={!isAgreed}>
             Continue
           </PrimaryButton>
-          
-          <SecondaryButton onClick={handleBack}>
+
+            <SecondaryButton onClick={handleBack}>
             Back
           </SecondaryButton>
         </div>

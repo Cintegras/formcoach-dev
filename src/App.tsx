@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import {AuthProvider} from '@/features/auth/components/AuthProvider';
@@ -12,6 +11,8 @@ import ForgotPassword from './pages/ForgotPassword';
 import VerifyEmail from './pages/VerifyEmail';
 import WorkoutPlan from './pages/WorkoutPlan';
 import WorkoutConfirmation from './pages/WorkoutConfirmation';
+import MedicalDisclaimer from './pages/MedicalDisclaimer';
+import Welcome from './pages/Welcome';
 
 function App() {
   return (
@@ -65,6 +66,22 @@ function App() {
             path="/verify"
             element={<VerifyEmail />}
           />
+            <Route
+                path="/welcome"
+                element={
+                    <ProtectedRoute>
+                        <Welcome/>
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/medical-disclaimer"
+                element={
+                    <ProtectedRoute>
+                        <MedicalDisclaimer/>
+                    </ProtectedRoute>
+                }
+            />
         </Routes>
       </Router>
     </AuthProvider>
