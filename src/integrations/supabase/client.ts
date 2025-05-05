@@ -29,7 +29,7 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_KEY, {
     detectSessionInUrl: true,
     flowType: 'pkce',
     // Define the site URL here directly instead of calling setConfig
-    site_url: getRedirectURL()
+    siteUrl: getRedirectURL()
   }
 });
 

@@ -1,4 +1,3 @@
-
 import { supabase } from '@/integrations/supabase/client';
 import { Database } from '@/integrations/supabase/types';
 import { getEnvironment } from '@/lib/environment';
@@ -9,8 +8,8 @@ export const getExerciseLogs = async (sessionId: string): Promise<ExerciseLog[]>
   const { data, error } = await supabase
     .from('exercise_logs')
     .select('*')
-    .eq('environment', getEnvironment())
-    .eq('workout_session_id', sessionId)
+    .eq('environment', getEnvironment() as string)
+    .eq('workout_session_id', sessionId as string)
     .order('created_at', { ascending: true });
 
   if (error) throw error;
@@ -32,7 +31,7 @@ export const logExercise = async (
     reps_completed: JSON.parse(repsCompleted),
     weights_used: JSON.parse(weightsUsed),
     video_url: videoUrl,
-    environment: getEnvironment()
+    environment: getEnvironment() as string
   };
 
   const { data, error } = await supabase
@@ -80,7 +79,7 @@ export const createExerciseLog = async (
 ): Promise<ExerciseLog | null> => {
   const insertData = {
     ...log,
-    environment: getEnvironment()
+    environment: getEnvironment() as string
   };
   
   const { data, error } = await supabase

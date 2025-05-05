@@ -1,3 +1,4 @@
+
 /**
  * Test script to verify Supabase client configuration and utility functions
  *
