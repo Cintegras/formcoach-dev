@@ -1,7 +1,6 @@
-import { supabase } from '@/integrations/supabase/client';
-import { Database } from '@/integrations/supabase/types';
-import { getEnvironment } from '@/lib/environment';
-import { ExerciseLog } from './types';
+import {supabase} from '@/integrations/supabase/client';
+import {getEnvironment} from '@/lib/environment';
+import {ExerciseLog} from './types';
 
 // Export exercise log functions
 export const getExerciseLogs = async (sessionId: string): Promise<ExerciseLog[]> => {
@@ -74,15 +73,15 @@ export const createExerciseLog = async (
     weights_used?: number[] | null;
     video_url?: string | null;
     form_feedback?: string | null;
-    environment?: string;
+      environment?: string | null;
   }
 ): Promise<ExerciseLog | null> => {
   const insertData = {
     ...log,
     environment: getEnvironment() as string
   };
-  
-  const { data, error } = await supabase
+
+    const { data, error } = await supabase
     .from('exercise_logs')
     .insert(insertData)
     .select('*')

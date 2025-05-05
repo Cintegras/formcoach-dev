@@ -33,11 +33,12 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_KEY, {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true,
-    flowType: 'pkce',
-    // Define the site URL here directly instead of calling setConfig
-    siteUrl: getRedirectURL()
+    flowType: 'pkce'
   }
 });
+
+// Note: redirectTo should be passed to specific auth methods like signIn, signUp, etc.
+// rather than in the client initialization
 
 // NOTE: We no longer set the environment using supabase.query() as it's a server-only feature
 // Instead, all reads and writes should explicitly use .eq('environment', getEnvironment())
