@@ -1,66 +1,37 @@
-
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import PageContainer from '@/components/PageContainer';
-import { Calendar } from '@/components/ui/calendar';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { 
-  ChartContainer, 
-  ChartTooltip,
-  ChartTooltipContent
-} from '@/components/ui/chart';
-import { 
-  LineChart, 
-  Line, 
-  CartesianGrid, 
-  XAxis, 
-  YAxis, 
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  Legend 
-} from 'recharts';
+import {Calendar} from '@/components/ui/calendar';
+import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs';
+import {ChartContainer, ChartTooltip, ChartTooltipContent} from '@/components/ui/chart';
+import {Bar, BarChart, CartesianGrid, Line, LineChart, XAxis, YAxis} from 'recharts';
 
-// Sample workout data for the calendar
-const sampleWorkoutData = [
-  { date: new Date(2025, 4, 2), type: 'strength' }, // May 2, 2025
-  { date: new Date(2025, 4, 4), type: 'cardio' },   // May 4, 2025
-  { date: new Date(2025, 4, 6), type: 'strength' },
-  { date: new Date(2025, 4, 9), type: 'cardio' },
-  { date: new Date(2025, 4, 11), type: 'cardio' },
-  { date: new Date(2025, 4, 12), type: 'strength' },
-  { date: new Date(2025, 4, 15), type: 'strength' },
-  { date: new Date(2025, 4, 17), type: 'cardio' },
-  { date: new Date(2025, 4, 19), type: 'strength' },
-  { date: new Date(2025, 4, 22), type: 'cardio' },
-  { date: new Date(2025, 4, 25), type: 'strength' },
-  { date: new Date(2025, 4, 28), type: 'cardio' },
-  { date: new Date(2025, 4, 30), type: 'strength' },
-];
+// Metric types for filtering
+const METRIC_TYPES = {
+    STRENGTH: {
+        BENCH_PRESS: 'bench_press',
+        SQUAT: 'squat',
+        DEADLIFT: 'deadlift',
+    },
+    BODY: {
+        WEIGHT: 'weight',
+        BODY_FAT: 'body_fat',
+        WAIST: 'waist',
+        CHEST: 'chest',
+    }
+};
 
-// Mock data for charts
-const strengthData = [
-  { month: 'Jan', bench: 135, squat: 185, deadlift: 225 },
-  { month: 'Feb', bench: 145, squat: 195, deadlift: 235 },
-  { month: 'Mar', bench: 150, squat: 205, deadlift: 245 },
-  { month: 'Apr', bench: 155, squat: 215, deadlift: 255 },
-  { month: 'May', bench: 165, squat: 225, deadlift: 265 },
-];
-
-const workoutData = [
-  { day: 'Mon', minutes: 45 },
-  { day: 'Tue', minutes: 0 },
-  { day: 'Wed', minutes: 60 },
-  { day: 'Thu', minutes: 30 },
-  { day: 'Fri', minutes: 0 },
-  { day: 'Sat', minutes: 90 },
-  { day: 'Sun', minutes: 45 },
-];
+// Workout types for calendar
+const WORKOUT_TYPES = {
+    STRENGTH: 'strength',
+    CARDIO: 'cardio',
+    FLEXIBILITY: 'flexibility',
+};
 
 const TrendsPage = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [firstName, setFirstName] = useState('');
-  
-  useEffect(() => {
+
+    useEffect(() => {
     // Get user data for personalization
     const userData = localStorage.getItem('userData');
     if (userData) {
@@ -68,16 +39,16 @@ const TrendsPage = () => {
       setFirstName(user.firstName || '');
     }
   }, []);
-  
-  // Function to check if a date has a workout and its type
+
+    // Function to check if a date has a workout and its type
   const getWorkoutType = (day: Date) => {
     const foundWorkout = sampleWorkoutData.find(
       workout => workout.date.getDate() === day.getDate() &&
                  workout.date.getMonth() === day.getMonth() &&
                  workout.date.getFullYear() === day.getFullYear()
     );
-    
-    return foundWorkout?.type;
+
+      return foundWorkout?.type;
   };
 
   return (
@@ -97,8 +68,8 @@ const TrendsPage = () => {
           <TabsTrigger value="activity">Activity</TabsTrigger>
           <TabsTrigger value="calendar">Calendar</TabsTrigger>
         </TabsList>
-        
-        <TabsContent value="strength" className="mt-6">
+
+          <TabsContent value="strength" className="mt-6">
           <div className="bg-[rgba(176,232,227,0.08)] p-4 rounded-lg">
             <h3 className="text-[#B0E8E3] text-lg mb-4">Strength Progress</h3>
             <div className="h-[300px] w-full">
@@ -126,8 +97,8 @@ const TrendsPage = () => {
             </div>
           </div>
         </TabsContent>
-        
-        <TabsContent value="activity" className="mt-6">
+
+          <TabsContent value="activity" className="mt-6">
           <div className="bg-[rgba(176,232,227,0.08)] p-4 rounded-lg">
             <h3 className="text-[#B0E8E3] text-lg mb-4">Weekly Activity</h3>
             <div className="h-[300px] w-full">
@@ -151,8 +122,8 @@ const TrendsPage = () => {
             </div>
           </div>
         </TabsContent>
-        
-        <TabsContent value="calendar" className="mt-6">
+
+          <TabsContent value="calendar" className="mt-6">
           <div className="bg-[rgba(176,232,227,0.08)] p-4 rounded-lg">
             <h3 className="text-[#B0E8E3] text-lg mb-4">Workout Calendar</h3>
             <div className="flex justify-center">
@@ -171,8 +142,8 @@ const TrendsPage = () => {
                 }}
               />
             </div>
-            
-            {/* Calendar legend */}
+
+              {/* Calendar legend */}
             <div className="flex justify-center mt-4 gap-4 text-xs">
               <div className="flex items-center">
                 <div className="w-3 h-3 rounded-full bg-[#FFDEE2] mr-2"></div>
