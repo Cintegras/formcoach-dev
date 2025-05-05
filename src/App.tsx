@@ -5,6 +5,7 @@ import {TooltipProvider} from "@/components/ui/tooltip";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {BrowserRouter, Route, Routes} from "react-router-dom";
 import {AuthProvider} from "./features/auth";
+import ProtectedRoute from "./features/auth/components/ProtectedRoute";
 import Splash from "./pages/Splash";
 import Login from "./pages/Login";
 import Signup from "./pages/Signup";
@@ -44,32 +45,37 @@ const App = () => {
           <BrowserRouter>
               <AuthProvider>
                   <Routes>
-                      {/* Splash and Home */}
+                      {/* Public Routes */}
                       <Route path="/splash" element={<Splash/>}/>
-                      <Route path="/" element={<Home/>}/>
-
-                      {/* Auth Routes */}
                       <Route path="/login" element={<Login/>}/>
                       <Route path="/signup" element={<Signup/>}/>
                       <Route path="/forgot-password" element={<ForgotPassword/>}/>
-                      <Route path="/profile-setup" element={<ProfileSetupPage/>}/>
 
-                      {/* Onboarding Routes */}
-                      <Route path="/welcome" element={<Welcome/>}/>
-                      <Route path="/medical-disclaimer" element={<MedicalDisclaimer/>}/>
+                      {/* Protected Routes */}
+                      <Route element={<ProtectedRoute/>}>
+                          {/* Home */}
+                          <Route path="/" element={<Home/>}/>
 
-                      {/* Workout Routes */}
-                      <Route path="/workout-category-select" element={<WorkoutCategorySelect/>}/>
-                      <Route path="/cardio-type-select" element={<CardioTypeSelect/>}/>
-                      <Route path="/workout-plan" element={<WorkoutPlan/>}/>
-                      <Route path="/workout-confirmation" element={<WorkoutConfirmation/>}/>
-                      <Route path="/cardio-warmup" element={<CardioWarmUp/>}/>
-                      <Route path="/workout-tracking/:exercise" element={<LogWorkout/>}/>
-                      <Route path="/workout-review" element={<WorkoutReview/>}/>
+                          {/* Profile Setup */}
+                          <Route path="/profile-setup" element={<ProfileSetupPage/>}/>
 
-                      {/* Main App Routes */}
-                      <Route path="/trends" element={<TrendsPage/>}/>
-                      <Route path="/profile" element={<ProfilePage/>}/>
+                          {/* Onboarding Routes */}
+                          <Route path="/welcome" element={<Welcome/>}/>
+                          <Route path="/medical-disclaimer" element={<MedicalDisclaimer/>}/>
+
+                          {/* Workout Routes */}
+                          <Route path="/workout-category-select" element={<WorkoutCategorySelect/>}/>
+                          <Route path="/cardio-type-select" element={<CardioTypeSelect/>}/>
+                          <Route path="/workout-plan" element={<WorkoutPlan/>}/>
+                          <Route path="/workout-confirmation" element={<WorkoutConfirmation/>}/>
+                          <Route path="/cardio-warmup" element={<CardioWarmUp/>}/>
+                          <Route path="/workout-tracking/:exercise" element={<LogWorkout/>}/>
+                          <Route path="/workout-review" element={<WorkoutReview/>}/>
+
+                          {/* Main App Routes */}
+                          <Route path="/trends" element={<TrendsPage/>}/>
+                          <Route path="/profile" element={<ProfilePage/>}/>
+                      </Route>
 
                       {/* Catch-all 404 page */}
                       <Route path="*" element={<NotFound/>}/>

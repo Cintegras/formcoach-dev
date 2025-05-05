@@ -1,22 +1,15 @@
-
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useState} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
-import { Input } from '@/components/ui/input';
-import {
-  Form,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormControl,
-  FormMessage
-} from '@/components/ui/form';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Mail, Lock } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import {Input} from '@/components/ui/input';
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form';
+import {useForm} from 'react-hook-form';
+import {z} from 'zod';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {Lock, Mail} from 'lucide-react';
+import {useToast} from '@/components/ui/use-toast';
+import {useAuth} from '@/features/auth/hooks/useAuth';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -27,8 +20,13 @@ type LoginValues = z.infer<typeof loginSchema>;
 
 const Login = () => {
   const navigate = useNavigate();
+    const location = useLocation();
+    const {signIn, loading: authLoading} = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+    // Get the redirect path from location state or default to home
+    const from = location.state?.from?.pathname || '/';
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -40,33 +38,30 @@ const Login = () => {
 
   const onSubmit = async (values: LoginValues) => {
     setIsLoading(true);
-    
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    
-    // Check if a user with this email exists in our mock storage
-    const userData = localStorage.getItem('userData');
-    
-    if (userData) {
-      const user = JSON.parse(userData);
-      // Update the email if it's changed
-      if (user.email !== values.email) {
-        user.email = values.email;
-        localStorage.setItem('userData', JSON.stringify(user));
+
+      try {
+          const {error} = await signIn(values.email, values.password);
+
+          if (error) {
+              toast({
+                  title: "Authentication error",
+                  description: error.message,
+                  variant: "destructive",
+              });
+              return;
+          }
+
+          // If successful, navigate to the redirect path
+          navigate(from);
+      } catch (error) {
+          toast({
+              title: "Authentication error",
+              description: error instanceof Error ? error.message : "Failed to sign in",
+              variant: "destructive",
+          });
+      } finally {
+          setIsLoading(false);
       }
-    } else {
-      // First time login, store just the email for now
-      localStorage.setItem('userEmail', values.email);
-      // Redirect to profile setup
-      setIsLoading(false);
-      navigate('/profile-setup');
-      return;
-    }
-    
-    setIsLoading(false);
-    
-    // If we have user data, go to home
-    navigate('/');
   };
 
   const handleForgotPassword = () => {

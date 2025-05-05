@@ -1,14 +1,15 @@
-
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
-import { Input } from '@/components/ui/input';
-import { Form, FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
-import { useForm } from 'react-hook-form';
-import { z } from 'zod';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Mail, Lock, User } from 'lucide-react';
+import {Input} from '@/components/ui/input';
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form';
+import {useForm} from 'react-hook-form';
+import {z} from 'zod';
+import {zodResolver} from '@hookform/resolvers/zod';
+import {Lock, Mail} from 'lucide-react';
+import {useAuth} from '@/features/auth/hooks/useAuth';
+import {useToast} from '@/components/ui/use-toast';
 
 const signupSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -23,7 +24,9 @@ type SignupValues = z.infer<typeof signupSchema>;
 
 const Signup = () => {
   const navigate = useNavigate();
+    const {signUp, loading: authLoading} = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+    const {toast} = useToast();
 
   const form = useForm<SignupValues>({
     resolver: zodResolver(signupSchema),
@@ -37,16 +40,29 @@ const Signup = () => {
   const onSubmit = async (values: SignupValues) => {
     setIsLoading(true);
 
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 1000));
+      try {
+          const {error} = await signUp(values.email, values.password);
 
-    // Save email for profile setup
-    localStorage.setItem('userEmail', values.email);
-    
-    setIsLoading(false);
+          if (error) {
+              toast({
+                  title: "Registration error",
+                  description: error.message,
+                  variant: "destructive",
+              });
+              return;
+          }
 
-    // Redirect to profile setup page instead
-    navigate('/profile-setup');
+          // If successful, navigate to profile setup
+          navigate('/profile-setup');
+      } catch (error) {
+          toast({
+              title: "Registration error",
+              description: error instanceof Error ? error.message : "Failed to create account",
+              variant: "destructive",
+          });
+      } finally {
+          setIsLoading(false);
+      }
   };
 
   return (

@@ -13,6 +13,8 @@ import AgeStep from '@/components/profile-setup/AgeStep';
 import SexStep from '@/components/profile-setup/SexStep';
 import SummaryStep from '@/components/profile-setup/SummaryStep';
 import {ArrowLeft} from 'lucide-react';
+import {useProfile} from '@/hooks/useProfile';
+import {useAuth} from '@/features/auth/hooks/useAuth';
 
 const profileSchema = z.object({
   firstName: z.string().min(1, { message: 'First name is required' }),
@@ -27,6 +29,8 @@ type ProfileValues = z.infer<typeof profileSchema>;
 
 const ProfileSetupPage = () => {
   const navigate = useNavigate();
+  const {user} = useAuth();
+  const {create, loading: profileLoading} = useProfile();
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -124,25 +128,40 @@ const ProfileSetupPage = () => {
 
       setIsLoading(true);
 
-      // Simulate API call - would save to backend in a real app
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      if (!user) {
+        toast({
+          title: "Authentication error",
+          description: "You must be logged in to create a profile",
+          variant: "destructive",
+        });
+        setIsLoading(false);
+        navigate('/login');
+        return;
+      }
 
-      // Save user data to localStorage for now
-      const userData = {
-        firstName: formValues.firstName,
-        email: localStorage.getItem('userEmail') || 'user@example.com',
-        height: {
-          feet: formValues.heightFeet,
-          inches: formValues.heightInches
-        },
+      // Create profile using the useProfile hook
+      const profileData = {
+        first_name: formValues.firstName,
+        height_feet: formValues.heightFeet,
+        height_inches: formValues.heightInches,
         weight: formValues.weight,
         age: formValues.age,
         sex: formValues.sex,
-        weightHistory: [{ date: new Date().toISOString(), weight: formValues.weight }]
+        weight_history: [{date: new Date().toISOString(), weight: formValues.weight}]
       };
 
-      localStorage.setItem('userData', JSON.stringify(userData));
+      const result = await create(profileData);
+
       setIsLoading(false);
+
+      if (!result) {
+        toast({
+          title: "Error",
+          description: "Failed to create profile. Please try again.",
+          variant: "destructive",
+        });
+        return;
+      }
 
       toast({
         title: `Welcome, ${formValues.firstName}!`,
