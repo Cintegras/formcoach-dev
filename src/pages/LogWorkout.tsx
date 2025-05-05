@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams, useLocation } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {useLocation, useNavigate, useParams} from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import SecondaryButton from '@/components/SecondaryButton';
-import { Input } from '@/components/ui/input';
+import {Input} from '@/components/ui/input';
+import {AlertCircle, Camera, Video} from 'lucide-react';
+import {useWorkoutSessions} from '@/hooks/useWorkoutSessions';
+import {useExerciseLogs} from '@/hooks/useExerciseLogs';
 
 interface SetData {
   label: string;
@@ -27,13 +30,14 @@ const LogWorkout = () => {
   const navigate = useNavigate();
   const { exercise } = useParams<{ exercise: string }>();
   const location = useLocation();
-  
+
   // Get the exercises array and current index from location state
   const exercises: ExerciseItem[] = location.state?.exercises || [];
   const currentIndex: number = location.state?.currentIndex || 0;
 
   // Make sure we have a default exercise and properly format it
   const exerciseName = exercise ? decodeURIComponent(exercise).replace(/-/g, ' ') : 'Leg Press';
+    const exerciseId = exercise || 'leg-press';
 
   // Format the exercise name to look nicer
   const formattedExerciseName = exerciseName
@@ -65,6 +69,14 @@ const LogWorkout = () => {
     }
   };
 
+    // Use hooks for workout sessions and exercise logs
+    const {activeSession} = useWorkoutSessions();
+    const {
+        logs,
+        logCompletedExercise,
+        loading: logsLoading
+    } = useExerciseLogs(activeSession?.id || null, true);
+
   const [sets, setSets] = useState<SetData[]>([
     {
       label: 'Warm-up Set',
@@ -89,6 +101,54 @@ const LogWorkout = () => {
     }
   ]);
 
+    const [videoUrl, setVideoUrl] = useState<string | null>(null);
+    const [isRecording, setIsRecording] = useState(false);
+    const [formFeedback, setFormFeedback] = useState<string | null>(null);
+    const [isSaving, setIsSaving] = useState(false);
+
+    // Check if this exercise has already been logged
+    useEffect(() => {
+        if (logs.length > 0) {
+            const existingLog = logs.find(log => log.exercise_id === exerciseId);
+            if (existingLog) {
+                // If we have an existing log, populate the sets data
+                try {
+                    const repsCompleted = JSON.parse(existingLog.reps_completed || '[]');
+                    const weightsUsed = JSON.parse(existingLog.weights_used || '[]');
+
+                    // Update sets with the logged data
+                    const updatedSets = [...sets];
+                    for (let i = 0; i < repsCompleted.length; i++) {
+                        if (i === 0 && updatedSets[0].isWarmup) {
+                            updatedSets[0].reps = repsCompleted[i].toString();
+                            updatedSets[0].weight = weightsUsed[i].toString();
+                        } else {
+                            const setIndex = updatedSets[0].isWarmup ? i : i - 1;
+                            if (updatedSets[setIndex + 1]) {
+                                updatedSets[setIndex + 1].reps = repsCompleted[i].toString();
+                                updatedSets[setIndex + 1].weight = weightsUsed[i].toString();
+                            }
+                        }
+                    }
+
+                    setSets(updatedSets);
+
+                    // Set video URL if available
+                    if (existingLog.video_url) {
+                        setVideoUrl(existingLog.video_url);
+                    }
+
+                    // Set form feedback if available
+                    if (existingLog.form_feedback) {
+                        setFormFeedback(existingLog.form_feedback);
+                    }
+                } catch (error) {
+                    console.error('Error parsing exercise log data:', error);
+                }
+            }
+        }
+    }, [logs, exerciseId]);
+
   const updateSet = (index: number, field: 'reps' | 'weight', value: string) => {
     setSets(prev => {
       const newSets = [...prev];
@@ -97,13 +157,93 @@ const LogWorkout = () => {
     });
   };
 
+    const startRecording = () => {
+        // In a real app, this would access the camera and start recording
+        setIsRecording(true);
+
+        // Simulate recording for demo purposes
+        setTimeout(() => {
+            stopRecording();
+        }, 3000);
+    };
+
+    const stopRecording = () => {
+        setIsRecording(false);
+
+        // In a real app, this would save the video and get the URL
+        // For demo purposes, we'll use a placeholder URL
+        setVideoUrl('https://example.com/exercise-video.mp4');
+
+        // Simulate form feedback generation
+        setTimeout(() => {
+            generateFormFeedback();
+        }, 1000);
+    };
+
+    const generateFormFeedback = () => {
+        // In a real app, this would analyze the video and generate feedback
+        // For demo purposes, we'll use placeholder feedback
+        const feedbackOptions = [
+            "Good form overall. Keep your back straight during the exercise.",
+            "Try to maintain a steady pace throughout the movement.",
+            "Watch your knee alignment - they should track over your toes.",
+            "Great depth on the movement. Maintain this form for all sets."
+        ];
+
+        const randomFeedback = feedbackOptions[Math.floor(Math.random() * feedbackOptions.length)];
+        setFormFeedback(randomFeedback);
+    };
+
+    const saveExercise = async () => {
+        if (!activeSession) {
+            alert('No active workout session found');
+            return;
+        }
+
+        setIsSaving(true);
+
+        try {
+            // Prepare the data for logging
+            const setsCompleted = sets.length;
+            const repsCompleted = sets.map(set => parseInt(set.reps) || 0);
+            const weightsUsed = sets.map(set => parseInt(set.weight) || 0);
+
+            // Log the completed exercise
+            await logCompletedExercise(
+                exerciseId,
+                setsCompleted,
+                repsCompleted,
+                weightsUsed,
+                videoUrl || undefined
+            );
+
+            // Mark the exercise as completed in the exercises array
+            if (exercises.length > 0) {
+                const updatedExercises = exercises.map((ex, idx) =>
+                    idx === currentIndex ? {...ex, completed: true} : ex
+                );
+
+                // Store the updated exercises in localStorage
+                localStorage.setItem('currentWorkoutExercises', JSON.stringify(updatedExercises));
+            }
+
+            // Navigate to the next exercise or review page
+            nextExercise();
+        } catch (error) {
+            console.error('Error saving exercise:', error);
+            alert('Failed to save exercise data');
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
   const nextExercise = () => {
     // If we have custom exercises and there's a next exercise in the array
     if (exercises.length > 0 && currentIndex < exercises.length - 1) {
       // Go to the next exercise in the custom order
       const nextIndex = currentIndex + 1;
       const nextExerciseData = exercises[nextIndex];
-      
+
       if (nextExerciseData.isCardio) {
         navigate('/cardio-warmup', { 
           state: { exercises, currentIndex: nextIndex } 
@@ -138,7 +278,53 @@ const LogWorkout = () => {
           </p>
         )}
       </div>
-      
+
+        {/* Form Feedback Section */}
+        {formFeedback && (
+            <div className="mb-4 p-4 rounded-lg bg-[rgba(0,196,180,0.1)] border border-[#00C4B4]">
+                <div className="flex items-start">
+                    <AlertCircle size={18} className="text-[#00C4B4] mr-2 mt-0.5"/>
+                    <div>
+                        <h3 className="font-medium text-[16px] text-[#00C4B4] mb-1">Form Feedback</h3>
+                        <p className="text-[14px] text-[#A4B1B7]">{formFeedback}</p>
+                    </div>
+                </div>
+            </div>
+        )}
+
+        {/* Video Recording Section */}
+        <div className="mb-4 p-4 rounded-lg" style={{backgroundColor: "rgba(176, 232, 227, 0.08)"}}>
+            <h3 className="font-medium text-[16px] text-[#B0E8E3] mb-2 flex items-center">
+                <Video size={18} className="mr-2"/>
+                Record Your Form
+            </h3>
+
+            {videoUrl ? (
+                <div className="bg-[rgba(0,0,0,0.2)] rounded-lg p-4 flex flex-col items-center justify-center">
+                    <p className="text-[#A4B1B7] text-sm mb-2">Video recorded</p>
+                    <button
+                        onClick={() => setVideoUrl(null)}
+                        className="text-[#00C4B4] text-sm font-medium"
+                    >
+                        Record Again
+                    </button>
+                </div>
+            ) : (
+                <button
+                    onClick={startRecording}
+                    disabled={isRecording}
+                    className="w-full bg-[rgba(176,232,227,0.12)] rounded-lg p-4 flex flex-col items-center justify-center"
+                >
+                    <Camera size={24}
+                            className={`${isRecording ? 'text-red-500 animate-pulse' : 'text-[#00C4B4]'} mb-2`}/>
+                    <span className="text-[#A4B1B7] text-sm">
+              {isRecording ? 'Recording...' : 'Tap to record your form'}
+            </span>
+                </button>
+            )}
+        </div>
+
+        {/* Exercise Sets Section */}
       <div className="w-full rounded-lg p-6" style={{ backgroundColor: "rgba(176, 232, 227, 0.12)" }}>
         {sets.map((set, index) => (
           <div key={index} className="mb-6 last:mb-0">
@@ -181,11 +367,14 @@ const LogWorkout = () => {
       </div>
 
       <div className="mt-8 space-y-2">
-        <PrimaryButton onClick={nextExercise}>
-          Save and Continue
+          <PrimaryButton
+              onClick={saveExercise}
+              disabled={isSaving || logsLoading}
+          >
+              {isSaving ? 'Saving...' : 'Save and Continue'}
         </PrimaryButton>
-        
-        <SecondaryButton onClick={skipExercise}>
+
+          <SecondaryButton onClick={skipExercise}>
           Skip to Next Exercise
         </SecondaryButton>
       </div>
