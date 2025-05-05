@@ -141,13 +141,10 @@ const ProfileSetupPage = () => {
 
       // Create profile using the useProfile hook
       const profileData = {
-        first_name: formValues.firstName,
-        height_feet: formValues.heightFeet,
-        height_inches: formValues.heightInches,
+        full_name: formValues.firstName, // Map firstName to full_name
+        height: (formValues.heightFeet * 12) + formValues.heightInches, // Convert to total inches
         weight: formValues.weight,
-        age: formValues.age,
-        sex: formValues.sex,
-        weight_history: [{date: new Date().toISOString(), weight: formValues.weight}]
+        // Note: age, sex, and weight_history are not in the profiles table schema
       };
 
       const result = await create(profileData);
