@@ -21,39 +21,48 @@ FormCoach is an AI-assisted fitness planner focused on helping users build bette
 
 ## 🚀 Getting Started
 
-### 1. Clone the Repo
+For detailed setup instructions, please see the [START_HERE.md](START_HERE.md) guide.
+
+### Quick Start
 
 ```bash
-git clone https://github.com/Cintegras/formcoach.git
-cd formcoach
+# Start the application with guided setup
+./scripts/start-project.sh
 ```
 
-### 2. Start the App
+Or manually:
 
 ```bash
-./run.sh
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
 ```
 
-Stop all processes:
-
-```bash
-./stop.sh
-```
-
-> 💡 Requires: Python 3.9+, Node.js, `uvicorn`, and `npm`.
+> 💡 Requires: Node.js 16+, npm, and optionally Supabase CLI for local development.
 
 ---
 
 ## 📁 Folder Structure
 
 ```
-formcoach/
-├── backend/           # FastAPI (main.py, venv, API logic)
-├── frontend/          # Vite + React + Tailwind UI
-├── docs/              # Dev environment guides
-├── run.sh             # Launch backend + frontend
-├── stop.sh            # Stop all running processes
-└── README.md          # You're here
+formcoach-dev/
+├── src/                       # Source code
+│   ├── components/            # React components
+│   ├── features/              # Feature modules (auth, etc.)
+│   ├── hooks/                 # React hooks for data access
+│   ├── integrations/          # External integrations
+│   │   └── supabase/          # Supabase client and types
+│   ├── lib/                   # Utility functions
+│   └── services/              # Service layer for data access
+│       └── supabase/          # Supabase service implementations
+├── supabase/                  # Supabase configuration
+├── docs/                      # Documentation and SQL scripts
+├── scripts/                   # Utility scripts
+│   └── start-project.sh       # Script to start the project
+├── START_HERE.md              # Getting started guide
+└── README.md                  # You're here
 ```
 
 ---
@@ -92,11 +101,12 @@ Prompts are structured and stored in `prompt_library/` (WIP).
 
 ## 🛠 Tools Used
 
-- ⚙️ FastAPI (backend)
 - ⚛️ React + Vite (frontend)
+- 🔥 Supabase (backend, authentication, database)
 - 🎨 Tailwind CSS + shadcn/ui
-- 🧪 pytest, ESLint, Prettier
-- 🧱 MongoDB planned for future DB work
+- 🧪 TypeScript, ESLint
+- 🔄 Real-time subscriptions for live updates
+- 🔒 Row Level Security (RLS) for data protection
 - 🔗 Integrated with GitHub, Windsurf, and Microsoft Copilot Chat
 
 ---

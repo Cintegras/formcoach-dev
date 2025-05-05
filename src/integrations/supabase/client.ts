@@ -20,30 +20,7 @@ const SUPABASE_KEY = ENV === 'prod'
 // Create the Supabase client
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_KEY);
 
-// Initialize the session with the correct environment
-// This ensures the app.environment variable is set correctly for RLS policies
-const initializeEnvironment = async () => {
-    try {
-        // Set the app.environment variable based on the current environment
-        const envValue = ENV === 'prod' ? 'prod' : ENV === 'stage' ? 'stage' : 'dev';
-
-        // Call the initialize_session function or set the variable directly
-        await supabase.rpc('initialize_session');
-
-        // Alternative approach: set the variable directly if the RPC fails
-        await supabase.query(`SET app.environment = '${envValue}'`);
-
-        console.log(`Database environment set to: ${envValue}`);
-    } catch (error) {
-        console.error('Failed to initialize database environment:', error);
-        // Fallback: try direct SQL approach
-        try {
-            await supabase.query(`SET app.environment = '${ENV || 'dev'}'`);
-        } catch (fallbackError) {
-            console.error('Fallback environment initialization also failed:', fallbackError);
-        }
-    }
-};
-
-// Initialize the environment when the client is first imported
-initializeEnvironment();
+// NOTE: We no longer set the environment using supabase.query() as it's a server-only feature
+// Instead, all reads and writes should explicitly use .eq('environment', getEnvironment())
+// or include environment: getEnvironment() in inserts/updates
+// This is handled in the service layer (e.g., src/services/supabase/*.ts)

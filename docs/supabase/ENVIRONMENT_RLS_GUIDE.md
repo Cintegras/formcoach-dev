@@ -63,21 +63,27 @@ FROM public.exercises;
 
 The environment is automatically set at the start of each session through multiple mechanisms:
 
-1. **Client-side initialization**: The Supabase client automatically sets the environment variable when it connects:
+1. **Client-side approach**: In browser environments, we cannot use `supabase.query()` to set session variables as it's
+   a server-only feature. Instead, we explicitly include the environment in all database operations:
 
 ```typescript
-// This happens automatically when the client is imported
-const initializeEnvironment = async () => {
-    try {
-        // Call the initialize_session function
-        await supabase.rpc('initialize_session');
+// For queries (reads)
+const { data } = await supabase
+    .from('table_name')
+    .select('*')
+    .eq('environment', getEnvironment());
 
-        // Alternative approach as fallback
-        await supabase.query(`SET app.environment = '${envValue}'`);
-    } catch (error) {
-        // Fallback handling
-    }
-};
+// For inserts
+const { data } = await supabase
+    .from('table_name')
+    .insert({ ...newRecord, environment: getEnvironment() });
+
+// For updates
+const { data } = await supabase
+    .from('table_name')
+    .update({ ...updates })
+    .eq('id', recordId)
+    .eq('environment', getEnvironment());
 ```
 
 2. **Database function**: You can call the initialization function directly:

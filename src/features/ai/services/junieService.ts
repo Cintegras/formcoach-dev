@@ -7,8 +7,6 @@
  */
 
 import {getEnvironment} from '../../../lib/environment.ts';
-import fs from 'fs';
-import path from 'path';
 
 // Define types for environment information
 interface EnvironmentInfo {
@@ -19,7 +17,7 @@ interface EnvironmentInfo {
 
 class JunieService {
     private environmentInfo: EnvironmentInfo | null = null;
-    private initMdPath = path.resolve(process.cwd(), 'docs/init.md');
+    private initMdUrl = '/docs/init.md';
     private isInitialized = false;
 
     /**
@@ -51,7 +49,11 @@ class JunieService {
      */
     private async loadInitFile(): Promise<string> {
         try {
-            return fs.readFileSync(this.initMdPath, 'utf-8');
+            const response = await fetch(this.initMdUrl);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch INIT.md: ${response.status} ${response.statusText}`);
+            }
+            return await response.text();
         } catch (error) {
             console.error('Error loading INIT.md file:', error);
             throw new Error('Failed to load INIT.md file. Please ensure the file exists at docs/init.md');
