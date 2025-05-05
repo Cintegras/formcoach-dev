@@ -1,15 +1,16 @@
 import {supabase} from '@/integrations/supabase/client';
 import {Database} from '@/integrations/supabase/types';
 import {getEnvironment} from '@/lib/environment';
+import {WorkoutPlan, WorkoutPlanExercise, WorkoutPlanExerciseInsert, WorkoutPlanExerciseUpdate, WorkoutPlanInsert, WorkoutPlanUpdate} from './types/workout-plans';
 
 // Type definitions
-type WorkoutPlan = Database['public']['Tables']['workout_plans']['Row'];
-type WorkoutPlanInsert = Database['public']['Tables']['workout_plans']['Insert'];
-type WorkoutPlanUpdate = Database['public']['Tables']['workout_plans']['Update'];
+// type WorkoutPlan = Database['public']['Tables']['workout_plans']['Row'];
+// type WorkoutPlanInsert = Database['public']['Tables']['workout_plans']['Insert'];
+// type WorkoutPlanUpdate = Database['public']['Tables']['workout_plans']['Update'];
 
-type WorkoutPlanExercise = Database['public']['Tables']['workout_plan_exercises']['Row'];
-type WorkoutPlanExerciseInsert = Database['public']['Tables']['workout_plan_exercises']['Insert'];
-type WorkoutPlanExerciseUpdate = Database['public']['Tables']['workout_plan_exercises']['Update'];
+// type WorkoutPlanExercise = Database['public']['Tables']['workout_plan_exercises']['Row'];
+// type WorkoutPlanExerciseInsert = Database['public']['Tables']['workout_plan_exercises']['Insert'];
+// type WorkoutPlanExerciseUpdate = Database['public']['Tables']['workout_plan_exercises']['Update'];
 
 /**
  * Get all workout plans for a user
@@ -315,6 +316,13 @@ export const subscribeToWorkoutPlanExercises = (
     callback: (exercise: WorkoutPlanExercise, eventType: 'INSERT' | 'UPDATE' | 'DELETE') => void
 ) => {
     const environment = getEnvironment();
+
+    // Make sure planId is a string and not null or undefined
+    if (!planId) {
+        console.error('Invalid plan ID provided to subscribeToWorkoutPlanExercises');
+        // Return a no-op unsubscribe function
+        return () => {};
+    }
 
     const subscription = supabase
         .channel('workout_plan_exercises_changes')

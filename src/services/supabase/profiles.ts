@@ -2,10 +2,8 @@ import {supabase} from '@/integrations/supabase/client';
 import {Database} from '@/integrations/supabase/types';
 import {getEnvironment} from '@/lib/environment';
 
-// Type definitions
-type Profile = Database['public']['Tables']['profiles']['Row'];
-type ProfileInsert = Database['public']['Tables']['profiles']['Insert'];
-type ProfileUpdate = Database['public']['Tables']['profiles']['Update'];
+// Import types
+import {Profile, ProfileInsert, ProfileUpdate} from './types/profiles';
 
 // Dummy UUIDs for development
 export const DUMMY_USER_IDS = {

@@ -2,10 +2,13 @@ import {supabase} from '@/integrations/supabase/client';
 import {Database} from '@/integrations/supabase/types';
 import {getEnvironment} from '@/lib/environment';
 
+// Import types from our types directory
+import {ExerciseLog, ExerciseLogInsert, ExerciseLogUpdate} from './types/exercise-logs';
+
 // Type definitions
-type ExerciseLog = Database['public']['Tables']['exercise_logs']['Row'];
-type ExerciseLogInsert = Database['public']['Tables']['exercise_logs']['Insert'];
-type ExerciseLogUpdate = Database['public']['Tables']['exercise_logs']['Update'];
+// type ExerciseLog = Database['public']['Tables']['exercise_logs']['Row'];
+// type ExerciseLogInsert = Database['public']['Tables']['exercise_logs']['Insert'];
+// type ExerciseLogUpdate = Database['public']['Tables']['exercise_logs']['Update'];
 
 /**
  * Get all exercise logs for a workout session
