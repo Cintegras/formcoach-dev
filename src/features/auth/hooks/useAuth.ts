@@ -1,7 +1,13 @@
+import {useEffect, useState} from 'react';
+import {supabase} from '@/integrations/supabase/client';
+import {Session, User} from '@supabase/supabase-js';
 
-import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { User, Session } from '@supabase/supabase-js';
+// Define an interface for auth errors
+interface AuthError {
+    message: string;
+
+    [key: string]: any;
+}
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
@@ -28,43 +34,43 @@ export function useAuth() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const signIn = async (email: string, password: string) => {
+    const signIn = async (email: string, password: string): Promise<{ data: any, error: AuthError | null }> => {
     try {
       setLoading(true);
       const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
-      
+
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
       console.error("Sign in error:", error);
-      return { data: null, error };
+        return {data: null, error: error as AuthError};
     } finally {
       setLoading(false);
     }
   };
 
-  const signUp = async (email: string, password: string) => {
+    const signUp = async (email: string, password: string): Promise<{ data: any, error: AuthError | null }> => {
     try {
       setLoading(true);
       const { data, error } = await supabase.auth.signUp({
         email,
         password,
       });
-      
+
       if (error) throw error;
       return { data, error: null };
     } catch (error) {
       console.error("Sign up error:", error);
-      return { data: null, error };
+        return {data: null, error: error as AuthError};
     } finally {
       setLoading(false);
     }
   };
 
-  const signOut = async () => {
+    const signOut = async (): Promise<{ error: AuthError | null }> => {
     try {
       setLoading(true);
       const { error } = await supabase.auth.signOut();
@@ -72,7 +78,7 @@ export function useAuth() {
       return { error: null };
     } catch (error) {
       console.error("Sign out error:", error);
-      return { error };
+        return {error: error as AuthError};
     } finally {
       setLoading(false);
     }
