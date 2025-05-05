@@ -11,13 +11,15 @@ pitfalls to avoid when working with the FormCoach project.
 
 ## 🌍 Environments
 
-FormCoach uses three distinct environments, each with its own configuration:
+FormCoach uses two primary environments, each with its own configuration:
 
 | Environment | Color Code | PyCharm Project   | Value in `.env` | Supabase Project | Environment Column | Purpose                               |
 |-------------|------------|-------------------|-----------------|------------------|--------------------|---------------------------------------|
 | Development | 🟢         | `formcoach-dev`   | `dev`           | `formcoach-dev`  | `dev`              | Local development and testing         |
-| Staging     | 🟡         | `formcoach-stage` | `stage`         | `formcoach-dev`  | `stage`            | Pre-production testing and validation |
 | Production  | 🔴         | `formcoach`       | `prod`          | `formcoach`      | `prod`             | Live production environment           |
+
+> **Note**: The `stage` GitHub branch exists but currently uses the same Supabase project as `dev`. When a separate
+> Supabase project for staging is created, this table will be updated to include a distinct staging environment.
 
 ### Environment Selection Logic
 
@@ -26,19 +28,25 @@ The current environment is determined by the `VITE_FORMCOACH_ENV` environment va
 
 ```typescript
 export const getEnvironment = (): string => {
-    return import.meta.env.VITE_FORMCOACH_ENV || 'dev';
+    const env = import.meta.env.VITE_FORMCOACH_ENV || 'dev';
+    // For now, we only distinguish between 'prod' and non-prod environments
+    return env === 'prod' ? 'prod' : 'dev';
 };
 ```
 
-If the environment variable is not set, it defaults to `'dev'`.
+If the environment variable is not set, it defaults to `'dev'`. Currently, both `dev` and `stage` values in `.env` will
+result in the `'dev'` environment being used.
 
 ### PyCharm Project Structure
 
-FormCoach uses three separate PyCharm projects, one for each environment:
+FormCoach uses two primary PyCharm projects:
 
-- 🟢 **formcoach-dev**: Used for development environment
-- 🟡 **formcoach-stage**: Used for staging environment
+- 🟢 **formcoach-dev**: Used for development environment (also used for the stage GitHub branch)
 - 🔴 **formcoach**: Used for production environment
+
+> **Note**: While a `formcoach-stage` PyCharm project exists, it currently uses the same Supabase project as
+`formcoach-dev`. When a separate Supabase project for staging is created, this section will be updated to include
+> distinct configuration for the staging environment.
 
 Each PyCharm project has its own `.env` file that configures the environment and Supabase connection.
 
@@ -48,7 +56,7 @@ Each PyCharm project has its own `.env` file that configures the environment and
 
 1. Open the `formcoach-dev` PyCharm project
 2. Copy `.env.example` to `.env` in the project root
-3. Set `VITE_FORMCOACH_ENV=dev` in the `.env` file
+3. Set `VITE_FORMCOACH_ENV=dev` in the `.env` file (or `VITE_FORMCOACH_ENV=stage` if working with the stage branch)
 4. Configure the Supabase URLs and keys for both development and production
 
 Example `.env` file for development:
@@ -63,24 +71,8 @@ VITE_SUPABASE_URL_PROD=https://hqmavplgoosxhzahdfzn.supabase.co
 VITE_SUPABASE_KEY_PROD=your_supabase_anon_key_for_prod
 ```
 
-#### 🟡 Staging Environment Setup
-
-1. Open the `formcoach-stage` PyCharm project
-2. Copy `.env.example` to `.env` in the project root
-3. Set `VITE_FORMCOACH_ENV=stage` in the `.env` file
-4. Configure the Supabase URLs and keys for both development and production
-
-Example `.env` file for staging:
-
-```
-VITE_FORMCOACH_ENV=stage
-
-VITE_SUPABASE_URL_DEV=https://gfaqeouktaxibmyzfnwr.supabase.co
-VITE_SUPABASE_KEY_DEV=your_supabase_anon_key_for_dev
-
-VITE_SUPABASE_URL_PROD=https://hqmavplgoosxhzahdfzn.supabase.co
-VITE_SUPABASE_KEY_PROD=your_supabase_anon_key_for_prod
-```
+> **Note**: Currently, setting `VITE_FORMCOACH_ENV=stage` will still use the development Supabase project, as the
+`getEnvironment()` function has been simplified to only distinguish between `prod` and non-prod environments.
 
 #### 🔴 Production Environment Setup
 
@@ -107,23 +99,29 @@ VITE_SUPABASE_KEY_PROD=your_supabase_anon_key_for_prod
 
 FormCoach uses two Supabase projects:
 
-- 🟢🟡 `formcoach-dev`: Hosts both development and staging environments
+- 🟢 `formcoach-dev`: Hosts the development environment (also used for the stage GitHub branch)
 - 🔴 `formcoach`: Hosts the production environment
+
+> **Note**: When a separate Supabase project for staging is created, this section will be updated to include a distinct
+> staging Supabase project.
 
 ### Environment Filtering and Cross-Contamination Prevention
 
 To prevent cross-environment data contamination, FormCoach uses an environment column approach:
 
-1. All tables include an `environment` column (`dev`, `stage`, or `prod`)
+1. All tables include an `environment` column (`dev` or `prod`)
 2. All queries must include environment filtering
 3. Row Level Security (RLS) policies include environment filtering
 
 This approach is critical because:
 
-- 🟢 **Development** and 🟡 **Staging** environments share the same Supabase project (`formcoach-dev`)
 - Without proper environment filtering, data from one environment could leak into another
 - Scripts and queries that don't respect the environment value can cause cross-environment contamination
 - The seed script includes checks to ensure it's running in the correct environment
+
+> **Note**: Previously, the `stage` environment value was used in the environment column for staging data. Currently,
+> all non-production data uses the `dev` environment value. When a separate Supabase project for staging is created, the
+`stage` environment value will be reintroduced.
 
 #### Cross-Contamination Prevention Checklist
 
@@ -167,6 +165,8 @@ environment:
 ```typescript
 const ENV = getEnvironment();
 
+// TODO: When a separate Supabase project for staging is created,
+// update this to use VITE_SUPABASE_URL_STAGE and VITE_SUPABASE_KEY_STAGE for stage environment
 const SUPABASE_URL = ENV === 'prod'
     ? import.meta.env.VITE_SUPABASE_URL_PROD
     : import.meta.env.VITE_SUPABASE_URL_DEV;
@@ -178,11 +178,13 @@ const SUPABASE_KEY = ENV === 'prod'
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_KEY);
 ```
 
-Note that both `dev` and `stage` environments use the development Supabase URL and key.
+Currently, both `dev` and `stage` environments use the development Supabase URL and key. The `getEnvironment()` function
+has been simplified to only distinguish between `prod` and non-prod environments, treating both `dev` and `stage` as
+`dev`.
 
 ## 📁 Directory Layout
 
-The FormCoach project is organized into three separate PyCharm projects, each with a similar structure:
+The FormCoach project is organized into two primary PyCharm projects:
 
 ### 🟢 formcoach-dev (Development)
 
@@ -216,37 +218,9 @@ formcoach-dev/
 └── ...                        # Other project files
 ```
 
-### 🟡 formcoach-stage (Staging)
-
-```
-formcoach-stage/
-├── docs/                      # Documentation
-│   ├── PyCharm/               # PyCharm-specific documentation
-│   ├── supabase/              # Supabase-specific documentation
-│   │   ├── sql/               # SQL migration files
-│   │   └── ...                # Verification scripts and documentation
-│   └── ...                    # Other documentation
-├── scripts/                   # Utility scripts
-│   ├── seed-stage.ts          # Staging environment seed script (planned, not yet implemented)
-│   └── ...                    # Other utility scripts
-├── src/                       # Source code
-│   ├── integrations/          # External integrations
-│   │   ├── supabase/          # Supabase integration
-│   │   │   ├── client.ts      # Supabase client configuration
-│   │   │   └── types.ts       # TypeScript types for Supabase
-│   │   └── ...                # Other integrations
-│   ├── lib/                   # Utility libraries
-│   │   ├── environment.ts     # Environment configuration
-│   │   ├── supabase-utils.ts  # Supabase utility functions
-│   │   └── ...                # Other utility functions
-│   └── ...                    # Application code
-├── supabase/                  # Supabase configuration
-│   ├── config.toml            # Supabase configuration
-│   └── ...                    # Other Supabase configuration files
-├── .env                       # Environment variables (not in version control)
-├── .env.example               # Example environment variables
-└── ...                        # Other project files
-```
+> **Note**: The `formcoach-dev` project is used for both the development environment and the stage GitHub branch. When a
+> separate Supabase project for staging is created, a distinct `formcoach-stage` project structure will be documented
+> here.
 
 ### 🔴 formcoach (Production)
 
@@ -336,14 +310,16 @@ Alternatively, you can run the SQL verification scripts directly in the Supabase
 
 ### Supabase Project Selection
 
-- **Issue**: Both 🟢 `dev` and 🟡 `stage` environments use the same Supabase project (`formcoach-dev`).
-- **Solution**: Be careful when working with the staging environment, as it shares the same database as development.
+- **Issue**: Both 🟢 `dev` and the stage GitHub branch use the same Supabase project (`formcoach-dev`).
+- **Solution**: Be aware that there is currently no separate Supabase project for staging. Both dev and stage GitHub
+  branches use the same backend.
 
 ### Environment Variable Configuration
 
 - **Issue**: Incorrect environment variable settings in `.env` files can cause data to be written to the wrong
   environment.
-- **Solution**: Double-check that `VITE_FORMCOACH_ENV` is set correctly for each PyCharm project.
+- **Solution**: Double-check that `VITE_FORMCOACH_ENV` is set correctly for each PyCharm project. Note that currently,
+  both `dev` and `stage` values will result in the `dev` environment being used.
 
 ### Seed Script Environment Check
 
@@ -355,6 +331,7 @@ Alternatively, you can run the SQL verification scripts directly in the Supabase
 
 - **Issue**: Forgetting to include the `environment` field when inserting data can lead to data being inaccessible.
 - **Solution**: Always include the `environment` field set to the current environment value when inserting data.
+  Currently, this will be either `dev` (for both development and stage GitHub branches) or `prod`.
 
 ### Cross-Environment Data Leakage
 
@@ -408,13 +385,15 @@ FormCoach uses TypeScript for type safety:
 
 The FormCoach project structure with shared Supabase projects presents several risks:
 
-| Risk                                        | Description                                                                      | Mitigation                                                                       |
-|---------------------------------------------|----------------------------------------------------------------------------------|----------------------------------------------------------------------------------|
-| 🟢🟡 **Cross-Environment Data Leakage**     | Data from development environment could appear in staging queries and vice versa | Always use `withEnvironmentFilter()` and verify environment column in all tables |
-| 🟢🟡 **Shared Database Resources**          | Development and staging share database connections, rate limits, and storage     | Monitor resource usage and implement rate limiting in development environment    |
-| 🟡🔴 **Inconsistent Schema**                | Schema differences between environments can cause unexpected behavior            | Use migration scripts to keep schemas in sync across all environments            |
-| 🟢🟡🔴 **Environment Configuration Errors** | Using the wrong PyCharm project or incorrect `.env` settings                     | Double-check PyCharm project and environment variables before running scripts    |
-| 🟢🟡 **RLS Policy Conflicts**               | RLS policies might not properly isolate environments                             | Ensure all RLS policies include environment filtering                            |
+| Risk                                      | Description                                                                  | Mitigation                                                                    |
+|-------------------------------------------|------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| 🟢 **Shared Database Resources**          | Development and stage GitHub branches share database connections and storage | Monitor resource usage and implement rate limiting in development environment |
+| 🟢🔴 **Inconsistent Schema**              | Schema differences between environments can cause unexpected behavior        | Use migration scripts to keep schemas in sync across all environments         |
+| 🟢🔴 **Environment Configuration Errors** | Using the wrong PyCharm project or incorrect `.env` settings                 | Double-check PyCharm project and environment variables before running scripts |
+| 🟢 **RLS Policy Conflicts**               | RLS policies might not properly isolate environments                         | Ensure all RLS policies include environment filtering                         |
+
+> **Note**: When a separate Supabase project for staging is created, additional risks related to cross-environment data
+> leakage between development and staging will need to be addressed.
 
 ### Critical Warnings
 
@@ -431,7 +410,11 @@ The FormCoach project structure with shared Supabase projects presents several r
 3. ✅ Run verification scripts regularly to check for data integrity
 4. ✅ Use the environment-specific seed scripts for each environment
 5. ✅ Include environment filtering in all database operations
-6. ✅ Test queries in development before running them in staging or production
+6. ✅ Test queries in development before running them in production
+
+> **Note**: Currently, both dev and stage GitHub branches use the same Supabase project and environment value (`dev`).
+> When a separate Supabase project for staging is created, these best practices will be updated to include stage-specific
+> guidance.
 
 ## 📝 Documentation Standards
 

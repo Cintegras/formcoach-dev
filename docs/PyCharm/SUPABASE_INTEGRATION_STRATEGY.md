@@ -170,14 +170,14 @@ erDiagram
     profiles ||--o{ workout_plans : creates
     profiles ||--o{ workout_sessions : performs
     profiles ||--o{ progress_metrics : tracks
-    
+
     exercises ||--o{ workout_plan_exercises : included_in
-    
+
     workout_plans ||--o{ workout_plan_exercises : contains
     workout_plans ||--o{ workout_sessions : followed_in
-    
+
     workout_sessions ||--o{ exercise_logs : records
-    
+
     exercise_logs ||--o{ form_analyses : analyzed_by
     exercises ||--o{ exercise_logs : performed_as
 ```
@@ -223,7 +223,7 @@ CREATE
 POLICY "Users can create their own workout plans"
   ON workout_plans FOR INSERT
   WITH CHECK (auth.uid() = user_id);
-  
+
 CREATE
 POLICY "Users can update their own workout plans"
   ON workout_plans FOR
@@ -334,10 +334,15 @@ USING (auth.uid() = user_id);
 
 ### Environment Management
 
-- Use separate Supabase projects for development, staging, and production
+- Use separate Supabase projects for development and production
+- Currently, both dev and stage GitHub branches use the same Supabase project (`formcoach-dev`)
+- The production branch uses a separate Supabase project (`formcoach`)
 - Implement environment-specific configuration
 - Create service tokens with appropriate permissions
 - Document API and schema changes
+
+> **Note**: When a separate Supabase project for staging is created, this section will be updated to include three
+> distinct Supabase projects.
 
 ### Monitoring and Maintenance
 

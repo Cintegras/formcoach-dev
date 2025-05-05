@@ -11,8 +11,8 @@ on:
 jobs:
   deploy-migrations:
     runs-on: ubuntu-latest
-    environment: staging
-    
+    environment: production
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
@@ -38,7 +38,7 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
         run: |
-          echo "Applying migrations to staging environment..."
+          echo "Applying migrations to production environment..."
           supabase db push
 
       - name: Verify migrations
@@ -52,12 +52,12 @@ jobs:
       - name: Notify on success
         if: success()
         run: |
-          echo "Migrations applied successfully to staging environment"
+          echo "Migrations applied successfully to production environment"
 
       - name: Notify on failure
         if: failure()
         run: |
-          echo "Failed to apply migrations to staging environment"
+          echo "Failed to apply migrations to production environment"
 
 # Note: This is a basic example. You'll need to:
 # 1. Set up the following secrets in your GitHub repository:

@@ -62,6 +62,9 @@ class JunieService {
 
     /**
      * Parse the INIT.md content to extract environment information
+     *
+     * TODO: When a separate Supabase project for staging is created,
+     * update this method to properly distinguish between 'dev', 'stage', and 'prod'
      */
     private parseEnvironmentInfo(content: string): EnvironmentInfo {
         // Get the current environment from the environment.ts file
@@ -72,18 +75,18 @@ class JunieService {
         let supabaseProject: 'formcoach-dev' | 'formcoach' = 'formcoach-dev';
 
         // Map environment to PyCharm project and Supabase project
-        if (currentEnv === 'dev') {
-            pycharmProject = 'formcoach-dev';
-            supabaseProject = 'formcoach-dev';
-        } else if (currentEnv === 'stage') {
-            pycharmProject = 'formcoach-stage';
-            supabaseProject = 'formcoach-dev'; // Both dev and stage use the same Supabase project
-        } else if (currentEnv === 'prod') {
+        if (currentEnv === 'prod') {
             pycharmProject = 'formcoach';
             supabaseProject = 'formcoach';
+        } else {
+            // Both dev and stage use the same Supabase project
+            pycharmProject = 'formcoach-dev';
+            supabaseProject = 'formcoach-dev';
         }
 
         return {
+            // For compatibility with existing code, we'll keep the environment type as is
+            // but in practice, it will only be 'dev' or 'prod'
             environment: currentEnv as 'dev' | 'stage' | 'prod',
             pycharmProject,
             supabaseProject
