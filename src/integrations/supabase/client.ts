@@ -66,6 +66,17 @@ const getRedirectURL = () => {
   return 'https://gfaqeouktaxibmyzfnwr.supabase.co';
 };
 
+// Ensure SUPABASE_URL and SUPABASE_KEY are not empty
+if (!SUPABASE_URL) {
+  SUPABASE_URL = 'https://gfaqeouktaxibmyzfnwr.supabase.co';
+  console.warn('SUPABASE_URL was empty, using fallback URL');
+}
+
+if (!SUPABASE_KEY) {
+  SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdmYXFlb3VrdGF4aWJteXpmbndyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDYyMzAxMDIsImV4cCI6MjA2MTgwNjEwMn0.EmzRZtlWoZBpcYflghiULEQbDI_pQtGCUG1J9KuH3rw';
+  console.warn('SUPABASE_KEY was empty, using fallback key');
+}
+
 // Create the Supabase client with site URL configuration
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_KEY, {
   auth: {
