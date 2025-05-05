@@ -1,3 +1,4 @@
+
 import { supabase } from './client';
 import { Database } from '@/integrations/supabase/types';
 import { ExerciseLog } from './types';
