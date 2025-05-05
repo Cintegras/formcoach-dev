@@ -1,287 +1,181 @@
+
 import { supabase } from './client';
-import { Database } from './types';
-import { withEnvironmentFilter } from '@/lib/supabase-utils';
+import { Database } from '@/integrations/supabase/types';
+import { WorkoutPlan, WorkoutPlanExercise } from './types';
 
-// Type definitions for Workout Plans and Exercises
-export type WorkoutPlan = Database['public']['Tables']['workout_plans']['Row'];
-export type WorkoutPlanExercise = Database['public']['Tables']['workout_plan_exercises']['Row'];
-
-/**
- * Fetches all workout plans for the current user.
- *
- * @param userId The ID of the user.
- * @returns A promise that resolves to an array of workout plans.
- */
+// Export workout plan functions
 export const getWorkoutPlans = async (userId: string): Promise<WorkoutPlan[]> => {
-  try {
-    const { data, error } = await withEnvironmentFilter(
-      supabase
-        .from('workout_plans')
-        .select('*')
-        .eq('user_id', userId)
-    );
+  const { data, error } = await supabase
+    .from('workout_plans')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Error fetching workout plans:', error);
-      return [];
-    }
-
-    return data || [];
-  } catch (error) {
-    console.error('Error fetching workout plans:', error);
-    return [];
-  }
+  if (error) throw error;
+  return data || [];
 };
 
-/**
- * Fetches a single workout plan by ID.
- *
- * @param id The ID of the workout plan.
- * @returns A promise that resolves to the workout plan, or null if not found.
- */
-export const getWorkoutPlan = async (id: string): Promise<WorkoutPlan | null> => {
-  try {
-    const { data, error } = await withEnvironmentFilter(
-      supabase
-        .from('workout_plans')
-        .select('*')
-        .eq('id', id)
-        .single()
-    );
+export const getWorkoutPlan = async (planId: string): Promise<WorkoutPlan | null> => {
+  const { data, error } = await supabase
+    .from('workout_plans')
+    .select('*')
+    .eq('id', planId)
+    .single();
 
-    if (error) {
-      console.error('Error fetching workout plan:', error);
-      return null;
-    }
-
-    return data || null;
-  } catch (error) {
-    console.error('Error fetching workout plan:', error);
-    return null;
-  }
+  if (error) throw error;
+  return data;
 };
 
-/**
- * Creates a new workout plan.
- *
- * @param workoutPlan The workout plan to create.
- * @returns A promise that resolves to the created workout plan, or null if creation fails.
- */
-export const createWorkoutPlan = async (workoutPlan: Omit<WorkoutPlan, 'id' | 'created_at' | 'updated_at'>): Promise<WorkoutPlan | null> => {
-  try {
-    const { data, error } = await supabase
-      .from('workout_plans')
-      .insert([workoutPlan])
-      .select('*')
-      .single();
+export const createWorkoutPlan = async (plan: Database['public']['Tables']['workout_plans']['Insert']): Promise<WorkoutPlan | null> => {
+  const { data, error } = await supabase
+    .from('workout_plans')
+    .insert(plan)
+    .select('*')
+    .single();
 
-    if (error) {
-      console.error('Error creating workout plan:', error);
-      return null;
-    }
-
-    return data || null;
-  } catch (error) {
-    console.error('Error creating workout plan:', error);
-    return null;
-  }
+  if (error) throw error;
+  return data;
 };
 
-/**
- * Updates an existing workout plan.
- *
- * @param id The ID of the workout plan to update.
- * @param updates The updates to apply to the workout plan.
- * @returns A promise that resolves to the updated workout plan, or null if update fails.
- */
-export const updateWorkoutPlan = async (id: string, updates: Partial<WorkoutPlan>): Promise<WorkoutPlan | null> => {
-  try {
-    const { data, error } = await supabase
-      .from('workout_plans')
-      .update(updates)
-      .eq('id', id)
-      .select('*')
-      .single();
+export const updateWorkoutPlan = async (
+  planId: string, 
+  updates: Database['public']['Tables']['workout_plans']['Update']
+): Promise<WorkoutPlan | null> => {
+  const { data, error } = await supabase
+    .from('workout_plans')
+    .update(updates)
+    .eq('id', planId)
+    .select('*')
+    .single();
 
-    if (error) {
-      console.error('Error updating workout plan:', error);
-      return null;
-    }
-
-    return data || null;
-  } catch (error) {
-    console.error('Error updating workout plan:', error);
-    return null;
-  }
+  if (error) throw error;
+  return data;
 };
 
-/**
- * Deletes a workout plan by ID.
- *
- * @param id The ID of the workout plan to delete.
- * @returns A promise that resolves to true if the workout plan was successfully deleted, or false otherwise.
- */
-export const deleteWorkoutPlan = async (id: string): Promise<boolean> => {
-  try {
-    const { error } = await supabase
-      .from('workout_plans')
-      .delete()
-      .eq('id', id);
+export const deleteWorkoutPlan = async (planId: string): Promise<boolean> => {
+  const { error } = await supabase
+    .from('workout_plans')
+    .delete()
+    .eq('id', planId);
 
-    if (error) {
-      console.error('Error deleting workout plan:', error);
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    console.error('Error deleting workout plan:', error);
-    return false;
-  }
+  if (error) throw error;
+  return true;
 };
 
-/**
- * Fetches all exercises for a given workout plan.
- *
- * @param workoutPlanId The ID of the workout plan.
- * @returns A promise that resolves to an array of exercises for the workout plan.
- */
-export const getWorkoutPlanExercises = async (workoutPlanId: string): Promise<WorkoutPlanExercise[]> => {
-  try {
-    const { data, error } = await withEnvironmentFilter(
-      supabase
-        .from('workout_plan_exercises')
-        .select('*')
-        .eq('workout_plan_id', workoutPlanId)
-    );
+// Workout plan exercise functions
+export const getWorkoutPlanExercises = async (planId: string): Promise<WorkoutPlanExercise[]> => {
+  const { data, error } = await supabase
+    .from('workout_plan_exercises')
+    .select('*')
+    .eq('workout_plan_id', planId)
+    .order('order_index', { ascending: true });
 
-    if (error) {
-      console.error('Error fetching workout plan exercises:', error);
-      return [];
-    }
-
-    return data || [];
-  } catch (error) {
-    console.error('Error fetching workout plan exercises:', error);
-    return [];
-  }
+  if (error) throw error;
+  return data || [];
 };
 
-/**
- * Adds an exercise to a workout plan.
- *
- * @param exercise The exercise to add to the workout plan.
- * @returns A promise that resolves to the added exercise, or null if the operation fails.
- */
-export const addWorkoutPlanExercise = async (exercise: Omit<WorkoutPlanExercise, 'id' | 'created_at'>): Promise<WorkoutPlanExercise | null> => {
-  try {
-    const { data, error } = await supabase
-      .from('workout_plan_exercises')
-      .insert([exercise])
-      .select('*')
-      .single();
+export const addExerciseToWorkoutPlan = async (
+  exercise: Database['public']['Tables']['workout_plan_exercises']['Insert']
+): Promise<WorkoutPlanExercise | null> => {
+  const { data, error } = await supabase
+    .from('workout_plan_exercises')
+    .insert(exercise)
+    .select('*')
+    .single();
 
-    if (error) {
-      console.error('Error adding workout plan exercise:', error);
-      return null;
-    }
-
-    return data || null;
-  } catch (error) {
-    console.error('Error adding workout plan exercise:', error);
-    return null;
-  }
+  if (error) throw error;
+  return data;
 };
 
-/**
- * Updates an exercise in a workout plan.
- *
- * @param id The ID of the exercise to update.
- * @param updates The updates to apply to the exercise.
- * @returns A promise that resolves to the updated exercise, or null if the operation fails.
- */
-export const updateWorkoutPlanExercise = async (id: string, updates: Partial<WorkoutPlanExercise>): Promise<WorkoutPlanExercise | null> => {
-  try {
-    const { data, error } = await supabase
-      .from('workout_plan_exercises')
-      .update(updates)
-      .eq('id', id)
-      .select('*')
-      .single();
+export const updateWorkoutPlanExercise = async (
+  exerciseId: string,
+  updates: Database['public']['Tables']['workout_plan_exercises']['Update']
+): Promise<WorkoutPlanExercise | null> => {
+  const { data, error } = await supabase
+    .from('workout_plan_exercises')
+    .update(updates)
+    .eq('id', exerciseId)
+    .select('*')
+    .single();
 
-    if (error) {
-      console.error('Error updating workout plan exercise:', error);
-      return null;
-    }
-
-    return data || null;
-  } catch (error) {
-    console.error('Error updating workout plan exercise:', error);
-    return null;
-  }
+  if (error) throw error;
+  return data;
 };
 
-/**
- * Deletes an exercise from a workout plan.
- *
- * @param id The ID of the exercise to delete.
- * @returns A promise that resolves to true if the exercise was successfully deleted, or false otherwise.
- */
-export const deleteWorkoutPlanExercise = async (id: string): Promise<boolean> => {
-  try {
-    const { error } = await supabase
-      .from('workout_plan_exercises')
-      .delete()
-      .eq('id', id);
+export const removeExerciseFromWorkoutPlan = async (exerciseId: string): Promise<boolean> => {
+  const { error } = await supabase
+    .from('workout_plan_exercises')
+    .delete()
+    .eq('id', exerciseId);
 
-    if (error) {
-      console.error('Error deleting workout plan exercise:', error);
-      return false;
-    }
-
-    return true;
-  } catch (error) {
-    console.error('Error deleting workout plan exercise:', error);
-    return false;
-  }
+  if (error) throw error;
+  return true;
 };
 
-/**
- * Subscribes to changes in workout plan exercises for a specific workout plan.
- *
- * @param plan_id The ID of the workout plan to subscribe to.
- * @param callback A callback function that will be called with the latest exercises whenever changes occur.
- * @returns An object with an unsubscribe method to stop listening for changes.
- */
-export const subscribeToWorkoutPlanExercises = (
-  plan_id: string | null | undefined,
-  callback: (exercises: WorkoutPlanExercise[]) => void
-) => {
-  if (!plan_id) {
-    console.error('No plan ID provided to subscription');
-    return { unsubscribe: () => {} };
-  }
+export const reorderWorkoutPlanExercises = async (planId: string, exerciseIds: string[]): Promise<boolean> => {
+  // Update each exercise with its new order
+  const updates = exerciseIds.map((id, index) => ({
+    id,
+    order_index: index
+  }));
 
+  const { error } = await supabase
+    .from('workout_plan_exercises')
+    .upsert(updates);
+
+  if (error) throw error;
+  return true;
+};
+
+// Real-time subscriptions
+export const subscribeToWorkoutPlan = (
+  planId: string,
+  callback: (plan: WorkoutPlan, eventType: 'INSERT' | 'UPDATE' | 'DELETE') => void
+): (() => void) => {
   const channel = supabase
-    .channel(`workout_plan_exercises_${plan_id}`)
+    .channel(`workout_plan_${planId}`)
+    .on(
+      'postgres_changes',
+      {
+        event: '*',
+        schema: 'public',
+        table: 'workout_plans',
+        filter: `id=eq.${planId}`,
+      },
+      (payload) => {
+        const eventType = payload.eventType as 'INSERT' | 'UPDATE' | 'DELETE';
+        callback(payload.new as WorkoutPlan, eventType);
+      }
+    )
+    .subscribe();
+
+  return () => {
+    supabase.removeChannel(channel);
+  };
+};
+
+export const subscribeToWorkoutPlanExercises = (
+  planId: string,
+  callback: (exercise: WorkoutPlanExercise, eventType: 'INSERT' | 'UPDATE' | 'DELETE') => void
+): (() => void) => {
+  const channel = supabase
+    .channel(`workout_plan_exercises_${planId}`)
     .on(
       'postgres_changes',
       {
         event: '*',
         schema: 'public',
         table: 'workout_plan_exercises',
-        filter: `workout_plan_id=eq.${plan_id}`,
+        filter: `workout_plan_id=eq.${planId}`,
       },
-      () => {
-        // When changes occur, fetch the latest exercises
-        getWorkoutPlanExercises(plan_id).then((exercises) => {
-          if (exercises) {
-            callback(exercises);
-          }
-        });
+      (payload) => {
+        const eventType = payload.eventType as 'INSERT' | 'UPDATE' | 'DELETE';
+        callback(payload.new as WorkoutPlanExercise, eventType);
       }
     )
     .subscribe();
 
-  return channel;
+  return () => {
+    supabase.removeChannel(channel);
+  };
 };

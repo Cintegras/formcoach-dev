@@ -1,3 +1,4 @@
+
 import {useCallback, useEffect, useState} from 'react';
 import {
     addFormFeedback,
@@ -75,16 +76,16 @@ export function useExerciseLogs(sessionId: string | null, enableRealtime = true)
      * Log a completed exercise
      * @param exerciseId - The exercise ID
      * @param setsCompleted - Number of sets completed
-     * @param repsCompleted - Array of reps completed for each set
-     * @param weightsUsed - Array of weights used for each set
+     * @param repsCompleted - JSON string of reps completed for each set
+     * @param weightsUsed - JSON string of weights used for each set
      * @param videoUrl - Optional URL to a video of the exercise
      * @returns The created exercise log
      */
     const logCompletedExercise = async (
         exerciseId: string,
         setsCompleted: number,
-        repsCompleted: number[],
-        weightsUsed: number[],
+        repsCompleted: string, // Change to string for JSON
+        weightsUsed: string, // Change to string for JSON
         videoUrl?: string
     ): Promise<ExerciseLog | null> => {
         if (!sessionId) {

@@ -49,10 +49,14 @@ export function useAuth() {
     return { error };
   };
 
+  // Add isAuthenticated computed property
+  const isAuthenticated = !!user;
+
   return {
     user,
     session,
     loading,
+    isAuthenticated,
     signIn,
     signUp,
     signOut,

@@ -111,43 +111,52 @@ const LogWorkout = () => {
         if (logs.length > 0) {
             const existingLog = logs.find(log => log.exercise_id === exerciseId);
             if (existingLog) {
-                // If we have an existing log, populate the sets data
-                try {
-                    const repsCompleted = JSON.parse(existingLog.reps_completed || '[]');
-                    const weightsUsed = JSON.parse(existingLog.weights_used || '[]');
+              // If we have an existing log, populate the sets data
+              try {
+                  const repsCompleted = existingLog.reps_completed ? 
+                      (typeof existingLog.reps_completed === 'string' ? 
+                          JSON.parse(existingLog.reps_completed) as number[] : 
+                          existingLog.reps_completed as number[]) : 
+                      [];
+                      
+                  const weightsUsed = existingLog.weights_used ? 
+                      (typeof existingLog.weights_used === 'string' ? 
+                          JSON.parse(existingLog.weights_used) as number[] : 
+                          existingLog.weights_used as number[]) : 
+                      [];
 
-                    // Update sets with the logged data
-                    const updatedSets = [...sets];
-                    for (let i = 0; i < repsCompleted.length; i++) {
-                        if (i === 0 && updatedSets[0].isWarmup) {
-                            updatedSets[0].reps = repsCompleted[i].toString();
-                            updatedSets[0].weight = weightsUsed[i].toString();
-                        } else {
-                            const setIndex = updatedSets[0].isWarmup ? i : i - 1;
-                            if (updatedSets[setIndex + 1]) {
-                                updatedSets[setIndex + 1].reps = repsCompleted[i].toString();
-                                updatedSets[setIndex + 1].weight = weightsUsed[i].toString();
-                            }
-                        }
-                    }
+                  // Update sets with the logged data
+                  const updatedSets = [...sets];
+                  for (let i = 0; i < repsCompleted.length; i++) {
+                      if (i === 0 && updatedSets[0].isWarmup) {
+                          updatedSets[0].reps = repsCompleted[i].toString();
+                          updatedSets[0].weight = weightsUsed[i].toString();
+                      } else {
+                          const setIndex = updatedSets[0].isWarmup ? i : i - 1;
+                          if (updatedSets[setIndex + 1]) {
+                              updatedSets[setIndex + 1].reps = repsCompleted[i].toString();
+                              updatedSets[setIndex + 1].weight = weightsUsed[i].toString();
+                          }
+                      }
+                  }
 
-                    setSets(updatedSets);
+                  setSets(updatedSets);
 
-                    // Set video URL if available
-                    if (existingLog.video_url) {
-                        setVideoUrl(existingLog.video_url);
-                    }
+                  // Set video URL if available
+                  if (existingLog.video_url) {
+                      setVideoUrl(existingLog.video_url);
+                  }
 
-                    // Set form feedback if available
-                    if (existingLog.form_feedback) {
-                        setFormFeedback(existingLog.form_feedback);
-                    }
-                } catch (error) {
-                    console.error('Error parsing exercise log data:', error);
-                }
-            }
-        }
-    }, [logs, exerciseId]);
+                  // Set form feedback if available
+                  if (existingLog.form_feedback) {
+                      setFormFeedback(existingLog.form_feedback);
+                  }
+              } catch (error) {
+                  console.error('Error parsing exercise log data:', error);
+              }
+          }
+      }
+  }, [logs, exerciseId]);
 
   const updateSet = (index: number, field: 'reps' | 'weight', value: string) => {
     setSets(prev => {
@@ -208,12 +217,12 @@ const LogWorkout = () => {
             const repsCompleted = sets.map(set => parseInt(set.reps) || 0);
             const weightsUsed = sets.map(set => parseInt(set.weight) || 0);
 
-            // Log the completed exercise
+            // Log the completed exercise - pass serialized arrays
             await logCompletedExercise(
                 exerciseId,
                 setsCompleted,
-                repsCompleted,
-                weightsUsed,
+                JSON.stringify(repsCompleted),
+                JSON.stringify(weightsUsed),
                 videoUrl || undefined
             );
 

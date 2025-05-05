@@ -35,28 +35,39 @@ const WorkoutReview = () => {
     // Load exercise data from logs
     useEffect(() => {
         if (logs.length > 0) {
-            const exerciseData: ExerciseDisplay[] = logs.map(log => {
-                // Parse JSON data
-                const repsCompleted = JSON.parse(log.reps_completed || '[]');
-                const weightsUsed = JSON.parse(log.weights_used || '[]');
+            const exerciseData: ExerciseDisplay[] = logs
+                .filter(log => log.exercise_id !== null) // Filter out logs with null exercise_id
+                .map(log => {
+                    // Parse JSON data safely
+                    const repsCompleted = log.reps_completed ? 
+                        (typeof log.reps_completed === 'string' ? 
+                            JSON.parse(log.reps_completed) as number[] : 
+                            log.reps_completed as number[]) : 
+                        [];
+                        
+                    const weightsUsed = log.weights_used ? 
+                        (typeof log.weights_used === 'string' ? 
+                            JSON.parse(log.weights_used) as number[] : 
+                            log.weights_used as number[]) : 
+                        [];
 
-                // Get exercise name from ID
-                const exerciseId = log.exercise_id;
-                const exerciseName = exerciseId
-                    .split('-')
-                    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-                    .join(' ');
+                    // Get exercise name from ID
+                    const exerciseId = log.exercise_id || '';
+                    const exerciseName = exerciseId
+                        .split('-')
+                        .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                        .join(' ');
 
-                return {
-                    id: exerciseId,
-                    name: exerciseName,
-                    sets: repsCompleted.length,
-                    reps: repsCompleted,
-                    weights: weightsUsed,
-                    feedback: log.form_feedback,
-                    videoUrl: log.video_url
-                };
-            });
+                    return {
+                        id: exerciseId,
+                        name: exerciseName,
+                        sets: repsCompleted.length,
+                        reps: repsCompleted,
+                        weights: weightsUsed,
+                        feedback: log.form_feedback,
+                        videoUrl: log.video_url
+                    };
+                });
 
             setExercises(exerciseData);
 
@@ -85,7 +96,7 @@ const WorkoutReview = () => {
 
             // Calculate duration
             if (session.end_time) {
-                const startTime = new Date(session.created_at);
+                const startTime = new Date(session.created_at || new Date());
                 const endTime = new Date(session.end_time);
                 const duration = differenceInMinutes(endTime, startTime);
                 setWorkoutDuration(duration);

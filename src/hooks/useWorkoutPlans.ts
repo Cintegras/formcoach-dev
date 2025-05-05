@@ -74,7 +74,8 @@ export function useWorkoutPlans(enableRealtime = true) {
         try {
             const newPlan = await createWorkoutPlan({
                 ...plan,
-                user_id: user.id
+                user_id: user.id,
+                name: plan.name || 'New Workout Plan' // Ensure name is provided
             });
 
             if (newPlan) {

@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {Loader2} from 'lucide-react';
 
@@ -8,12 +9,17 @@ interface LoadingIndicatorProps {
     className?: string;
 }
 
-const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({
-                                                               size = 'medium',
-                                                               text = 'Loading...',
-                                                               fullScreen = false,
-                                                               className = '',
-                                                           }) => {
+const LoadingIndicator: React.FC<LoadingIndicatorProps> & {
+    Small: React.FC<Omit<LoadingIndicatorProps, 'size'>>,
+    Medium: React.FC<Omit<LoadingIndicatorProps, 'size'>>,
+    Large: React.FC<Omit<LoadingIndicatorProps, 'size'>>,
+    FullScreen: React.FC<Omit<LoadingIndicatorProps, 'fullScreen'>>
+} = ({
+    size = 'medium',
+    text = 'Loading...',
+    fullScreen = false,
+    className = '',
+}) => {
     // Determine icon size based on the size prop
     const iconSize = {
         small: 16,
