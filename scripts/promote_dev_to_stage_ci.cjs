@@ -10,18 +10,29 @@
 const fs = require('fs-extra');
 const path = require('path');
 
-// Retry operation helper function
-async function retryOperation(operation, retries = 3) {
+// Enhanced retry operation helper function with better error handling
+async function retryOperation(operation, operationName = 'Operation', retries = 3) {
     for (let i = 0; i < retries; i++) {
         try {
             return await operation();
         } catch (err) {
-            console.warn(`Retry ${i + 1}/${retries} failed: ${err.message}`);
+            const retryCount = i + 1;
+            const errorCode = err.code || 'UNKNOWN';
+            const backoffTime = 1000 * Math.pow(2, i);
+
+            console.warn(`⚠️ ${operationName} - Retry ${retryCount}/${retries} failed: [${errorCode}] ${err.message}`);
+
             if (i === retries - 1) {
+                console.error(`❌ ${operationName} - All ${retries} retries failed. Last error: [${errorCode}] ${err.message}`);
+                // Add additional context to the error
+                err.retryAttempts = retries;
+                err.operationName = operationName;
                 throw err; // Rethrow the error after all retries have failed
             }
+
+            console.log(`⏱️ Waiting ${backoffTime / 1000} seconds before next retry...`);
             // Wait a bit before retrying (exponential backoff)
-            await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i)));
+            await new Promise(resolve => setTimeout(resolve, backoffTime));
         }
     }
 }
@@ -95,7 +106,7 @@ async function savePromotionSummary() {
     // Create the directory if it doesn't exist
     await retryOperation(async () => {
         await fs.ensureDir(logDir);
-    });
+    }, 'Create Log Directory');
 
     // Create the log entry
     const timestamp = formatDate();
@@ -108,16 +119,16 @@ async function savePromotionSummary() {
     try {
         const fileExists = await retryOperation(async () => {
             return await fs.pathExists(logFile);
-        });
+        }, 'Check Log File Exists');
 
         if (fileExists) {
             await retryOperation(async () => {
                 await fs.appendFile(logFile, logEntry);
-            });
+            }, 'Append to Log File');
         } else {
             await retryOperation(async () => {
                 await fs.writeFile(logFile, `# Promotion Log - Stage Environment\n${logEntry}`);
-            });
+            }, 'Create New Log File');
         }
         console.log(`\n✅ Promotion summary saved to ${logFile}`);
     } catch (err) {
@@ -176,7 +187,7 @@ async function promoteDevToStage() {
                                 await retryOperation(async () => {
                                     await fs.ensureDir(path.dirname(fileDestPath));
                                     await fs.copy(file, fileDestPath, {overwrite: true});
-                                });
+                                }, `Copy File: ${relativePath}`);
                                 promotedFiles.push(relativePath);
                                 console.log(`✅ Copied: ${relativePath}`);
                             } catch (err) {
@@ -193,7 +204,7 @@ async function promoteDevToStage() {
                     try {
                         await retryOperation(async () => {
                             await fs.copy(sourcePath, destPath, {overwrite: true});
-                        });
+                        }, `Copy Item: ${item}`);
                         promotedFiles.push(item);
                         console.log(`✅ Copied: ${item}`);
                     } catch (err) {
@@ -218,7 +229,7 @@ async function promoteDevToStage() {
                     if (stats.isFile()) {
                         await retryOperation(async () => {
                             await fs.copy(sourcePath, destPath, {overwrite: true});
-                        });
+                        }, `Copy Markdown File: ${file}`);
                         promotedFiles.push(file);
                         console.log(`✅ Copied: ${file}`);
                     }

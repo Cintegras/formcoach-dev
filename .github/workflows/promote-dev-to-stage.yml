@@ -32,9 +32,10 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Verify promotion script exists
+      - name: Verify scripts exist
         run: |
-          test -f formcoach-dev/scripts/promote_dev_to_stage_ci.cjs || exit 1
+          test -f formcoach-dev/scripts/promote_dev_to_stage_ci.cjs || { echo "❌ Promotion script not found"; exit 1; }
+          test -f formcoach-dev/docs/supabase/run_verification_dev.js || { echo "❌ Dev verification script not found"; exit 1; }
 
       - name: Install dependencies
         run: |
@@ -44,13 +45,21 @@ jobs:
       - name: Ensure stage directory exists
         run: mkdir -p ../formcoach-stage
 
-      - name: Make CI script executable
-        run: chmod +x formcoach-dev/scripts/promote_dev_to_stage_ci.cjs
+      - name: Make scripts executable
+        run: |
+          chmod +x formcoach-dev/scripts/promote_dev_to_stage_ci.cjs
+          chmod +x formcoach-dev/docs/supabase/run_verification_dev.js
 
       - name: Debug resolved paths
         run: |
           echo "Source Directory: $(pwd)/formcoach-dev"
           echo "Destination Directory: $(pwd)/formcoach-stage"
+
+      - name: Run dev environment verification
+        run: |
+          cd formcoach-dev
+          node docs/supabase/run_verification_dev.js || { echo '❌ Dev environment verification failed'; exit 1; }
+          echo '✅ Dev environment verification passed'
 
       - name: Run promotion script
         run: |
