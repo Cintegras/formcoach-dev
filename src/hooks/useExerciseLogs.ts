@@ -1,3 +1,4 @@
+
 import {useEffect, useState} from 'react';
 import {supabase} from '@/integrations/supabase/client';
 import {useToast} from '@/components/ui/use-toast';
@@ -5,13 +6,13 @@ import {useToast} from '@/components/ui/use-toast';
 // This function accepts a number[] but converts to string[] for the query
 const fetchExerciseLogsById = async (ids: number[]) => {
   try {
-      // Convert number[] to string[] for the .in() method
-      const stringIds = ids.map(id => id.toString());
+    // Convert number[] to string[] for the .in() method
+    const stringIds = ids.map(id => id.toString());
 
     const { data, error } = await supabase
       .from('exercise_logs')
       .select('*')
-        .in('id', stringIds);
+      .in('id', stringIds);
 
     if (error) throw error;
     return { data, error: null };

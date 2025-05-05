@@ -1,3 +1,4 @@
+
 import {useEffect, useState} from 'react';
 import {supabase} from '@/integrations/supabase/client';
 import {Session, User} from '@supabase/supabase-js';
@@ -5,7 +6,6 @@ import {Session, User} from '@supabase/supabase-js';
 // Define an interface for auth errors
 interface AuthError {
     message: string;
-
     [key: string]: any;
 }
 
