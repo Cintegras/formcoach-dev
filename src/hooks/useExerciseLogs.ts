@@ -1,4 +1,3 @@
-
 import {useEffect, useState} from 'react';
 import {supabase} from '@/integrations/supabase/client';
 import {useToast} from '@/components/ui/use-toast';
@@ -73,8 +72,33 @@ export const useExerciseLogs = (sessionId: string | number | null, includeComple
     }, [sessionId, includeCompleted, toast]);
 
     // Function to log a completed exercise
-    const logCompletedExercise = async (exerciseData: any) => {
+    const logCompletedExercise = async (
+        exerciseId: string,
+        setsCompleted: number,
+        repsCompleted: string | number[],
+        weightsUsed: string | number[],
+        videoUrl?: string
+    ) => {
         try {
+            // Ensure repsCompleted and weightsUsed are arrays of numbers
+            const repsArray = typeof repsCompleted === 'string'
+                ? JSON.parse(repsCompleted)
+                : repsCompleted;
+
+            const weightsArray = typeof weightsUsed === 'string'
+                ? JSON.parse(weightsUsed)
+                : weightsUsed;
+
+            const exerciseData = {
+                exercise_id: exerciseId,
+                session_id: sessionId,
+                sets_completed: setsCompleted,
+                reps_completed: repsArray,
+                weights_used: weightsArray,
+                video_url: videoUrl,
+                completed: true
+            };
+
             const {data, error} = await supabase
                 .from('exercise_logs')
                 .upsert(exerciseData)
