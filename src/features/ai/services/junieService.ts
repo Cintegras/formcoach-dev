@@ -6,7 +6,7 @@
  * to understand the current environment, Supabase project, and PyCharm project.
  */
 
-import {getEnvironment} from '../../../lib/environment.ts';
+import {getEnvironment} from '../../../lib/environment';
 
 // Define types for environment information
 interface EnvironmentInfo {

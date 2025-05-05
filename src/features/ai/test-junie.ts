@@ -5,7 +5,7 @@
  * Run it with: npx ts-node src/features/ai/test-junie.ts
  */
 
-import junieService from './services/junieService.ts';
+import junieService from './services/junieService';
 
 async function testJunieService() {
     console.log('Testing Junie service...');
