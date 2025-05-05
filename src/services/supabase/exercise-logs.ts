@@ -20,16 +20,16 @@ export const logExercise = async (
   sessionId: string,
   exerciseId: string,
   setsCompleted: number,
-  repsCompleted: string, // JSON string with reps data
-  weightsUsed: string, // JSON string with weights data
+  repsCompleted: number[],
+  weightsUsed: number[],
   videoUrl?: string
 ): Promise<ExerciseLog | null> => {
   const insertData = {
     workout_session_id: sessionId,
     exercise_id: exerciseId,
     sets_completed: setsCompleted,
-    reps_completed: JSON.parse(repsCompleted),
-    weights_used: JSON.parse(weightsUsed),
+    reps_completed: repsCompleted,
+    weights_used: weightsUsed,
     video_url: videoUrl,
     environment: getEnvironment()
   };

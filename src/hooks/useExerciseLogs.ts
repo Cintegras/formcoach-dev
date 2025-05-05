@@ -8,7 +8,8 @@ import {
   createExerciseLog,
   updateExerciseLog,
   deleteExerciseLog,
-  subscribeToExerciseLogs
+  subscribeToExerciseLogs,
+  logExercise
 } from '@/services/supabase/exercise-logs';
 
 export function useExerciseLogs(sessionId: string) {
@@ -60,6 +61,37 @@ export function useExerciseLogs(sessionId: string) {
       return newLog;
     } catch (err) {
       console.error('Error adding exercise log:', err);
+      setError(err instanceof Error ? err : new Error(String(err)));
+      return null;
+    }
+  }, [sessionId]);
+  
+  // Added the logCompletedExercise function to fix the TypeScript error
+  const logCompletedExercise = useCallback(async (
+    exerciseId: string,
+    setsCompleted: number,
+    repsCompleted: number[],
+    weightsUsed: number[],
+    videoUrl?: string
+  ) => {
+    if (!sessionId) return null;
+
+    try {
+      const newLog = await logExercise(
+        sessionId,
+        exerciseId,
+        setsCompleted,
+        repsCompleted,
+        weightsUsed,
+        videoUrl
+      );
+
+      if (newLog) {
+        setLogs(current => [...current, newLog]);
+      }
+      return newLog;
+    } catch (err) {
+      console.error('Error logging completed exercise:', err);
       setError(err instanceof Error ? err : new Error(String(err)));
       return null;
     }
@@ -141,6 +173,7 @@ export function useExerciseLogs(sessionId: string) {
     fetchLogs,
     addLog,
     updateLog,
-    removeLog
+    removeLog,
+    logCompletedExercise
   };
 }

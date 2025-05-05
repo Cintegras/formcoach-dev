@@ -8,10 +8,11 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/
 import {useForm} from 'react-hook-form';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {Lock, Mail} from 'lucide-react';
+import {Lock, Mail, AlertCircle} from 'lucide-react';
 import {useToast} from '@/components/ui/use-toast';
 import {useAuth} from '@/features/auth/hooks/useAuth';
 import { EmailVerification } from '@/features/auth/components/EmailVerification';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -26,6 +27,7 @@ const Login = () => {
   const {signIn, loading: authLoading} = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [verificationEmail, setVerificationEmail] = useState<string | null>(null);
+  const [authError, setAuthError] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Get the redirect path from location state or default to home
@@ -41,9 +43,10 @@ const Login = () => {
 
   const onSubmit = async (values: LoginValues) => {
     setIsLoading(true);
+    setAuthError(null);
 
     try {
-      const {error} = await signIn(values.email, values.password);
+      const {data, error} = await signIn(values.email, values.password);
 
       if (error) {
         // Check if the error is related to email confirmation
@@ -56,20 +59,19 @@ const Login = () => {
           return;
         }
         
-        toast({
-          title: "Authentication error",
-          description: error.message,
-          variant: "destructive",
-        });
+        // Show error in the UI
+        setAuthError(error.message);
         return;
       }
 
       // If successful, navigate to the redirect path
       navigate(from);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : "Failed to sign in";
+      setAuthError(errorMessage);
       toast({
         title: "Authentication error",
-        description: error instanceof Error ? error.message : "Failed to sign in",
+        description: errorMessage,
         variant: "destructive",
       });
     } finally {
@@ -113,7 +115,15 @@ const Login = () => {
           </p>
         </div>
 
-        <div className="w-full rounded-lg p-6" style={{ backgroundColor: "rgba(176, 232, 227, 0.12)" }}>
+        <div className="w-full max-w-md rounded-lg p-6" style={{ backgroundColor: "rgba(176, 232, 227, 0.12)" }}>
+          {authError && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertTitle>Authentication Failed</AlertTitle>
+              <AlertDescription>{authError}</AlertDescription>
+            </Alert>
+          )}
+
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
