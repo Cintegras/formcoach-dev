@@ -1,3 +1,4 @@
+
 import {supabase} from '@/integrations/supabase/client';
 import {getEnvironment} from '@/lib/environment';
 import {ExerciseLog} from './types';
@@ -7,12 +8,12 @@ export const getExerciseLogs = async (sessionId: string): Promise<ExerciseLog[]>
   const { data, error } = await supabase
     .from('exercise_logs')
     .select('*')
-    .eq('environment', getEnvironment() as string)
-    .eq('workout_session_id', sessionId as string)
+    .eq('environment', getEnvironment())
+    .eq('workout_session_id', sessionId)
     .order('created_at', { ascending: true });
 
   if (error) throw error;
-  return (data || []) as ExerciseLog[];
+  return (data || []) as unknown as ExerciseLog[];
 };
 
 export const logExercise = async (
@@ -30,17 +31,17 @@ export const logExercise = async (
     reps_completed: JSON.parse(repsCompleted),
     weights_used: JSON.parse(weightsUsed),
     video_url: videoUrl,
-    environment: getEnvironment() as string
+    environment: getEnvironment()
   };
 
   const { data, error } = await supabase
     .from('exercise_logs')
-    .insert(insertData)
+    .insert(insertData as any)
     .select('*')
     .single();
 
   if (error) throw error;
-  return data as ExerciseLog;
+  return data as unknown as ExerciseLog;
 };
 
 export const addFormFeedback = async (
@@ -60,7 +61,7 @@ export const addFormFeedback = async (
     .single();
 
   if (error) throw error;
-  return data as ExerciseLog;
+  return data as unknown as ExerciseLog;
 };
 
 // Create exercise log with proper type
@@ -73,22 +74,21 @@ export const createExerciseLog = async (
     weights_used?: number[] | null;
     video_url?: string | null;
     form_feedback?: string | null;
-      environment?: string | null;
   }
 ): Promise<ExerciseLog | null> => {
   const insertData = {
     ...log,
-    environment: getEnvironment() as string
+    environment: getEnvironment()
   };
 
-    const { data, error } = await supabase
+  const { data, error } = await supabase
     .from('exercise_logs')
-    .insert(insertData)
+    .insert(insertData as any)
     .select('*')
     .single();
 
   if (error) throw error;
-  return data as ExerciseLog;
+  return data as unknown as ExerciseLog;
 };
 
 export const updateExerciseLog = async (
@@ -111,7 +111,7 @@ export const updateExerciseLog = async (
     .single();
 
   if (error) throw error;
-  return data as ExerciseLog;
+  return data as unknown as ExerciseLog;
 };
 
 export const deleteExerciseLog = async (logId: string): Promise<boolean> => {

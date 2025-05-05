@@ -27,25 +27,27 @@ async function testSupabaseConnection() {
         }
 
         console.log(`✅ Successfully connected to Supabase and fetched profiles!`);
-        console.log(`Found ${profiles.length} profiles in the '${getEnvironment()}' environment:`);
+        console.log(`Found ${profiles?.length || 0} profiles in the '${getEnvironment()}' environment:`);
 
         // Log the profiles (limited to 10 for readability)
-        const displayProfiles = profiles.slice(0, 10);
-        console.table(displayProfiles);
+        if (profiles) {
+            const displayProfiles = profiles.slice(0, 10);
+            console.table(displayProfiles);
 
-        if (profiles.length > 10) {
-            console.log(`... and ${profiles.length - 10} more profiles`);
-        }
+            if (profiles.length > 10) {
+                console.log(`... and ${profiles.length - 10} more profiles`);
+            }
 
-        // Verify environment filtering is working
-        const allHaveCorrectEnvironment = profiles.every(
-            profile => profile.environment === getEnvironment()
-        );
+            // Verify environment filtering is working
+            const allHaveCorrectEnvironment = profiles.every(
+                profile => profile.environment === getEnvironment()
+            );
 
-        if (allHaveCorrectEnvironment) {
-            console.log(`✅ Environment filtering is working correctly!`);
-        } else {
-            console.error(`❌ Some profiles have incorrect environment values!`);
+            if (allHaveCorrectEnvironment) {
+                console.log(`✅ Environment filtering is working correctly!`);
+            } else {
+                console.error(`❌ Some profiles have incorrect environment values!`);
+            }
         }
 
     } catch (err) {

@@ -15,7 +15,7 @@ export function useExercises() {
       const { data, error } = await supabase
         .from('exercises')
         .select('*')
-        .eq('environment', environment as string)
+        .eq('environment', environment)
         .order('name', { ascending: true });
 
       if (error) throw error;
@@ -34,8 +34,8 @@ export function useExercises() {
       const { data, error } = await supabase
         .from('exercises')
         .select('*')
-        .eq('environment', environment as string)
-        .eq('id', id as string)
+        .eq('environment', environment)
+        .eq('id', id)
         .single();
 
       if (error) throw error;
