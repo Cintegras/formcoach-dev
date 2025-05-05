@@ -28,10 +28,17 @@ export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_KEY, {
     persistSession: true,
     detectSessionInUrl: true,
     flowType: 'pkce',
-    // Use the URL of the current site for redirects
-    redirectTo: `${getRedirectURL()}/verify`
   }
 });
+
+// Set up the site URL for verification redirects
+if (typeof window !== 'undefined') {
+  const url = new URL(window.location.href);
+  const baseUrl = `${url.protocol}//${url.host}`;
+  supabase.auth.setConfig({
+    site_url: baseUrl
+  });
+}
 
 // NOTE: We no longer set the environment using supabase.query() as it's a server-only feature
 // Instead, all reads and writes should explicitly use .eq('environment', getEnvironment())

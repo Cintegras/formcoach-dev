@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import {AuthProvider} from '@/features/auth/components/AuthProvider';
@@ -5,14 +6,12 @@ import ProtectedRoute from '@/features/auth/components/ProtectedRoute';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import ProfileSetup from './pages/ProfileSetup';
+import ProfileSetupPage from './pages/ProfileSetupPage';
 import WorkoutCategorySelect from './pages/WorkoutCategorySelect';
-import ExerciseSelect from './pages/ExerciseSelect';
-import WorkoutTracking from './pages/WorkoutTracking';
-import Trends from './pages/Trends';
 import ForgotPassword from './pages/ForgotPassword';
-import ResetPassword from './pages/ResetPassword';
 import VerifyEmail from './pages/VerifyEmail';
+import WorkoutPlan from './pages/WorkoutPlan';
+import WorkoutConfirmation from './pages/WorkoutConfirmation';
 
 function App() {
   return (
@@ -22,7 +21,6 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
           <Route
             path="/"
             element={
@@ -35,7 +33,7 @@ function App() {
             path="/profile-setup"
             element={
               <ProtectedRoute>
-                <ProfileSetup />
+                <ProfileSetupPage />
               </ProtectedRoute>
             }
           />
@@ -48,26 +46,18 @@ function App() {
             }
           />
           <Route
-            path="/exercise-select/:categoryId"
+            path="/workout-plan"
             element={
               <ProtectedRoute>
-                <ExerciseSelect />
+                <WorkoutPlan />
               </ProtectedRoute>
             }
           />
           <Route
-            path="/workout-tracking"
+            path="/workout-confirmation"
             element={
               <ProtectedRoute>
-                <WorkoutTracking />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/trends"
-            element={
-              <ProtectedRoute>
-                <Trends />
+                <WorkoutConfirmation />
               </ProtectedRoute>
             }
           />
