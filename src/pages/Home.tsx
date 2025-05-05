@@ -1,3 +1,4 @@
+
 import React, {useEffect, useState} from 'react';
 import {format} from 'date-fns';
 import {useNavigate} from 'react-router-dom';
@@ -6,6 +7,7 @@ import PrimaryButton from '@/components/PrimaryButton';
 import {Activity, Calendar, Clock, TrendingUp} from 'lucide-react';
 import {useWorkoutSessions} from '@/hooks/useWorkoutSessions';
 import {useProgressMetrics} from '@/hooks/useProgressMetrics';
+import {safeParseDate} from '@/utils/dateUtils';
 
 const Home = () => {
   const navigate = useNavigate();
@@ -45,7 +47,7 @@ const Home = () => {
 
     // Calculate workout stats
     const totalWorkouts = sessions.length;
-    const lastWorkoutDate = sessions.length > 0 ? new Date(sessions[0].created_at) : null;
+    const lastWorkoutDate = sessions.length > 0 ? safeParseDate(sessions[0].created_at) : null;
     const lastWorkoutFormatted = lastWorkoutDate ? format(lastWorkoutDate, 'MMM d, yyyy') : 'No workouts yet';
 
     // Check if there's an active session

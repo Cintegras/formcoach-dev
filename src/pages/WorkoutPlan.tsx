@@ -4,6 +4,7 @@ import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import {ArrowLeft, Check, Clock, Pause, Play, RotateCcw} from 'lucide-react';
 import {useWorkoutSessions} from '@/hooks/useWorkoutSessions';
+import { safeParseDate } from '@/utils/dateUtils';
 
 interface ExerciseItem {
   id: string;
@@ -152,7 +153,7 @@ const WorkoutPlan = () => {
           setSessionStarted(true);
 
           // Calculate elapsed time
-          const startTime = new Date(activeSession.created_at).getTime();
+          const startTime = safeParseDate(activeSession.created_at).getTime();
           const currentTime = new Date().getTime();
           const elapsed = Math.floor((currentTime - startTime) / 1000);
           setElapsedTime(elapsed);

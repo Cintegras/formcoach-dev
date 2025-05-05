@@ -1,4 +1,3 @@
-
 import { supabase } from './client';
 import { Database } from '@/integrations/supabase/types';
 import { ExerciseLog } from './types';
@@ -59,6 +58,7 @@ export const addFormFeedback = async (
   return data;
 };
 
+// Fix the invalid property error by using appropriate type
 export const createExerciseLog = async (
   log: Database['public']['Tables']['exercise_logs']['Insert']
 ): Promise<ExerciseLog | null> => {

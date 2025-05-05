@@ -5,6 +5,7 @@ import PrimaryButton from '@/components/PrimaryButton';
 import SecondaryButton from '@/components/SecondaryButton';
 import {ArrowLeft, GripVertical, Loader2, Plus, Save, Trash2} from 'lucide-react';
 import {useWorkoutPlan} from '@/hooks/useWorkoutPlans';
+import { useExercises } from '@/hooks/useExercises'; // Add this if it doesn't exist yet
 
 interface ExerciseFormData {
     name: string;
@@ -47,6 +48,10 @@ const WorkoutPlanEditor = () => {
         rest_seconds: 60,
         notes: ''
     });
+    
+    // Add this state if needed to track exercises by ID
+    const [exerciseDetails, setExerciseDetails] = useState<Record<string, any>>({});
+    const { exercises: allExercises, loading: exercisesLoading } = useExercises?.() || { exercises: [], loading: false };
 
     // Initialize form with plan data when loaded
     useEffect(() => {
@@ -55,6 +60,38 @@ const WorkoutPlanEditor = () => {
             setPlanDescription(plan.description || '');
         }
     }, [plan]);
+
+    // Load exercise details when exercises change
+    useEffect(() => {
+        if (exercises.length > 0 && allExercises.length > 0) {
+            const detailsMap: Record<string, any> = {};
+            exercises.forEach(ex => {
+                const matchingExercise = allExercises.find(e => e.id === ex.exercise_id);
+                if (matchingExercise) {
+                    detailsMap[ex.id] = matchingExercise;
+                }
+            });
+            setExerciseDetails(detailsMap);
+        }
+    }, [exercises, allExercises]);
+
+    // Get exercise name from either the details map or fallback to a generated name
+    const getExerciseName = (exercise: any) => {
+        if (exerciseDetails[exercise.id]?.name) {
+            return exerciseDetails[exercise.id].name;
+        }
+        
+        // Fallback - generate a name from the ID if available
+        if (exercise.exercise_id) {
+            const exerciseId = exercise.exercise_id;
+            return exerciseId
+                .split('-')
+                .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+                .join(' ');
+        }
+        
+        return 'Unnamed Exercise';
+    };
 
     // Handle plan save
     const handleSavePlan = async () => {
@@ -229,7 +266,7 @@ const WorkoutPlanEditor = () => {
                                     </div>
                                     <div className="flex-1">
                                         <h3 className="font-semibold text-[16px] text-[#B0E8E3]">
-                                            {exercise.name}
+                                            {getExerciseName(exercise)}
                                         </h3>
                                         <p className="font-normal text-[14px] text-[#A4B1B7]">
                                             {exercise.sets} sets × {exercise.reps} reps

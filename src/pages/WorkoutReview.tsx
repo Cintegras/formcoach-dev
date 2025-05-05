@@ -1,3 +1,4 @@
+
 import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
@@ -7,6 +8,7 @@ import {AlertCircle, Clock, Dumbbell, Edit, Flame, ThumbsUp, Video} from 'lucide
 import {useWorkoutSessions} from '@/hooks/useWorkoutSessions';
 import {useExerciseLogs} from '@/hooks/useExerciseLogs';
 import {differenceInMinutes} from 'date-fns';
+import { safeParseDate } from '@/utils/dateUtils';
 
 interface ExerciseDisplay {
     id: string;
@@ -16,8 +18,8 @@ interface ExerciseDisplay {
     weights: number[];
     isCardio?: boolean;
     duration?: string;
-    feedback?: string;
-    videoUrl?: string;
+    feedback?: string | null; // Update to allow null
+    videoUrl?: string | null; // Update to allow null
 }
 
 const WorkoutReview = () => {
@@ -96,8 +98,8 @@ const WorkoutReview = () => {
 
             // Calculate duration
             if (session.end_time) {
-                const startTime = new Date(session.created_at || new Date());
-                const endTime = new Date(session.end_time);
+                const startTime = safeParseDate(session.created_at);
+                const endTime = safeParseDate(session.end_time);
                 const duration = differenceInMinutes(endTime, startTime);
                 setWorkoutDuration(duration);
 

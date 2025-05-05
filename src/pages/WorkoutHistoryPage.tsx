@@ -3,6 +3,7 @@ import {format, isWithinInterval, subDays} from 'date-fns';
 import PageContainer from '@/components/PageContainer';
 import {useWorkoutSessions} from '@/hooks/useWorkoutSessions';
 import {ChevronRight, Clock, Filter, Loader2, X} from 'lucide-react';
+import { safeFormat, safeParseDate } from '@/utils/dateUtils';
 
 // Workout types for filtering
 const WORKOUT_TYPES = {
@@ -54,7 +55,7 @@ const WorkoutHistoryPage = () => {
             if (selectedTimeRange !== TIME_RANGES.ALL) {
                 const days = parseInt(selectedTimeRange);
                 const startDate = subDays(new Date(), days);
-                const sessionDate = new Date(session.created_at);
+                const sessionDate = safeParseDate(session.created_at);
 
                 if (!isWithinInterval(sessionDate, {start: startDate, end: new Date()})) {
                     return false;
@@ -64,7 +65,9 @@ const WorkoutHistoryPage = () => {
             return true;
         }).sort((a, b) => {
             // Sort by date (newest first)
-            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+            const dateA = safeParseDate(a.created_at, new Date(0));
+            const dateB = safeParseDate(b.created_at, new Date(0));
+            return dateB.getTime() - dateA.getTime();
         });
     }, [sessions, selectedType, selectedTimeRange]);
 
@@ -73,7 +76,7 @@ const WorkoutHistoryPage = () => {
         const groups: Record<string, any[]> = {};
 
         filteredSessions.forEach(session => {
-            const dateKey = format(new Date(session.created_at), 'yyyy-MM-dd');
+            const dateKey = safeFormat(session.created_at, 'yyyy-MM-dd');
             if (!groups[dateKey]) {
                 groups[dateKey] = [];
             }
@@ -275,7 +278,7 @@ const WorkoutHistoryPage = () => {
                     {Object.entries(groupedSessions).map(([dateKey, dateSessions]) => (
                         <div key={dateKey}>
                             <h3 className="text-[#B0E8E3] font-medium mb-2">
-                                {format(new Date(dateKey), 'EEEE, MMMM d, yyyy')}
+                                {safeFormat(dateKey, 'EEEE, MMMM d, yyyy')}
                             </h3>
 
                             <div className="space-y-3">
@@ -295,7 +298,7 @@ const WorkoutHistoryPage = () => {
                                                 </h4>
                                                 <div className="flex items-center text-[#A4B1B7] text-sm mt-1">
                                                     <Clock size={14} className="mr-1"/>
-                                                    <span>{format(new Date(session.created_at), 'h:mm a')}</span>
+                                                    <span>{safeFormat(session.created_at, 'h:mm a')}</span>
                                                     <span className="mx-2">•</span>
                                                     <span>{getWorkoutDuration(session)}</span>
                                                 </div>

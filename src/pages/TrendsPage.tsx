@@ -1,13 +1,14 @@
+
 import React, { useState, useMemo } from 'react';
 import PageContainer from '@/components/PageContainer';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts';
-import { format } from 'date-fns';
 import { Loader2, Calendar, ArrowRight } from 'lucide-react';
 import { useProgressMetrics } from '@/hooks/useProgressMetrics';
 import { useWorkoutSessions } from '@/hooks/useWorkoutSessions';
+import { safeFormat, safeParseDate } from '@/utils/dateUtils';
 import BottomNav from '@/components/BottomNav';
 
 interface Measurement {
@@ -55,22 +56,22 @@ const TrendsPage = () => {
 
     const weightData = useMemo(() => {
         return weightMetrics.map(metric => ({
-            date: format(new Date(metric.date), 'MMM dd'),
-            value: metric.value
+            date: safeFormat(metric.recorded_date, 'MMM dd'),
+            value: metric.metric_value || 0
         }));
     }, [weightMetrics]);
 
     const workoutData = useMemo(() => {
         return sessions.map(session => ({
-            date: format(new Date(session.created_at), 'MMM dd'),
+            date: safeFormat(session.created_at, 'MMM dd'),
             duration: 60
         }));
     }, [sessions]);
 
     const measurementData = useMemo(() => {
         return measurementMetrics.map(metric => ({
-            date: format(new Date(metric.date), 'MMM dd'),
-            value: metric.value
+            date: safeFormat(metric.recorded_date, 'MMM dd'),
+            value: metric.metric_value || 0
         }));
     }, [measurementMetrics]);
 
