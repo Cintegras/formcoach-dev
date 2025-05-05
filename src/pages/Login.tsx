@@ -1,4 +1,3 @@
-
 import React, {useState} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
@@ -8,11 +7,11 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/
 import {useForm} from 'react-hook-form';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
-import {Lock, Mail, AlertCircle} from 'lucide-react';
+import {AlertCircle, Lock, Mail} from 'lucide-react';
 import {useToast} from '@/components/ui/use-toast';
 import {useAuth} from '@/features/auth/hooks/useAuth';
-import { EmailVerification } from '@/features/auth/components/EmailVerification';
-import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+import {EmailVerification} from '@/features/auth/components/EmailVerification';
+import {Alert, AlertDescription, AlertTitle} from '@/components/ui/alert';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -58,7 +57,7 @@ const Login = () => {
           });
           return;
         }
-        
+
         // Show error in the UI
         setAuthError(error.message);
         return;
@@ -140,6 +139,7 @@ const Login = () => {
                           {...field}
                           placeholder="yourname@example.com"
                           type="email"
+                          autoComplete="username"
                           className="rounded-md w-full h-auto pl-[42px] pr-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
                           style={{
                             backgroundColor: "rgba(176, 232, 227, 0.12)", 
@@ -168,6 +168,7 @@ const Login = () => {
                           {...field}
                           placeholder="******"
                           type="password"
+                          autoComplete="current-password"
                           className="rounded-md w-full h-auto pl-[42px] pr-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
                           style={{
                             backgroundColor: "rgba(176, 232, 227, 0.12)",

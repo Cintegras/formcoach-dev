@@ -1,4 +1,3 @@
-
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
@@ -11,7 +10,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {Lock, Mail} from 'lucide-react';
 import {useAuth} from '@/features/auth/hooks/useAuth';
 import {useToast} from '@/components/ui/use-toast';
-import { EmailVerification } from '@/features/auth/components/EmailVerification';
+import {EmailVerification} from '@/features/auth/components/EmailVerification';
 
 const signupSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -57,7 +56,7 @@ const Signup = () => {
 
       // Set the verification email to show the verification screen
       setVerificationEmail(values.email);
-      
+
       toast({
         title: "Verification required",
         description: "Please check your email for a verification link.",
@@ -120,6 +119,7 @@ const Signup = () => {
                           {...field}
                           placeholder="yourname@example.com"
                           type="email"
+                          autoComplete="username"
                           className="rounded-md w-full h-auto pl-[42px] pr-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
                           style={{
                             backgroundColor: "rgba(176, 232, 227, 0.12)",
@@ -146,6 +146,7 @@ const Signup = () => {
                           {...field}
                           placeholder="******"
                           type="password"
+                          autoComplete="new-password"
                           className="rounded-md w-full h-auto pl-[42px] pr-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
                           style={{
                             backgroundColor: "rgba(176, 232, 227, 0.12)",
@@ -172,6 +173,7 @@ const Signup = () => {
                           {...field}
                           placeholder="******"
                           type="password"
+                          autoComplete="new-password"
                           className="rounded-md w-full h-auto pl-[42px] pr-[13.5px] py-[13px] border-0 text-[17px] font-normal font-inter"
                           style={{
                             backgroundColor: "rgba(176, 232, 227, 0.12)",
