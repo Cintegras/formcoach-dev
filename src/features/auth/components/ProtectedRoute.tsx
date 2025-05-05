@@ -1,32 +1,27 @@
 
 import React from 'react';
-import {Navigate, Outlet, useLocation} from 'react-router-dom';
-import {useAuth} from '../hooks/useAuth';
+import { Navigate, Outlet, useLocation } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
+import LoadingIndicator from '@/components/LoadingIndicator';
 
-/**
- * A component that protects routes by checking if the user is authenticated.
- * If the user is not authenticated, they are redirected to the login page.
- */
-export const ProtectedRoute: React.FC = () => {
-    const {user, loading} = useAuth();
-    const location = useLocation();
+interface ProtectedRouteProps {
+  children?: React.ReactNode;
+}
 
-    // Show loading state while checking authentication
-    if (loading) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <div className="animate-spin w-8 h-8 border-4 border-t-transparent border-[#00C4B4] rounded-full"></div>
-            </div>
-        );
-    }
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+  const { user, loading } = useAuth();
+  const location = useLocation();
 
-    // If not authenticated, redirect to login with the current location as the redirect target
-    if (!user) {
-        return <Navigate to="/login" state={{from: location}} replace/>;
-    }
+  if (loading) {
+    return <LoadingIndicator fullScreen text="Loading authentication..." />;
+  }
 
-    // If authenticated, render the child routes
-    return <Outlet/>;
+  if (!user) {
+    // Redirect to login and save the location they were trying to access
+    return <Navigate to="/login" state={{ from: location }} replace />;
+  }
+
+  return <>{children || <Outlet />}</>;
 };
 
 export default ProtectedRoute;

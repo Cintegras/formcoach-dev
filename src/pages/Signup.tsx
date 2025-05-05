@@ -1,3 +1,4 @@
+
 import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
@@ -10,6 +11,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {Lock, Mail} from 'lucide-react';
 import {useAuth} from '@/features/auth/hooks/useAuth';
 import {useToast} from '@/components/ui/use-toast';
+import { EmailVerification } from '@/features/auth/components/EmailVerification';
 
 const signupSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -24,9 +26,10 @@ type SignupValues = z.infer<typeof signupSchema>;
 
 const Signup = () => {
   const navigate = useNavigate();
-    const {signUp, loading: authLoading} = useAuth();
+  const {signUp, loading: authLoading} = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-    const {toast} = useToast();
+  const [verificationEmail, setVerificationEmail] = useState<string | null>(null);
+  const {toast} = useToast();
 
   const form = useForm<SignupValues>({
     resolver: zodResolver(signupSchema),
@@ -40,30 +43,55 @@ const Signup = () => {
   const onSubmit = async (values: SignupValues) => {
     setIsLoading(true);
 
-      try {
-          const {error} = await signUp(values.email, values.password);
+    try {
+      const {error} = await signUp(values.email, values.password);
 
-          if (error) {
-              toast({
-                  title: "Registration error",
-                  description: error.message,
-                  variant: "destructive",
-              });
-              return;
-          }
-
-          // If successful, navigate to profile setup
-          navigate('/profile-setup');
-      } catch (error) {
-          toast({
-              title: "Registration error",
-              description: error instanceof Error ? error.message : "Failed to create account",
-              variant: "destructive",
-          });
-      } finally {
-          setIsLoading(false);
+      if (error) {
+        toast({
+          title: "Registration error",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
       }
+
+      // Set the verification email to show the verification screen
+      setVerificationEmail(values.email);
+      
+      toast({
+        title: "Verification required",
+        description: "Please check your email for a verification link.",
+      });
+    } catch (error) {
+      toast({
+        title: "Registration error",
+        description: error instanceof Error ? error.message : "Failed to create account",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  // If we're in verification state, show the verification component
+  if (verificationEmail) {
+    return (
+      <PageContainer>
+        <div className="flex flex-col items-center justify-center min-h-[80vh] font-inter">
+          <div className="mb-10">
+            <h1 className="font-bold text-[32px] text-center text-[#A4B1B7]">
+              Verify Your Account
+            </h1>
+            <p className="font-normal text-[16px] text-[#A4B1B7] text-center mt-2">
+              One last step to complete your registration
+            </p>
+          </div>
+
+          <EmailVerification email={verificationEmail} />
+        </div>
+      </PageContainer>
+    );
+  }
 
   return (
     <PageContainer>

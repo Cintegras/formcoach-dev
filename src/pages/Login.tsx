@@ -1,3 +1,4 @@
+
 import React, {useState} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
@@ -10,6 +11,7 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {Lock, Mail} from 'lucide-react';
 import {useToast} from '@/components/ui/use-toast';
 import {useAuth} from '@/features/auth/hooks/useAuth';
+import { EmailVerification } from '@/features/auth/components/EmailVerification';
 
 const loginSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email address' }),
@@ -20,13 +22,14 @@ type LoginValues = z.infer<typeof loginSchema>;
 
 const Login = () => {
   const navigate = useNavigate();
-    const location = useLocation();
-    const {signIn, loading: authLoading} = useAuth();
+  const location = useLocation();
+  const {signIn, loading: authLoading} = useAuth();
   const [isLoading, setIsLoading] = useState(false);
+  const [verificationEmail, setVerificationEmail] = useState<string | null>(null);
   const { toast } = useToast();
 
-    // Get the redirect path from location state or default to home
-    const from = location.state?.from?.pathname || '/';
+  // Get the redirect path from location state or default to home
+  const from = location.state?.from?.pathname || '/';
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -39,34 +42,64 @@ const Login = () => {
   const onSubmit = async (values: LoginValues) => {
     setIsLoading(true);
 
-      try {
-          const {error} = await signIn(values.email, values.password);
+    try {
+      const {error} = await signIn(values.email, values.password);
 
-          if (error) {
-              toast({
-                  title: "Authentication error",
-                  description: error.message,
-                  variant: "destructive",
-              });
-              return;
-          }
-
-          // If successful, navigate to the redirect path
-          navigate(from);
-      } catch (error) {
+      if (error) {
+        // Check if the error is related to email confirmation
+        if (error.message.includes('Email not confirmed')) {
+          setVerificationEmail(values.email);
           toast({
-              title: "Authentication error",
-              description: error instanceof Error ? error.message : "Failed to sign in",
-              variant: "destructive",
+            title: "Email not verified",
+            description: "Please verify your email before logging in",
           });
-      } finally {
-          setIsLoading(false);
+          return;
+        }
+        
+        toast({
+          title: "Authentication error",
+          description: error.message,
+          variant: "destructive",
+        });
+        return;
       }
+
+      // If successful, navigate to the redirect path
+      navigate(from);
+    } catch (error) {
+      toast({
+        title: "Authentication error",
+        description: error instanceof Error ? error.message : "Failed to sign in",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleForgotPassword = () => {
     navigate('/forgot-password');
   };
+
+  // If we're in verification state, show the verification component
+  if (verificationEmail) {
+    return (
+      <PageContainer>
+        <div className="flex flex-col items-center justify-center min-h-[80vh] font-inter">
+          <div className="mb-10">
+            <h1 className="font-bold text-[32px] text-center text-[#A4B1B7]">
+              Verify Your Email
+            </h1>
+            <p className="font-normal text-[16px] text-[#A4B1B7] text-center mt-2">
+              You need to verify your email before logging in
+            </p>
+          </div>
+
+          <EmailVerification email={verificationEmail} />
+        </div>
+      </PageContainer>
+    );
+  }
 
   return (
     <PageContainer>
