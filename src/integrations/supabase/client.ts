@@ -21,24 +21,17 @@ const getRedirectURL = () => {
   return 'https://gfaqeouktaxibmyzfnwr.supabase.co';
 };
 
-// Create the Supabase client
+// Create the Supabase client with site URL configuration
 export const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_KEY, {
   auth: {
     autoRefreshToken: true,
     persistSession: true,
     detectSessionInUrl: true,
     flowType: 'pkce',
+    // Define the site URL here directly instead of calling setConfig
+    site_url: getRedirectURL()
   }
 });
-
-// Set up the site URL for verification redirects
-if (typeof window !== 'undefined') {
-  const url = new URL(window.location.href);
-  const baseUrl = `${url.protocol}//${url.host}`;
-  supabase.auth.setConfig({
-    site_url: baseUrl
-  });
-}
 
 // NOTE: We no longer set the environment using supabase.query() as it's a server-only feature
 // Instead, all reads and writes should explicitly use .eq('environment', getEnvironment())
