@@ -1,7 +1,6 @@
-
-import { supabase } from './client';
-import { Database } from '@/integrations/supabase/types';
-import { ExerciseLog } from './types';
+import {supabase} from './client';
+import {Database} from '@/integrations/supabase/types';
+import {ExerciseLog} from './types';
 
 // Export exercise log functions
 export const getExerciseLogs = async (sessionId: string): Promise<ExerciseLog[]> => {
@@ -32,7 +31,7 @@ export const logExercise = async (
       reps_completed: repsCompleted,
       weights_used: weightsUsed,
       video_url: videoUrl
-    })
+    } as Database['public']['Tables']['exercise_logs']['Insert'])
     .select('*')
     .single();
 
