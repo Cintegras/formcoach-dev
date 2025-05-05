@@ -1,3 +1,4 @@
+
 import {supabase} from './client';
 import {Database} from '@/integrations/supabase/types';
 import {ExerciseLog} from './types';
@@ -22,16 +23,18 @@ export const logExercise = async (
   weightsUsed: string, // JSON string with weights data
   videoUrl?: string
 ): Promise<ExerciseLog | null> => {
+  const insertData: Database['public']['Tables']['exercise_logs']['Insert'] = {
+    workout_session_id: sessionId,
+    exercise_id: exerciseId,
+    sets_completed: setsCompleted,
+    reps_completed: repsCompleted,
+    weights_used: weightsUsed,
+    video_url: videoUrl
+  };
+
   const { data, error } = await supabase
     .from('exercise_logs')
-    .insert({
-      workout_session_id: sessionId,
-      exercise_id: exerciseId,
-      sets_completed: setsCompleted,
-      reps_completed: repsCompleted,
-      weights_used: weightsUsed,
-      video_url: videoUrl
-    } as Database['public']['Tables']['exercise_logs']['Insert'])
+    .insert(insertData)
     .select('*')
     .single();
 
@@ -58,7 +61,7 @@ export const addFormFeedback = async (
   return data;
 };
 
-// Fix the invalid property error by using appropriate type
+// Create exercise log with proper type
 export const createExerciseLog = async (
   log: Database['public']['Tables']['exercise_logs']['Insert']
 ): Promise<ExerciseLog | null> => {

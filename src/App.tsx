@@ -1,91 +1,84 @@
-import React from "react";
-import {Toaster} from "@/components/ui/toaster";
-import {Toaster as Sonner} from "@/components/ui/sonner";
-import {TooltipProvider} from "@/components/ui/tooltip";
-import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
-import {BrowserRouter, Route, Routes} from "react-router-dom";
-import {AuthProvider} from "./features/auth";
-import ProtectedRoute from "./features/auth/components/ProtectedRoute";
-import Splash from "./pages/Splash";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import ProfileSetupPage from "./pages/ProfileSetupPage";
-import Welcome from "./pages/Welcome";
-import MedicalDisclaimer from "./pages/MedicalDisclaimer";
-import LogWorkout from "./pages/LogWorkout";
-import WorkoutPlan from "./pages/WorkoutPlan";
-import WorkoutCategorySelect from "./pages/WorkoutCategorySelect";
-import CardioTypeSelect from "./pages/CardioTypeSelect";
-import WorkoutConfirmation from "./pages/WorkoutConfirmation";
-import CardioWarmUp from "./pages/CardioWarmUp";
-import WorkoutReview from "./pages/WorkoutReview";
-import TrendsPage from "./pages/TrendsPage";
-import ProfilePage from "./pages/ProfilePage";
-import NotFound from "./pages/NotFound";
-import ForgotPassword from "./pages/ForgotPassword";
-import Home from "./pages/Home";
+import React from 'react';
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import {AuthProvider} from '@/features/auth/components/AuthProvider';
+import ProtectedRoute from '@/features/auth/components/ProtectedRoute';
+import Home from './pages/Home';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import ProfileSetup from './pages/ProfileSetup';
+import WorkoutCategorySelect from './pages/WorkoutCategorySelect';
+import ExerciseSelect from './pages/ExerciseSelect';
+import WorkoutTracking from './pages/WorkoutTracking';
+import Trends from './pages/Trends';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
+import VerifyEmail from './pages/VerifyEmail';
 
-// Create a client
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-      refetchOnWindowFocus: false,
-    },
-  }
-});
-
-const App = () => {
+function App() {
   return (
-    <React.StrictMode>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter>
-              <AuthProvider>
-                  <Routes>
-                      {/* Public Routes */}
-                      <Route path="/splash" element={<Splash/>}/>
-                      <Route path="/login" element={<Login/>}/>
-                      <Route path="/signup" element={<Signup/>}/>
-                      <Route path="/forgot-password" element={<ForgotPassword/>}/>
-
-                      {/* Protected Routes */}
-                      <Route element={<ProtectedRoute/>}>
-                          {/* Home */}
-                          <Route path="/" element={<Home/>}/>
-
-                          {/* Profile Setup */}
-                          <Route path="/profile-setup" element={<ProfileSetupPage/>}/>
-
-                          {/* Onboarding Routes */}
-                          <Route path="/welcome" element={<Welcome/>}/>
-                          <Route path="/medical-disclaimer" element={<MedicalDisclaimer/>}/>
-
-                          {/* Workout Routes */}
-                          <Route path="/workout-category-select" element={<WorkoutCategorySelect/>}/>
-                          <Route path="/cardio-type-select" element={<CardioTypeSelect/>}/>
-                          <Route path="/workout-plan" element={<WorkoutPlan/>}/>
-                          <Route path="/workout-confirmation" element={<WorkoutConfirmation/>}/>
-                          <Route path="/cardio-warmup" element={<CardioWarmUp/>}/>
-                          <Route path="/workout-tracking/:exercise" element={<LogWorkout/>}/>
-                          <Route path="/workout-review" element={<WorkoutReview/>}/>
-
-                          {/* Main App Routes */}
-                          <Route path="/trends" element={<TrendsPage/>}/>
-                          <Route path="/profile" element={<ProfilePage/>}/>
-                      </Route>
-
-                      {/* Catch-all 404 page */}
-                      <Route path="*" element={<NotFound/>}/>
-                  </Routes>
-              </AuthProvider>
-          </BrowserRouter>
-        </TooltipProvider>
-      </QueryClientProvider>
-    </React.StrictMode>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/profile-setup"
+            element={
+              <ProtectedRoute>
+                <ProfileSetup />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/workout-category-select"
+            element={
+              <ProtectedRoute>
+                <WorkoutCategorySelect />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/exercise-select/:categoryId"
+            element={
+              <ProtectedRoute>
+                <ExerciseSelect />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/workout-tracking"
+            element={
+              <ProtectedRoute>
+                <WorkoutTracking />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/trends"
+            element={
+              <ProtectedRoute>
+                <Trends />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/verify"
+            element={<VerifyEmail />}
+          />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
-};
+}
 
 export default App;
