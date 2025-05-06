@@ -2,6 +2,8 @@ import React from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import {AuthProvider} from '@/features/auth/components/AuthProvider';
 import ProtectedRoute from '@/features/auth/components/ProtectedRoute';
+import RequireProfile from '@/features/auth/components/RequireProfile';
+import RedirectIfProfileExists from '@/features/auth/components/RedirectIfProfileExists';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -26,7 +28,9 @@ function App() {
             path="/"
             element={
               <ProtectedRoute>
-                <Home />
+                  <RequireProfile>
+                      <Home/>
+                  </RequireProfile>
               </ProtectedRoute>
             }
           />
@@ -34,7 +38,9 @@ function App() {
             path="/profile-setup"
             element={
               <ProtectedRoute>
-                <ProfileSetupPage />
+                  <RedirectIfProfileExists>
+                      <ProfileSetupPage/>
+                  </RedirectIfProfileExists>
               </ProtectedRoute>
             }
           />
@@ -42,7 +48,9 @@ function App() {
             path="/workout-category-select"
             element={
               <ProtectedRoute>
-                <WorkoutCategorySelect />
+                  <RequireProfile>
+                      <WorkoutCategorySelect/>
+                  </RequireProfile>
               </ProtectedRoute>
             }
           />
@@ -50,7 +58,9 @@ function App() {
             path="/workout-plan"
             element={
               <ProtectedRoute>
-                <WorkoutPlan />
+                  <RequireProfile>
+                      <WorkoutPlan/>
+                  </RequireProfile>
               </ProtectedRoute>
             }
           />
@@ -58,7 +68,9 @@ function App() {
             path="/workout-confirmation"
             element={
               <ProtectedRoute>
-                <WorkoutConfirmation />
+                  <RequireProfile>
+                      <WorkoutConfirmation/>
+                  </RequireProfile>
               </ProtectedRoute>
             }
           />
@@ -70,7 +82,9 @@ function App() {
                 path="/welcome"
                 element={
                     <ProtectedRoute>
-                        <Welcome/>
+                        <RequireProfile>
+                            <Welcome/>
+                        </RequireProfile>
                     </ProtectedRoute>
                 }
             />
@@ -78,7 +92,9 @@ function App() {
                 path="/medical-disclaimer"
                 element={
                     <ProtectedRoute>
-                        <MedicalDisclaimer/>
+                        <RequireProfile>
+                            <MedicalDisclaimer/>
+                        </RequireProfile>
                     </ProtectedRoute>
                 }
             />
