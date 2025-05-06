@@ -308,6 +308,20 @@ const ProfilePage = () => {
             <div>Age: {user.birthdate ? calculateAge(user.birthdate) : user.age}</div>
         </div>
 
+            {/* Complete Profile Button - only show if profile is incomplete */}
+            {(!profile || !profile.full_name || !profile.height || !profile.birthdate) && (
+                <Button
+                    variant="outline"
+                    className="w-full max-w-[300px] mb-8 justify-center bg-[#00C4B4] border-none text-black hover:bg-[#00C4B4]/80"
+                    onClick={() => {
+                        console.log("Complete Profile clicked");
+                        navigate("/profile-setup");
+                    }}
+                >
+                    Complete Profile
+                </Button>
+            )}
+
         {/* Weight trend chart if available */}
         {user.weightHistory && user.weightHistory.length > 1 && (
           <div className="w-full max-w-[300px] mb-8 bg-[rgba(176,232,227,0.08)] rounded-lg p-4">
