@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import AuthProvider from '@/features/auth/components/AuthProvider';
@@ -19,6 +18,7 @@ import WorkoutConfirmation from './pages/WorkoutConfirmation';
 import MedicalDisclaimer from './pages/MedicalDisclaimer';
 import Welcome from './pages/Welcome';
 import TestOptionsPage from './pages/TestOptionsPage';
+import TrendsPage from './pages/TrendsPage';
 
 function App() {
   return (
@@ -120,6 +120,16 @@ function App() {
                             <AdminRoute>
                                 <TestOptionsPage/>
                             </AdminRoute>
+                        </RequireProfile>
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/trends"
+                element={
+                    <ProtectedRoute>
+                        <RequireProfile>
+                            <TrendsPage/>
                         </RequireProfile>
                     </ProtectedRoute>
                 }
