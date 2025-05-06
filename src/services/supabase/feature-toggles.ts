@@ -43,7 +43,7 @@ export const isFeatureEnabled = async (
     featureName: string
 ): Promise<boolean> => {
     const toggle = await getFeatureToggle(userId, featureName);
-    return toggle !== null && toggle.is_enabled;
+    return toggle !== null && toggle.is_enabled === true;
 };
 
 /**
