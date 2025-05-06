@@ -53,7 +53,7 @@ const ProfilePage = () => {
     age: '0',
     sex: ''
   });
-  const { hasAccess } = useAdminAccess();
+  const { isAdmin } = useAdminAccess();
 
     // Fetch latest weight from progress_metrics
     useEffect(() => {
@@ -376,7 +376,7 @@ const ProfilePage = () => {
           </Button>
 
           {/* Test Options button - only shown to users with admin access */}
-          {hasAccess && (
+          {isAdmin && (
             <Button
               variant="outline" 
               className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
