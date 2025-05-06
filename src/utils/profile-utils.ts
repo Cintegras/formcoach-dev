@@ -1,3 +1,4 @@
+
 import {Profile} from '@/services/supabase';
 
 export const hasCompleteProfile = (profile: Profile | null): boolean => {
