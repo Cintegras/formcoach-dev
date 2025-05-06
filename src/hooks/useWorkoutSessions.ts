@@ -7,11 +7,13 @@ import {
     getWorkoutSessions,
     startWorkoutSession,
     subscribeToWorkoutSessions,
-    updateWorkoutSession,
-    WorkoutSession,
-    WorkoutSessionInsert,
-    WorkoutSessionUpdate
+    updateWorkoutSession
 } from '@/services/supabase';
+import type {Database} from '@/types/supabase';
+
+type WorkoutSession = Database['public']['Tables']['workout_sessions']['Row'];
+type WorkoutSessionInsert = Database['public']['Tables']['workout_sessions']['Insert'];
+type WorkoutSessionUpdate = Database['public']['Tables']['workout_sessions']['Update'];
 
 /**
  * Hook for accessing and managing workout sessions
@@ -97,7 +99,7 @@ export function useWorkoutSessions(limit = 20, enableRealtime = true) {
      * @param workoutPlanId - Optional workout plan ID
      * @returns The created workout session
      */
-    const startSession = async (workoutPlanId?: string): Promise<WorkoutSession | null> => {
+    const startSession = async (workoutPlanId?: string | null): Promise<WorkoutSession | null> => {
         if (!user) {
             setError(new Error('No authenticated user'));
             return null;

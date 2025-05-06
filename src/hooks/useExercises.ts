@@ -1,13 +1,13 @@
+import {useCallback, useEffect, useState} from 'react';
+import {supabase} from '@/integrations/supabase/client';
+import type {Database} from '@/types/supabase';
 
-import { useState, useEffect, useCallback } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { getEnvironment } from '@/lib/environment';
+type Exercise = Database['public']['Tables']['exercises']['Row'];
 
 export function useExercises() {
-  const [exercises, setExercises] = useState<any[]>([]);
+    const [exercises, setExercises] = useState<Exercise[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<Error | null>(null);
-  const environment = getEnvironment();
 
   const fetchExercises = useCallback(async () => {
     try {
@@ -15,7 +15,6 @@ export function useExercises() {
       const { data, error } = await supabase
         .from('exercises')
         .select('*')
-        .eq('environment', environment)
         .order('name', { ascending: true });
 
       if (error) throw error;
@@ -26,7 +25,7 @@ export function useExercises() {
     } finally {
       setLoading(false);
     }
-  }, [environment]);
+  }, []);
 
   // Get a single exercise by ID
   const getExercise = useCallback(async (id: string) => {
@@ -34,7 +33,6 @@ export function useExercises() {
       const { data, error } = await supabase
         .from('exercises')
         .select('*')
-        .eq('environment', environment)
         .eq('id', id)
         .single();
 
@@ -44,7 +42,7 @@ export function useExercises() {
       console.error('Error fetching exercise:', err);
       return null;
     }
-  }, [environment]);
+  }, []);
 
   useEffect(() => {
     fetchExercises();

@@ -1,17 +1,18 @@
+import {useEffect, useState} from 'react';
+import {useAuth} from '@/features/auth/hooks/useAuth';
+import {supabase} from '@/integrations/supabase/client';
+import type {Database} from '@/types/supabase';
 
-import { useState, useEffect } from 'react';
-import { useAuth } from '@/features/auth/hooks/useAuth';
-import { supabase } from '@/integrations/supabase/client';
-import type { ProgressMetric } from '@/services/supabase/types/progress-metrics';
-import type { ExerciseLog } from '@/services/supabase/types/exercise-logs';
+type ExerciseLog = Database['public']['Tables']['exercise_logs']['Row'];
 
 // Function to log a completed exercise
 export const logCompletedExercise = async (
-  exerciseId: string,
-  setsCompleted: number,
-  repsCompleted: number[] | string,
-  weightsUsed: number[] | string,
-  videoUrl?: string
+    exerciseId: string | null,
+    setsCompleted: number | null,
+    repsCompleted: number[] | null,
+    weightsUsed: number[] | null,
+    videoUrl?: string | null,
+    workoutSessionId?: string | null
 ) => {
   try {
     const { data, error } = await supabase
@@ -21,7 +22,8 @@ export const logCompletedExercise = async (
         sets_completed: setsCompleted,
         reps_completed: repsCompleted,
         weights_used: weightsUsed,
-        video_url: videoUrl
+          video_url: videoUrl,
+          workout_session_id: workoutSessionId
       })
       .select();
 
@@ -30,7 +32,7 @@ export const logCompletedExercise = async (
       return null;
     }
 
-    return data[0];
+      return data[0] as ExerciseLog;
   } catch (err) {
     console.error('Error in logCompletedExercise:', err);
     return null;
@@ -81,11 +83,12 @@ export function useExerciseLogs(workoutSessionId: string | null = null, fetchLog
    * Log a completed exercise
    */
   const logExercise = async (
-    workoutSessionId: string,
-    exerciseId: string,
-    setsCompleted: number,
-    repsCompleted: number[],
-    weightsUsed: number[]
+      workoutSessionId: string | null,
+      exerciseId: string | null,
+      setsCompleted: number | null,
+      repsCompleted: number[] | null,
+      weightsUsed: number[] | null,
+      videoUrl?: string | null
   ) => {
     setLoading(true);
     setError(null);
@@ -97,7 +100,8 @@ export function useExerciseLogs(workoutSessionId: string | null = null, fetchLog
         exercise_id: exerciseId,
         sets_completed: setsCompleted,
         reps_completed: repsCompleted,
-        weights_used: weightsUsed
+          weights_used: weightsUsed,
+          video_url: videoUrl
       };
 
       // Then insert it
@@ -105,10 +109,15 @@ export function useExerciseLogs(workoutSessionId: string | null = null, fetchLog
         .from('exercise_logs')
         .insert(exerciseLogData)
         .select();
-      
+
       if (error) throw error;
-      
-      return data[0] as ExerciseLog;
+
+        const newLog = data[0] as ExerciseLog;
+
+        // Update logs state with the new log
+        setLogs(prevLogs => [...prevLogs, newLog]);
+
+        return newLog;
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Failed to log exercise');
       setError(error);

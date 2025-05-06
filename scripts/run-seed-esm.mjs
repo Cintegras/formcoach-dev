@@ -2,6 +2,8 @@
 import dotenv from 'dotenv';
 import {fileURLToPath} from 'url';
 import {dirname, resolve} from 'path';
+// Create a temporary file that exports the seedDevEnvironment function
+import {writeFileSync} from 'fs';
 
 // Configure dotenv
 dotenv.config();
@@ -23,49 +25,29 @@ globalThis.import = {
     }
 };
 
-// Create a temporary file that exports the seedDevEnvironment function
-import {writeFileSync} from 'fs';
-
 const tempFile = resolve(__dirname, 'temp-seed.mjs');
 writeFileSync(tempFile, `
 import { supabase } from '../src/integrations/supabase/client.js';
-import { withEnvironmentFilter } from '../src/lib/supabase-utils.js';
-import { getEnvironment } from '../src/lib/environment.js';
 
 // Mock user UUID
 const MOCK_USER_ID = 'df85e454-730d-460c-a34e-8e1fce3bf648';
 
 async function seedDevEnvironment() {
   console.log('Starting seed script for FormCoach development environment...');
-  
-  // Get the current environment
-  const env = getEnvironment();
-  console.log(\`Current environment: \${env}\`);
-  
-  // Ensure we're in the dev environment
-  if (env !== 'dev') {
-    console.warn(\`Warning: You are running the dev seed script in the '\${env}' environment.\`);
-    console.warn('This script is intended for the dev environment only.');
-    const proceed = await promptToContinue();
-    if (!proceed) {
-      console.log('Seed script aborted.');
-      return;
-    }
-  }
-  
+
   try {
     // 1. Create a mock profile
     await createProfile();
-    
+
     // 2. Create exercises
     const exerciseIds = await createExercises();
-    
+
     // 3. Create a workout plan with the exercises
     const workoutPlanId = await createWorkoutPlan(exerciseIds);
-    
+
     // 4. Create a workout session with exercise logs
     await createWorkoutSession(workoutPlanId, exerciseIds);
-    
+
     console.log('\\n✅ Seed script completed.');
   } catch (error) {
     console.error('Error during seed process:', error);
@@ -74,7 +56,7 @@ async function seedDevEnvironment() {
 
 async function createProfile() {
   console.log('\\nCreating mock profile...');
-  
+
   const { data, error } = await supabase
     .from('profiles')
     .upsert({
@@ -83,11 +65,11 @@ async function createProfile() {
       full_name: 'Test User',
       goals: ['strength', 'mobility'],
       fitness_level: 'beginner',
-      environment: 'dev'
+      birthdate: '1990-01-01' // Required field in the new schema
     }, {
       onConflict: 'id'
     });
-  
+
   if (error) {
     console.error('Error creating profile:', error);
     throw error;
@@ -99,51 +81,50 @@ async function createProfile() {
 
 async function createExercises() {
   console.log('\\nCreating exercises...');
-  
+
   const exercises = [
     {
       name: 'Dumbbell Bench Press',
       description: 'A chest exercise performed with dumbbells while lying on a bench.',
       muscle_groups: ['chest', 'triceps', 'shoulders'],
       equipment: ['dumbbells', 'bench'],
-      difficulty_level: 'intermediate',
-      environment: 'dev'
+      difficulty_level: 'intermediate'
     },
     {
       name: 'Seated Row',
       description: 'A back exercise performed on a seated row machine or with cables.',
       muscle_groups: ['back', 'biceps', 'forearms'],
       equipment: ['cable machine', 'bench'],
-      difficulty_level: 'beginner',
-      environment: 'dev'
+      difficulty_level: 'beginner'
     }
   ];
-  
+
   const exerciseIds = [];
-  
+
   for (const exercise of exercises) {
     // Check if exercise already exists
-    const { data: existingExercises, error: findError } = await withEnvironmentFilter(
-      supabase.from('exercises').select('id').eq('name', exercise.name)
-    );
-    
+    const { data: existingExercises, error: findError } = await supabase
+      .from('exercises')
+      .select('id')
+      .eq('name', exercise.name);
+
     if (findError) {
       console.error(\`Error finding exercise \${exercise.name}:\`, findError);
       continue;
     }
-    
+
     if (existingExercises && existingExercises.length > 0) {
       console.log(\`✓ Exercise '\${exercise.name}' already exists, skipping creation\`);
       exerciseIds.push(existingExercises[0].id);
       continue;
     }
-    
+
     // Create new exercise
     const { data, error } = await supabase
       .from('exercises')
       .insert(exercise)
       .select('id');
-    
+
     if (error) {
       console.error(\`Error creating exercise \${exercise.name}:\`, error);
     } else if (data && data.length > 0) {
@@ -151,29 +132,27 @@ async function createExercises() {
       exerciseIds.push(data[0].id);
     }
   }
-  
+
   return exerciseIds;
 }
 
 async function createWorkoutPlan(exerciseIds) {
   console.log('\\nCreating workout plan...');
-  
+
   // Check if workout plan already exists
-  const { data: existingPlans, error: findError } = await withEnvironmentFilter(
-    supabase
-      .from('workout_plans')
-      .select('id')
-      .eq('user_id', MOCK_USER_ID)
-      .eq('name', 'Upper Body Starter')
-  );
-  
+  const { data: existingPlans, error: findError } = await supabase
+    .from('workout_plans')
+    .select('id')
+    .eq('user_id', MOCK_USER_ID)
+    .eq('name', 'Upper Body Starter');
+
   if (findError) {
     console.error('Error finding workout plan:', findError);
     throw findError;
   }
-  
+
   let workoutPlanId;
-  
+
   if (existingPlans && existingPlans.length > 0) {
     console.log('✓ Workout plan already exists, skipping creation');
     workoutPlanId = existingPlans[0].id;
@@ -187,25 +166,24 @@ async function createWorkoutPlan(exerciseIds) {
         description: 'A beginner-friendly upper body workout plan',
         frequency: 'twice_weekly',
         duration_weeks: 4,
-        is_active: true,
-        environment: 'dev'
+        is_active: true
       })
       .select('id');
-    
+
     if (error) {
       console.error('Error creating workout plan:', error);
       throw error;
     } else if (!data || data.length === 0) {
       throw new Error('Failed to create workout plan');
     }
-    
+
     console.log('✓ Workout plan created successfully');
     workoutPlanId = data[0].id;
   }
-  
+
   // Add exercises to workout plan
   console.log('Adding exercises to workout plan...');
-  
+
   for (let i = 0; i < exerciseIds.length; i++) {
     const { error } = await supabase
       .from('workout_plan_exercises')
@@ -221,20 +199,20 @@ async function createWorkoutPlan(exerciseIds) {
       }, {
         onConflict: 'workout_plan_id,exercise_id'
       });
-    
+
     if (error) {
       console.error(\`Error adding exercise \${exerciseIds[i]} to workout plan:\`, error);
     } else {
       console.log(\`✓ Exercise \${i + 1} added to workout plan\`);
     }
   }
-  
+
   return workoutPlanId;
 }
 
 async function createWorkoutSession(workoutPlanId, exerciseIds) {
   console.log('\\nCreating workout session...');
-  
+
   // Create workout session
   const { data: sessionData, error: sessionError } = await supabase
     .from('workout_sessions')
@@ -248,24 +226,24 @@ async function createWorkoutSession(workoutPlanId, exerciseIds) {
       environment: 'dev'
     })
     .select('id');
-  
+
   if (sessionError) {
     console.error('Error creating workout session:', sessionError);
     throw sessionError;
   } else if (!sessionData || sessionData.length === 0) {
     throw new Error('Failed to create workout session');
   }
-  
+
   console.log('✓ Workout session created successfully');
   const sessionId = sessionData[0].id;
-  
+
   // Add exercise logs
   console.log('Adding exercise logs...');
-  
+
   for (const exerciseId of exerciseIds) {
     const reps = [10, 8, 8];
     const weights = [20, 22.5, 22.5];
-    
+
     const { error } = await supabase
       .from('exercise_logs')
       .insert({
@@ -278,7 +256,7 @@ async function createWorkoutSession(workoutPlanId, exerciseIds) {
         soreness_rating: 2,
         environment: 'dev'
       });
-    
+
     if (error) {
       console.error(\`Error creating exercise log for exercise \${exerciseId}:\`, error);
     } else {

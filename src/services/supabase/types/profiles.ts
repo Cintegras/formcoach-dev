@@ -1,5 +1,4 @@
-
-import { Database } from '@/integrations/supabase/types';
+import {Database} from '@/types/supabase';
 
 // Export type definitions
 export type Profile = Database['public']['Tables']['profiles']['Row'];

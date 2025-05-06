@@ -1,8 +1,11 @@
-
 import {useEffect, useRef, useState} from 'react';
 import {useAuth} from '@/features/auth/hooks/useAuth';
-import {createProfile, getProfile, Profile, ProfileUpdate, updateProfile} from '@/services/supabase';
+import {createProfile, getProfile, updateProfile} from '@/services/supabase';
 import {hasCompleteProfile} from '@/utils/profile-utils';
+import type {Database} from '@/types/supabase';
+
+type Profile = Database['public']['Tables']['profiles']['Row'];
+type ProfileUpdate = Database['public']['Tables']['profiles']['Update'];
 
 /**
  * Hook for accessing and managing the current user's profile
@@ -91,10 +94,9 @@ export function useProfile() {
         setError(null);
 
         try {
-            // Make sure birthdate is not undefined if provided in updates
+            // Ensure birthdate is a valid string if provided in updates
             const updatesWithValidBirthdate = {
-                ...updates,
-                birthdate: updates.birthdate || undefined
+                ...updates
             };
 
             const updatedProfile = await updateProfile(user.id, updatesWithValidBirthdate);
@@ -134,10 +136,9 @@ export function useProfile() {
         setError(null);
 
         try {
-            // Ensure birthdate is not undefined
+            // Birthdate is required in the new schema
             const profileDataWithValidBirthdate = {
-                ...profileData,
-                birthdate: profileData.birthdate as string // Cast to string to ensure it's not undefined
+                ...profileData
             };
 
             const newProfile = await createProfile({
