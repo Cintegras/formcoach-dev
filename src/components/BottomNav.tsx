@@ -1,13 +1,25 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useLocation, useNavigate} from 'react-router-dom';
-import {Activity, ChevronUp, ClipboardList, History, Home, TrendingUp, UserRound} from 'lucide-react';
+import {Activity, ChevronUp, ClipboardList, History, Home, Lock, TrendingUp, UserRound} from 'lucide-react';
 import {useAuth} from '@/features/auth/hooks/useAuth';
+import {useFeatureToggles} from '@/hooks/useFeatureToggles';
 
 const BottomNav = () => {
   const navigate = useNavigate();
   const location = useLocation();
     const {user, isAuthenticated} = useAuth();
+    const {formCoachEnabled, workoutCount, checkFormCoachEnabled} = useFeatureToggles();
     const [showWorkoutMenu, setShowWorkoutMenu] = useState(false);
+    const [trendsEnabled, setTrendsEnabled] = useState(false);
+
+    // Check if trends feature is enabled
+    useEffect(() => {
+        if (isAuthenticated) {
+            checkFormCoachEnabled().then(enabled => {
+                setTrendsEnabled(enabled);
+            });
+        }
+    }, [isAuthenticated, checkFormCoachEnabled]);
 
   const isActive = (path: string) => {
     if (path === '/' && location.pathname === '/') return true;
@@ -54,7 +66,22 @@ const BottomNav = () => {
           icon: Activity,
           onClick: isAuthenticated ? toggleWorkoutMenu : undefined
       },
-    { path: '/trends', label: 'Trends', icon: TrendingUp },
+      {
+          path: trendsEnabled ? '/trends' : '/',
+          label: 'Trends',
+          icon: trendsEnabled ? TrendingUp : Lock,
+          disabled: !trendsEnabled,
+          onClick: (e: React.MouseEvent) => {
+              if (!trendsEnabled) {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  // Show a toast or alert about needing 3 workouts
+                  alert(`Complete ${3 - workoutCount} more workout${workoutCount >= 2 ? '' : 's'} to unlock Trends`);
+                  return;
+              }
+              navigate('/trends');
+          }
+      },
     { path: '/profile', label: 'Profile', icon: UserRound },
   ];
 
@@ -118,17 +145,24 @@ const BottomNav = () => {
               className={`mb-1 ${
                   item.label === 'Workout'
                       ? isWorkoutActive() || showWorkoutMenu ? 'text-[#00C4B4]' : 'text-[#A4B1B7]'
-                      : isActive(item.path) ? 'text-[#00C4B4]' : 'text-[#A4B1B7]'
+                      : item.label === 'Trends' && item.disabled
+                          ? 'text-[#A4B1B7] opacity-50'
+                          : isActive(item.path) ? 'text-[#00C4B4]' : 'text-[#A4B1B7]'
               }`}
             />
             <span
               className={`text-xs ${
                   item.label === 'Workout'
                       ? isWorkoutActive() || showWorkoutMenu ? 'text-[#00C4B4]' : 'text-[#A4B1B7]'
-                      : isActive(item.path) ? 'text-[#00C4B4]' : 'text-[#A4B1B7]'
+                      : item.label === 'Trends' && item.disabled
+                          ? 'text-[#A4B1B7] opacity-50'
+                          : isActive(item.path) ? 'text-[#00C4B4]' : 'text-[#A4B1B7]'
               }`}
             >
               {item.label}
+                {item.label === 'Trends' && item.disabled && (
+                    <span className="text-[10px] block">({3 - workoutCount} more)</span>
+                )}
             </span>
           </button>
         ))}

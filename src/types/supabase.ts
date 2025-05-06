@@ -434,6 +434,41 @@ export type Database = {
                     },
                 ]
             }
+            feature_toggles: {
+                Row: {
+                    user_id: string
+                    feature_name: string
+                    is_enabled: boolean
+                    created_at: string
+                    updated_at: string
+                    metadata: Json | null
+                }
+                Insert: {
+                    user_id: string
+                    feature_name: string
+                    is_enabled: boolean
+                    created_at?: string
+                    updated_at?: string
+                    metadata?: Json | null
+                }
+                Update: {
+                    user_id?: string
+                    feature_name?: string
+                    is_enabled?: boolean
+                    created_at?: string
+                    updated_at?: string
+                    metadata?: Json | null
+                }
+                Relationships: [
+                    {
+                        foreignKeyName: "feature_toggles_user_id_fkey"
+                        columns: ["user_id"]
+                        isOneToOne: false
+                        referencedRelation: "profiles"
+                        referencedColumns: ["id"]
+                    }
+                ]
+            }
         }
         Views: {
             [_ in never]: never

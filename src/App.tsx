@@ -5,6 +5,7 @@ import ProtectedRoute from '@/features/auth/components/ProtectedRoute';
 import RequireProfile from '@/features/auth/components/RequireProfile';
 import RedirectIfProfileExists from '@/features/auth/components/RedirectIfProfileExists';
 import AdminRoute from '@/features/auth/components/AdminRoute';
+import RequireFormCoachAccess from '@/features/auth/components/RequireFormCoachAccess';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -129,7 +130,9 @@ function App() {
                 element={
                     <ProtectedRoute>
                         <RequireProfile>
-                            <TrendsPage/>
+                            <RequireFormCoachAccess>
+                                <TrendsPage/>
+                            </RequireFormCoachAccess>
                         </RequireProfile>
                     </ProtectedRoute>
                 }
