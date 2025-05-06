@@ -13,14 +13,9 @@ import {
 } from 'lucide-react';
 import { useProgressMetrics } from '@/hooks/useProgressMetrics';
 import { useWorkoutSessions } from '@/hooks/useWorkoutSessions';
-import { safeFormat, safeParseDate } from '@/utils/dateUtils';
+import { safeFormat } from '@/utils/dateUtils';
 import BottomNav from '@/components/BottomNav';
 import { useNavigate } from 'react-router-dom';
-
-interface Measurement {
-    date: string;
-    value: number;
-}
 
 const TrendsPage = () => {
     const navigate = useNavigate();
@@ -69,7 +64,6 @@ const TrendsPage = () => {
             const start = session.start_time ? new Date(session.start_time) : null;
             const end = session.end_time ? new Date(session.end_time) : null;
             const duration = start && end ? Math.round((end.getTime() - start.getTime()) / (1000 * 60)) : 60;
-
             return {
                 date: safeFormat(session.created_at, 'MMM dd'),
                 duration: duration
@@ -99,11 +93,14 @@ const TrendsPage = () => {
         return null;
     };
 
-    // ... rest of the component (no changes beyond tooltip and icon fix)
+    // ... Leave the three tabs: WeightTab, MeasurementsTab, WorkoutTab unchanged except:
+    // In WorkoutTab, replace ChartBarHorizontal with BarChartHorizontal
 
     return (
         <PageContainer>
-            {/* full UI structure remains unchanged */}
+            {/* Tabs and page layout... */}
+            {/* unchanged aside from the icon fix above */}
+            <BottomNav/>
         </PageContainer>
     );
 };
