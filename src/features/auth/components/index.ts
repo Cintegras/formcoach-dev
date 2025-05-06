@@ -5,5 +5,5 @@ export { default as RequireProfile } from './RequireProfile';
 export { default as RedirectIfProfileExists } from './RedirectIfProfileExists';
 export { default as AdminRoute } from './AdminRoute';
 export { default as LoginForm } from './LoginForm';
-export { default as EmailVerification } from './EmailVerification';
+export { EmailVerification } from './EmailVerification';
 export { default as AuthHeader } from './AuthHeader';

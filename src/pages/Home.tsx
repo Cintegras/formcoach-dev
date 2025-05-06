@@ -16,7 +16,7 @@ const Home = () => {
   const [firstName, setFirstName] = useState('');
 
     // Use hooks for workout data and progress metrics
-    const {sessions, activeSession, loading: sessionsLoading} = useWorkoutSessions(5);
+    const {sessions, activeSession, loading: sessionsLoading} = useWorkoutSessions('5'); // Convert number to string
     const {metrics, loading: metricsLoading} = useProgressMetrics();
     const {profile, loading: profileLoading} = useProfile();
     const [weightData, setWeightData] = useState<{ value: number | null }>({value: null});

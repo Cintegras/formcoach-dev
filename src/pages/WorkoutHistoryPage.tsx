@@ -25,7 +25,7 @@ const TIME_RANGES = {
 
 const WorkoutHistoryPage = () => {
     // Fetch workout sessions
-    const {sessions, loading, error} = useWorkoutSessions(500); // Get up to 500 sessions
+    const {sessions, loading, error} = useWorkoutSessions('500'); // Get up to 500 sessions
 
     // Filter state
     const [selectedType, setSelectedType] = useState(WORKOUT_TYPES.ALL);

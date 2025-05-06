@@ -251,7 +251,7 @@ const WorkoutPlan = () => {
 
     const handleEndSession = async () => {
         if (window.confirm('Are you sure you want to end this workout session?')) {
-            await endSession('Workout completed', 'Good');
+            await endSession(activeSession?.id || null);
             resetTimer();
             setSessionStarted(false);
             navigate('/workout-review');

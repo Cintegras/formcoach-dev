@@ -1,8 +1,9 @@
+
 import {useCallback, useEffect, useState} from 'react';
 import {useAuth} from '@/features/auth/hooks/useAuth';
 import {
-    getWorkoutSessionById,
-    getWorkoutSessionsForPlan,
+    getWorkoutSession,
+    getWorkoutSessions,
     startWorkoutSession,
     endWorkoutSession
 } from '@/services/supabase/workout-sessions';
@@ -32,7 +33,8 @@ export function useWorkoutSessions(workoutPlanId: string | null = null) {
         setError(null);
 
         try {
-            const sessionsData = await getWorkoutSessionsForPlan(workoutPlanId);
+            // Using getWorkoutSessions instead of getWorkoutSessionsForPlan
+            const sessionsData = await getWorkoutSessions(workoutPlanId);
             setSessions(sessionsData || []);
 
             // Check if there's an active session among the fetched sessions
@@ -55,7 +57,8 @@ export function useWorkoutSessions(workoutPlanId: string | null = null) {
         setError(null);
 
         try {
-            const sessionData = await getWorkoutSessionById(sessionId);
+            // Using getWorkoutSession instead of getWorkoutSessionById
+            const sessionData = await getWorkoutSession(sessionId);
             setActiveSession(sessionData);
         } catch (err) {
             const error = err instanceof Error ? err : new Error('Failed to fetch workout session');

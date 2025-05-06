@@ -30,7 +30,7 @@ const WorkoutReview = () => {
     const [showFeedbackModal, setShowFeedbackModal] = useState<boolean>(false);
 
     // Use hooks for workout sessions and exercise logs
-    const {activeSession, sessions} = useWorkoutSessions(1);
+    const {activeSession, sessions} = useWorkoutSessions('1'); // Convert number to string
     const {logs} = useExerciseLogs(activeSession?.id || sessions[0]?.id || null, true);
 
     // Load exercise data from logs
