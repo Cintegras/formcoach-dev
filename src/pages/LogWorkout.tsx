@@ -216,13 +216,14 @@ const LogWorkout = () => {
             const repsCompleted = sets.map(set => parseInt(set.reps) || 0);
             const weightsUsed = sets.map(set => parseInt(set.weight) || 0);
 
-            // Log the completed exercise - with activeSession.id as string
+            // Fix: Convert the arrays to the proper format for the API
             const logResult = await logCompletedExercise(
                 exerciseId,
                 setsCompleted,
-                JSON.stringify(repsCompleted),
-                JSON.stringify(weightsUsed),
-                videoUrl || undefined
+                repsCompleted, // Now properly passing number[]
+                weightsUsed,   // Now properly passing number[]
+                videoUrl || undefined,
+                activeSession.id
             );
 
             // Mark the exercise as completed in the exercises array

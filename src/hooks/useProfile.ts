@@ -1,3 +1,4 @@
+
 import {useEffect, useRef, useState} from 'react';
 import {useAuth} from '@/features/auth/hooks/useAuth';
 import {createProfile, getProfile, updateProfile} from '@/services/supabase';
@@ -96,7 +97,9 @@ export function useProfile() {
         try {
             // Ensure birthdate is a valid string if provided in updates
             const updatesWithValidBirthdate = {
-                ...updates
+                ...updates,
+                // Make sure birthdate is not undefined if provided
+                birthdate: updates.birthdate ?? profile?.birthdate ?? ""
             };
 
             const updatedProfile = await updateProfile(user.id, updatesWithValidBirthdate);
@@ -136,9 +139,11 @@ export function useProfile() {
         setError(null);
 
         try {
-            // Birthdate is required in the new schema
+            // Ensure birthdate is a valid string
             const profileDataWithValidBirthdate = {
-                ...profileData
+                ...profileData,
+                // Make sure birthdate is not undefined
+                birthdate: profileData.birthdate ?? ""
             };
 
             const newProfile = await createProfile({

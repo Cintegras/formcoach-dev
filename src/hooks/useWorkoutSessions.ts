@@ -1,3 +1,4 @@
+
 import {useCallback, useEffect, useState} from 'react';
 import {useAuth} from '@/features/auth/hooks/useAuth';
 import {
@@ -109,7 +110,8 @@ export function useWorkoutSessions(limit = 20, enableRealtime = true) {
         setError(null);
 
         try {
-            const newSession = await startWorkoutSession(workoutPlanId);
+            // Convert null to undefined to match the expected type
+            const newSession = await startWorkoutSession(workoutPlanId ?? undefined);
 
             if (newSession) {
                 // If not using real-time, update the state manually

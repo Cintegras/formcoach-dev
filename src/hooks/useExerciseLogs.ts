@@ -23,8 +23,8 @@ export const logCompletedExercise = async (
         sets_completed: setsCompleted,
         reps_completed: repsCompleted,
         weights_used: weightsUsed,
-          video_url: videoUrl,
-          workout_session_id: workoutSessionId
+        video_url: videoUrl,
+        workout_session_id: workoutSessionId
       })
       .select();
 
@@ -33,7 +33,7 @@ export const logCompletedExercise = async (
       return null;
     }
 
-      return data[0] as ExerciseLog;
+    return data[0] as ExerciseLog;
   } catch (err) {
     console.error('Error in logCompletedExercise:', err);
     return null;
@@ -101,8 +101,8 @@ export function useExerciseLogs(workoutSessionId: string | null = null, fetchLog
         exercise_id: exerciseId,
         sets_completed: setsCompleted,
         reps_completed: repsCompleted,
-          weights_used: weightsUsed,
-          video_url: videoUrl
+        weights_used: weightsUsed,
+        video_url: videoUrl
       };
 
       // Then insert it
@@ -113,12 +113,12 @@ export function useExerciseLogs(workoutSessionId: string | null = null, fetchLog
 
       if (error) throw error;
 
-        const newLog = data[0] as ExerciseLog;
+      const newLog = data[0] as ExerciseLog;
 
-        // Update logs state with the new log
-        setLogs(prevLogs => [...prevLogs, newLog]);
+      // Update logs state with the new log
+      setLogs(prevLogs => [...prevLogs, newLog]);
 
-        return newLog;
+      return newLog;
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Failed to log exercise');
       setError(error);
