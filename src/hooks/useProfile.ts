@@ -1,4 +1,3 @@
-
 import {useEffect, useRef, useState} from 'react';
 import {useAuth} from '@/features/auth/hooks/useAuth';
 import {createProfile, getProfile, updateProfile} from '@/services/supabase';
