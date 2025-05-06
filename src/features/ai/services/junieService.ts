@@ -21,18 +21,16 @@ class JunieService {
     private isInitialized = false;
 
     /**
-     * Initialize the Junie service by loading and parsing the INIT.md file
+     * Initialize the Junie service
      * This should be called at the start of every session
+     * Note: INIT.md is no longer required as environment setup has been hardcoded
      */
     async initialize(): Promise<void> {
         if (this.isInitialized) return;
 
         try {
-            // Load and parse the INIT.md file
-            const initContent = await this.loadInitFile();
-
-            // Extract environment information
-            this.environmentInfo = this.parseEnvironmentInfo(initContent);
+            // Extract environment information directly without loading INIT.md
+            this.environmentInfo = this.parseEnvironmentInfo();
 
             // Display confirmation message
             this.displayConfirmation();
@@ -46,47 +44,40 @@ class JunieService {
 
     /**
      * Load the INIT.md file
+     *
+     * Note: This method is kept for backward compatibility but is no longer used
+     * as INIT.md is no longer required
      */
     private async loadInitFile(): Promise<string> {
         try {
             const response = await fetch(this.initMdUrl);
             if (!response.ok) {
-                throw new Error(`Failed to fetch INIT.md: ${response.status} ${response.statusText}`);
+                console.warn(`INIT.md not found: ${response.status} ${response.statusText}`);
+                return ''; // Return empty string instead of throwing error
             }
             return await response.text();
         } catch (error) {
-            console.error('Error loading INIT.md file:', error);
-            throw new Error('Failed to load INIT.md file. Please ensure the file exists at docs/init.md');
+            console.warn('Could not load INIT.md file, but continuing anyway:', error);
+            return ''; // Return empty string instead of throwing error
         }
     }
 
     /**
-     * Parse the INIT.md content to extract environment information
+     * Get environment information
      *
-     * TODO: When a separate Supabase project for staging is created,
-     * update this method to properly distinguish between 'dev', 'stage', and 'prod'
+     * Note: This no longer parses INIT.md as environment setup has been hardcoded
+     * All environments now use the 'formcoach-dev' Supabase project
      */
-    private parseEnvironmentInfo(content: string): EnvironmentInfo {
+    private parseEnvironmentInfo(): EnvironmentInfo {
         // Get the current environment from the environment.ts file
         const currentEnv = getEnvironment();
 
-        // Default values
-        let pycharmProject: 'formcoach-dev' | 'formcoach-stage' | 'formcoach' = 'formcoach-dev';
-        let supabaseProject: 'formcoach-dev' | 'formcoach' = 'formcoach-dev';
-
-        // Map environment to PyCharm project and Supabase project
-        if (currentEnv === 'prod') {
-            pycharmProject = 'formcoach';
-            supabaseProject = 'formcoach';
-        } else {
-            // Both dev and stage use the same Supabase project
-            pycharmProject = 'formcoach-dev';
-            supabaseProject = 'formcoach-dev';
-        }
+        // All environments now use the same Supabase project (formcoach-dev)
+        const pycharmProject = 'formcoach-dev';
+        const supabaseProject = 'formcoach-dev';
 
         return {
             // For compatibility with existing code, we'll keep the environment type as is
-            // but in practice, it will only be 'dev' or 'prod'
             environment: currentEnv as 'dev' | 'stage' | 'prod',
             pycharmProject,
             supabaseProject
@@ -94,13 +85,13 @@ class JunieService {
     }
 
     /**
-     * Display confirmation message after parsing INIT.md
+     * Display confirmation message for environment initialization
      */
     private displayConfirmation(): void {
         if (!this.environmentInfo) return;
 
         const {environment, pycharmProject} = this.environmentInfo;
-        console.log(`✅ INIT.md loaded and parsed. Environment: ${environment}. Project: ${pycharmProject}.`);
+        console.log(`✅ Environment initialized. Environment: ${environment}. Project: ${pycharmProject}.`);
     }
 
     /**
