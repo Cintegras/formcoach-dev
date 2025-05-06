@@ -10,10 +10,11 @@ import {
     DialogHeader,
     DialogTitle
 } from '@/components/ui/dialog';
-import {ArrowLeft, Database, Trash2} from 'lucide-react';
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
+import {ArrowLeft, Database, Trash2, UserX} from 'lucide-react';
 import {useToast} from '@/hooks/use-toast';
 import {useAuth} from '@/features/auth/hooks/useAuth';
-import {deleteProfile} from '@/services/supabase/profiles';
+import {deleteProfile, getAllProfiles} from '@/services/supabase/profiles';
 import {supabase} from '@/integrations/supabase/client';
 import {useWorkoutPlans} from '@/hooks/useWorkoutPlans';
 import {useWorkoutSessions} from '@/hooks/useWorkoutSessions';
@@ -27,6 +28,12 @@ const TestOptionsPage = () => {
   const [isSimulateDialogOpen, setIsSimulateDialogOpen] = useState(false);
   const [isResetMetricsDialogOpen, setIsResetMetricsDialogOpen] = useState(false);
     const [isGenerateDataDialogOpen, setIsGenerateDataDialogOpen] = useState(false);
+    const [isDeleteUserDataDialogOpen, setIsDeleteUserDataDialogOpen] = useState(false);
+
+    // State for user profiles
+    const [profiles, setProfiles] = useState<any[]>([]);
+    const [selectedUserId, setSelectedUserId] = useState<string>("");
+    const [selectedUserProfile, setSelectedUserProfile] = useState<any>(null);
 
     // Get user's workout plans
     const {plans} = useWorkoutPlans();
@@ -83,6 +90,40 @@ const TestOptionsPage = () => {
             checkExerciseLogs();
         }
     }, [recentSessions]);
+
+    // Effect to fetch all profiles
+    useEffect(() => {
+        const fetchProfiles = async () => {
+            try {
+                const allProfiles = await getAllProfiles();
+                setProfiles(allProfiles);
+
+                // If there are profiles and no selected user, select the first one
+                if (allProfiles.length > 0 && !selectedUserId) {
+                    setSelectedUserId(allProfiles[0].id);
+                }
+            } catch (error) {
+                console.error('Error fetching profiles:', error);
+                toast({
+                    title: "Error",
+                    description: "Failed to fetch user profiles",
+                    variant: "destructive"
+                });
+            }
+        };
+
+        fetchProfiles();
+    }, [toast]);
+
+    // Effect to update selected user profile when selectedUserId changes
+    useEffect(() => {
+        if (selectedUserId) {
+            const profile = profiles.find(p => p.id === selectedUserId);
+            setSelectedUserProfile(profile || null);
+        } else {
+            setSelectedUserProfile(null);
+        }
+    }, [selectedUserId, profiles]);
 
     // Handle generating test data
     const handleGenerateFakeData = async () => {
@@ -185,6 +226,49 @@ const TestOptionsPage = () => {
     setIsResetMetricsDialogOpen(false);
   };
 
+    // Handle deleting a specific user's data
+    const handleDeleteUserData = async () => {
+        if (!selectedUserId || !selectedUserProfile) {
+            toast({
+                title: "Error",
+                description: "No user selected",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        try {
+            const success = await deleteProfile(selectedUserId);
+
+            if (success) {
+                toast({
+                    title: "User Data Deleted",
+                    description: `Successfully deleted profile data for ${selectedUserProfile.first_name || 'user'}`
+                });
+
+                // Refresh the profiles list
+                const allProfiles = await getAllProfiles();
+                setProfiles(allProfiles);
+
+                // Reset selected user if it was deleted
+                if (!allProfiles.some(p => p.id === selectedUserId)) {
+                    setSelectedUserId(allProfiles.length > 0 ? allProfiles[0].id : "");
+                }
+            } else {
+                throw new Error("Failed to delete profile");
+            }
+        } catch (error) {
+            console.error("Error deleting user data:", error);
+            toast({
+                title: "Error",
+                description: "Failed to delete user data",
+                variant: "destructive"
+            });
+        }
+
+        setIsDeleteUserDataDialogOpen(false);
+    };
+
   return (
     <PageContainer>
       <div className="mt-8 mb-6">
@@ -253,6 +337,35 @@ const TestOptionsPage = () => {
             <div className="text-[#A4B1B7]">Workout Count: {workoutCount}</div>
         </div>
 
+        {/* User Selection Section */}
+        <div className="w-full max-w-[300px] mx-auto mb-6 p-4 bg-[rgba(176,232,227,0.08)] rounded-lg">
+            <h3 className="text-[#B0E8E3] text-lg mb-2">Select User</h3>
+            <Select
+                value={selectedUserId}
+                onValueChange={(value) => setSelectedUserId(value)}
+            >
+                <SelectTrigger className="w-full bg-[#0C1518] border-[#243137] text-white">
+                    <SelectValue placeholder="Select a user"/>
+                </SelectTrigger>
+                <SelectContent className="bg-[#0C1518] border-[#243137] text-white">
+                    {profiles.map((profile) => (
+                        <SelectItem key={profile.id} value={profile.id}>
+                            {profile.first_name} {profile.last_name} ({profile.email || 'No email'})
+                        </SelectItem>
+                    ))}
+                </SelectContent>
+            </Select>
+
+            {selectedUserProfile && (
+                <div className="mt-2">
+                    <div
+                        className="text-white">Name: {selectedUserProfile.first_name} {selectedUserProfile.last_name}</div>
+                    <div className="text-[#A4B1B7]">Email: {selectedUserProfile.email || 'N/A'}</div>
+                    <div className="text-[#A4B1B7]">ID: {selectedUserProfile.id}</div>
+                </div>
+            )}
+        </div>
+
       <div className="w-full max-w-[300px] mx-auto space-y-4">
           {/* Generate Test Data Button */}
           <Button
@@ -273,6 +386,17 @@ const TestOptionsPage = () => {
           <Trash2 className="mr-2 text-[#00C4B4]" size={18} />
           Clear App Data (Dev)
         </Button>
+
+          {/* Delete User Data Button */}
+          <Button
+              variant="outline"
+              className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
+              onClick={() => setIsDeleteUserDataDialogOpen(true)}
+              disabled={!selectedUserId}
+          >
+              <UserX className="mr-2 text-[#00C4B4]" size={18}/>
+              Delete Selected User Data
+          </Button>
 
         {/* Simulate Missing Profile Button */}
         <Button 
@@ -402,6 +526,42 @@ const TestOptionsPage = () => {
                         className="bg-[#00C4B4] text-black hover:bg-[#00C4B4]/80"
                     >
                         Generate Data
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+
+        {/* Delete User Data Dialog */}
+        <Dialog open={isDeleteUserDataDialogOpen} onOpenChange={setIsDeleteUserDataDialogOpen}>
+            <DialogContent className="bg-[#0C1518] border-[#243137] text-white">
+                <DialogHeader>
+                    <DialogTitle className="text-red-400">Delete User Data</DialogTitle>
+                </DialogHeader>
+                <DialogDescription className="text-[#A4B1B7]">
+                    {selectedUserProfile ? (
+                        <>
+                            This will delete the profile data for <span className="text-white font-semibold">
+                            {selectedUserProfile.first_name} {selectedUserProfile.last_name}</span>.
+                            This action cannot be undone.
+                        </>
+                    ) : (
+                        "Please select a user first."
+                    )}
+                </DialogDescription>
+                <DialogFooter>
+                    <Button
+                        variant="outline"
+                        onClick={() => setIsDeleteUserDataDialogOpen(false)}
+                        className="border-[#243137] text-[#A4B1B7] hover:bg-[#243137]"
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleDeleteUserData}
+                        variant="destructive"
+                        disabled={!selectedUserProfile}
+                    >
+                        Delete User Data
                     </Button>
                 </DialogFooter>
             </DialogContent>

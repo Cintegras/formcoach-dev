@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import AuthProvider from '@/features/auth/components/AuthProvider';
@@ -23,6 +22,7 @@ import TestOptionsPage from './pages/TestOptionsPage';
 import TrendsPage from './pages/TrendsPage';
 import CardioTypeSelect from './pages/CardioTypeSelect';
 import CardioWarmUp from './pages/CardioWarmUp';
+import WorkoutHistoryPage from './pages/WorkoutHistoryPage';
 
 function App() {
   return (
@@ -157,6 +157,16 @@ function App() {
                     <ProtectedRoute>
                         <RequireProfile>
                             <CardioWarmUp/>
+                        </RequireProfile>
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/workout-history"
+                element={
+                    <ProtectedRoute>
+                        <RequireProfile>
+                            <WorkoutHistoryPage/>
                         </RequireProfile>
                     </ProtectedRoute>
                 }

@@ -10,6 +10,23 @@ export const DUMMY_USER_IDS = {
 };
 
 /**
+ * Get all user profiles
+ * @returns Array of all user profiles or empty array if error
+ */
+export const getAllProfiles = async (): Promise<Profile[]> => {
+    const {data, error} = await supabase
+        .from('profiles')
+        .select('*');
+
+    if (error) {
+        console.error('Error fetching all profiles:', error);
+        return [];
+    }
+
+    return data || [];
+};
+
+/**
  * Get a user's profile by ID
  * @param userId - The user's ID
  * @returns The user's profile or null if not found
