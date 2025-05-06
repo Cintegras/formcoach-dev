@@ -1,3 +1,4 @@
+
 import {supabase} from '@/integrations/supabase/client';
 import {Database} from '@/integrations/supabase/types';
 import {Json} from '@/types/supabase';
@@ -43,6 +44,7 @@ export const isFeatureEnabled = async (
     featureName: string
 ): Promise<boolean> => {
     const toggle = await getFeatureToggle(userId, featureName);
+    // Fix: Return false instead of null when toggle is null
     return toggle !== null && toggle.is_enabled === true;
 };
 

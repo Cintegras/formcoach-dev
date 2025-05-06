@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
 import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ArrowLeft, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/features/auth/hooks/useAuth';
@@ -150,7 +150,7 @@ const TestOptionsPage = () => {
           Simulate Missing Profile
         </Button>
 
-        {/* Reset Progress Metrics Button (admin only) - We check for adminAccess in the ProfilePage component */}
+        {/* Reset Progress Metrics Button (admin only) */}
         <Button 
           variant="outline" 
           className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
@@ -167,16 +167,10 @@ const TestOptionsPage = () => {
           <DialogHeader>
             <DialogTitle className="text-red-400">Clear App Data</DialogTitle>
           </DialogHeader>
-
-          <div className="py-4">
-            <p className="text-[#A4B1B7]">
-              This will reset all app data and return you to the profile setup screen. Your email will remain saved.
-            </p>
-            <p className="text-[#A4B1B7] mt-2">
-              This action cannot be undone.
-            </p>
-          </div>
-
+          <DialogDescription className="text-[#A4B1B7]">
+            This will reset all app data and return you to the profile setup screen. Your email will remain saved.
+            This action cannot be undone.
+          </DialogDescription>
           <DialogFooter>
             <Button 
               variant="outline" 
@@ -201,16 +195,10 @@ const TestOptionsPage = () => {
           <DialogHeader>
             <DialogTitle className="text-red-400">Simulate Missing Profile</DialogTitle>
           </DialogHeader>
-
-          <div className="py-4">
-            <p className="text-[#A4B1B7]">
-              This will delete your profile data but keep your authentication. You'll be redirected to the profile setup page.
-            </p>
-            <p className="text-[#A4B1B7] mt-2">
-              This action cannot be undone.
-            </p>
-          </div>
-
+          <DialogDescription className="text-[#A4B1B7]">
+            This will delete your profile data but keep your authentication. You'll be redirected to the profile setup page.
+            This action cannot be undone.
+          </DialogDescription>
           <DialogFooter>
             <Button 
               variant="outline" 
@@ -235,16 +223,10 @@ const TestOptionsPage = () => {
           <DialogHeader>
             <DialogTitle className="text-red-400">Reset Progress Metrics</DialogTitle>
           </DialogHeader>
-
-          <div className="py-4">
-            <p className="text-[#A4B1B7]">
-              This will delete all your progress metrics data including weight history, measurements, and other tracked metrics.
-            </p>
-            <p className="text-[#A4B1B7] mt-2">
-              This action cannot be undone.
-            </p>
-          </div>
-
+          <DialogDescription className="text-[#A4B1B7]">
+            This will delete all your progress metrics data including weight history, measurements, and other tracked metrics.
+            This action cannot be undone.
+          </DialogDescription>
           <DialogFooter>
             <Button 
               variant="outline" 

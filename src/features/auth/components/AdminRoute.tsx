@@ -1,22 +1,31 @@
 
-import React from 'react';
-import { Navigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 import { useAdminAccess } from '@/hooks/useAdminAccess';
 import LoadingIndicator from '@/components/LoadingIndicator';
 
-/**
- * A component that restricts access to admin routes
- * Redirects to home if user doesn't have admin access
- */
-const AdminRoute: React.FC<{children: React.ReactNode}> = ({ children }) => {
-  const { hasAccess, loading } = useAdminAccess();
+interface AdminRouteProps {
+  children: React.ReactNode;
+}
 
-  if (loading) {
-    return <LoadingIndicator />;
+const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
+  const { user, loading } = useAuth();
+  const { isAdmin, loading: adminLoading, error } = useAdminAccess();
+  const location = useLocation();
+  
+  if (loading || adminLoading) {
+    return <LoadingIndicator fullScreen text="Checking admin access..." />;
   }
 
-  if (!hasAccess) {
-    return <Navigate to="/profile" replace />;
+  if (error) {
+    console.error("Admin access error:", error);
+    return <Navigate to="/error" state={{ error: "Failed to check admin access" }} />;
+  }
+
+  if (!isAdmin) {
+    // Redirect to home page if not an admin
+    return <Navigate to="/" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;
