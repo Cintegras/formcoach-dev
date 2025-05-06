@@ -14,7 +14,7 @@ import {useAdminAccess} from '@/hooks/useAdminAccess';
 import {createProgressMetric, getLatestWeight} from '@/services/supabase/progress-metrics';
 import {calculateAge} from '@/utils/date-utils';
 import {useAuth} from '@/features/auth/hooks/useAuth';
-import {supabase} from '@/integrations/supabase/client';
+import {resetUserAppData} from '@/utils/resetUserAppData';
 
 interface UserData {
   firstName: string;
@@ -238,26 +238,6 @@ const ProfilePage = () => {
     navigate('/login');
   };
 
-    /**
-     * Resets user app data in the database
-     * @param userId - The ID of the user whose data should be cleared
-     * @returns A promise that resolves to an object with success status and any errors
-     */
-    const resetUserAppData = async (userId: string): Promise<{ success: boolean, errors: string[] }> => {
-        const errors: string[] = [];
-        const tablesToClear = ['progress_metrics', 'workout_sessions', 'exercise_logs'];
-
-        for (const table of tablesToClear) {
-            const {error} = await supabase.from(table).delete().eq('user_id', userId);
-            if (error) {
-                console.warn(`Error clearing ${table}:`, error.message);
-                errors.push(`${table}: ${error.message}`);
-            }
-        }
-
-        return {success: errors.length === 0, errors};
-    };
-
     const handleClearCache = async () => {
         setIsClearCacheDialogOpen(false);
 
@@ -270,9 +250,9 @@ const ProfilePage = () => {
         try {
             // First reset server-side data if user is logged in
             if (authUser) {
-                const result = await resetUserAppData(authUser.id);
-                if (!result.success) {
-                    console.warn("Some data couldn't be cleared:", result.errors);
+                const success = await resetUserAppData(authUser.id);
+                if (!success) {
+                    console.warn("Failed to reset user app data");
                 }
             }
 
@@ -280,15 +260,15 @@ const ProfilePage = () => {
             localStorage.clear();
             localStorage.setItem("force_profile_setup", "true");
 
-      toast({
-          title: "Data Cleared",
-          description: "All app data has been reset. Redirecting to login...",
-      });
+            toast({
+                title: "Data Cleared",
+                description: "App data cleared and profile reset. Redirecting to login...",
+            });
 
             // Redirect to login
-      setTimeout(() => {
-          navigate('/login');
-      }, 1500);
+            setTimeout(() => {
+                navigate('/login');
+            }, 1500);
         } catch (error) {
             console.error("Error clearing data:", error);
             toast({
@@ -297,7 +277,7 @@ const ProfilePage = () => {
                 variant: "destructive",
             });
         }
-  };
+    };
 
     const handleDeleteAccount = () => {
         // Clear all localStorage data
