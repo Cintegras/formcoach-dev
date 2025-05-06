@@ -1,4 +1,3 @@
-
 import React, {useEffect, useState} from 'react';
 import {format} from 'date-fns';
 import {useNavigate} from 'react-router-dom';
@@ -7,6 +6,7 @@ import PrimaryButton from '@/components/PrimaryButton';
 import {Activity, Calendar, Clock, TrendingUp} from 'lucide-react';
 import {useWorkoutSessions} from '@/hooks/useWorkoutSessions';
 import {useProgressMetrics} from '@/hooks/useProgressMetrics';
+import {useProfile} from '@/hooks/useProfile';
 import {safeParseDate} from '@/utils/dateUtils';
 
 const Home = () => {
@@ -17,8 +17,9 @@ const Home = () => {
 
     // Use hooks for workout data and progress metrics
     const {sessions, activeSession, loading: sessionsLoading} = useWorkoutSessions(5);
-    const {metrics, getLatest, loading: metricsLoading} = useProgressMetrics();
-    const [weightMetric, setWeightMetric] = useState<any>(null);
+    const {metrics, loading: metricsLoading} = useProgressMetrics();
+    const {profile, loading: profileLoading} = useProfile();
+    const [weightData, setWeightData] = useState<{ value: number | null }>({value: null});
 
   useEffect(() => {
     // Get user data from localStorage
@@ -33,17 +34,14 @@ const Home = () => {
         navigate('/profile-setup');
       }
     }
+  }, [navigate]);
 
-      // Fetch latest weight metric
-      const fetchLatestWeight = async () => {
-          const latest = await getLatest('weight');
-          if (latest) {
-              setWeightMetric(latest);
-          }
-      };
-
-      fetchLatestWeight();
-  }, [navigate, getLatest]);
+    // Get weight from profile
+    useEffect(() => {
+        if (profile && profile.weight) {
+            setWeightData({value: profile.weight});
+        }
+    }, [profile]);
 
     // Calculate workout stats
     const totalWorkouts = sessions.length;
@@ -120,14 +118,14 @@ const Home = () => {
                   Progress Metrics
               </h3>
 
-              {metricsLoading ? (
+              {metricsLoading || profileLoading ? (
                   <p className="text-[#A4B1B7] text-sm">Loading metrics...</p>
               ) : (
                   <div className="space-y-2">
-                      {weightMetric ? (
+                      {weightData.value ? (
                           <div className="flex justify-between">
                               <p className="text-[#A4B1B7] text-sm">Current Weight:</p>
-                              <p className="text-[#B0E8E3] text-sm font-medium">{weightMetric.value} lbs</p>
+                              <p className="text-[#B0E8E3] text-sm font-medium">{weightData.value} lbs</p>
                           </div>
                       ) : (
                           <p className="text-[#A4B1B7] text-sm">No weight data recorded</p>
