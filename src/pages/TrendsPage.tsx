@@ -1,8 +1,8 @@
-import React, {useMemo, useState} from 'react';
+
+import React, {useMemo, useState, useEffect} from 'react';
 import PageContainer from '@/components/PageContainer';
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs';
 import {Card} from '@/components/ui/card';
-import {Button} from '@/components/ui/button';
 import {
     Bar,
     BarChart,
@@ -16,15 +16,13 @@ import {
     XAxis,
     YAxis
 } from 'recharts';
-import {Activity, ArrowLeft, BarChartHorizontal, ChartLine, Loader2} from 'lucide-react';
+import {Activity, ChartLine, ChartBar} from 'lucide-react';
 import {useProgressMetrics} from '@/hooks/useProgressMetrics';
 import {useWorkoutSessions} from '@/hooks/useWorkoutSessions';
 import {safeFormat} from '@/utils/dateUtils';
-import BottomNav from '@/components/BottomNav';
-import {useNavigate} from 'react-router-dom';
 
 const TrendsPage = () => {
-    const navigate = useNavigate();
+    const [activeTab, setActiveTab] = useState('weight');
     const [weightTimeFrame, setWeightTimeFrame] = useState('7d');
     const [measurementTimeFrame, setMeasurementTimeFrame] = useState('7d');
     const [workoutTimeFrame, setWorkoutTimeFrame] = useState('7d');
@@ -50,11 +48,11 @@ const TrendsPage = () => {
         error: workoutError
     } = useWorkoutSessions();
 
-    React.useEffect(() => {
+    useEffect(() => {
         getWeightHistory('weight', 30);
     }, [getWeightHistory]);
 
-    React.useEffect(() => {
+    useEffect(() => {
         getMeasurementHistory(metricType, 30);
     }, [getMeasurementHistory, metricType]);
 
@@ -89,9 +87,9 @@ const TrendsPage = () => {
         const { active, payload, label } = props;
         if (active && payload && payload.length) {
             return (
-                <div className="bg-formcoach-card p-3 rounded-md border border-formcoach-comingsoon shadow-lg">
-                    <p className="text-formcoach-text font-medium">{label}</p>
-                    <p className="text-formcoach-primary text-lg">
+                <div className="bg-[#020D0C] p-3 rounded-md border border-[#333] shadow-lg">
+                    <p className="text-white font-medium">{label}</p>
+                    <p className="text-[#00C4B4] text-lg">
                         {payload[0].value} {payload[0].name === 'duration' ? 'mins' : 'lbs'}
                     </p>
                 </div>
@@ -100,152 +98,216 @@ const TrendsPage = () => {
         return null;
     };
 
-    const WeightTab = () => (
-        <Card className="bg-formcoach-card p-4">
-            <h3 className="text-lg font-semibold mb-4 text-formcoach-text">Weight Trend</h3>
-            <div className="flex justify-end mb-2">
-                <select
-                    className="bg-formcoach-comingsoon text-formcoach-text rounded-md p-1"
-                    value={weightTimeFrame}
-                    onChange={(e) => setWeightTimeFrame(e.target.value)}
-                >
-                    <option value="7d">7 Days</option>
-                    <option value="30d">30 Days</option>
-                    <option value="90d">90 Days</option>
-                </select>
-            </div>
-            <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={weightData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-                    <XAxis dataKey="date" stroke="#D7E4E3" />
-                    <YAxis stroke="#D7E4E3" />
-                    <Tooltip content={renderCustomTooltip} />
-                    <Line type="monotone" dataKey="value" stroke="#00C4B4" activeDot={{ r: 8 }} />
-                </LineChart>
-            </ResponsiveContainer>
-        </Card>
-    );
+    const renderContent = () => {
+        if (activeTab === 'weight') {
+            return renderWeightContent();
+        } else if (activeTab === 'measurements') {
+            return renderMeasurementsContent();
+        } else {
+            return renderWorkoutsContent();
+        }
+    };
 
-    const MeasurementsTab = () => (
-        <Card className="bg-formcoach-card p-4">
-            <h3 className="text-lg font-semibold mb-4 text-formcoach-text">Measurements Trend</h3>
-            <div className="flex justify-between items-center mb-2">
-                <select
-                    className="bg-formcoach-comingsoon text-formcoach-text rounded-md p-1"
-                    value={measurementTimeFrame}
-                    onChange={(e) => setMeasurementTimeFrame(e.target.value)}
-                >
-                    <option value="7d">7 Days</option>
-                    <option value="30d">30 Days</option>
-                    <option value="90d">90 Days</option>
-                </select>
-                <select
-                    className="bg-formcoach-comingsoon text-formcoach-text rounded-md p-1"
-                    value={metricType}
-                    onChange={(e) => setMetricType(e.target.value)}
-                >
-                    <option value="chest">Chest</option>
-                    <option value="waist">Waist</option>
-                    <option value="hips">Hips</option>
-                    {/* Add more options as needed */}
-                </select>
-            </div>
-            <ResponsiveContainer width="100%" height={300}>
-                <LineChart data={measurementData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-                    <XAxis dataKey="date" stroke="#D7E4E3" />
-                    <YAxis stroke="#D7E4E3" />
-                    <Tooltip content={renderCustomTooltip} />
-                    <Line type="monotone" dataKey="value" stroke="#00C4B4" activeDot={{ r: 8 }} />
-                </LineChart>
-            </ResponsiveContainer>
-        </Card>
-    );
+    const renderWeightContent = () => {
+        if (weightLoading) {
+            return (
+                <div className="flex justify-center items-center h-64">
+                    <div className="animate-spin h-10 w-10 border-4 border-[#00C4B4] rounded-full border-t-transparent"></div>
+                </div>
+            );
+        }
 
-    const WorkoutTab = () => (
-        <Card className="bg-formcoach-card p-4">
-            <h3 className="text-lg font-semibold mb-4 text-formcoach-text">Workout Duration</h3>
-            <div className="flex justify-end mb-2">
-                <select
-                    className="bg-formcoach-comingsoon text-formcoach-text rounded-md p-1"
-                    value={workoutTimeFrame}
-                    onChange={(e) => setWorkoutTimeFrame(e.target.value)}
-                >
-                    <option value="7d">7 Days</option>
-                    <option value="30d">30 Days</option>
-                    <option value="90d">90 Days</option>
-                </select>
+        if (weightError) {
+            return (
+                <div className="flex flex-col items-center justify-center h-64">
+                    <p className="text-red-500">Error loading weight data</p>
+                </div>
+            );
+        }
+
+        if (weightData.length === 0) {
+            return (
+                <div className="flex flex-col items-center justify-center h-64">
+                    <ChartLine size={48} className="text-[#666] mb-4" />
+                    <p className="text-white text-lg">No weight data available</p>
+                </div>
+            );
+        }
+
+        return (
+            <div className="mt-4">
+                <div className="flex justify-end mb-2">
+                    <select
+                        className="bg-[#1A1F2C] text-white rounded-md p-1 border border-[#333]"
+                        value={weightTimeFrame}
+                        onChange={(e) => setWeightTimeFrame(e.target.value)}
+                    >
+                        <option value="7d">7 Days</option>
+                        <option value="30d">30 Days</option>
+                        <option value="90d">90 Days</option>
+                    </select>
+                </div>
+                <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={weightData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                        <XAxis dataKey="date" stroke="#666" />
+                        <YAxis stroke="#666" />
+                        <Tooltip content={renderCustomTooltip} />
+                        <Line type="monotone" dataKey="value" stroke="#00C4B4" activeDot={{ r: 8 }} />
+                    </LineChart>
+                </ResponsiveContainer>
             </div>
-            <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={workoutData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#444" />
-                    <XAxis dataKey="date" stroke="#D7E4E3" />
-                    <YAxis stroke="#D7E4E3" />
-                    <Tooltip content={renderCustomTooltip} />
-                    <Bar dataKey="duration" fill="#00C4B4" />
-                    <Legend />
-                </BarChart>
-            </ResponsiveContainer>
-        </Card>
-    );
+        );
+    };
+
+    const renderMeasurementsContent = () => {
+        if (measurementLoading) {
+            return (
+                <div className="flex justify-center items-center h-64">
+                    <div className="animate-spin h-10 w-10 border-4 border-[#00C4B4] rounded-full border-t-transparent"></div>
+                </div>
+            );
+        }
+
+        if (measurementError) {
+            return (
+                <div className="flex flex-col items-center justify-center h-64">
+                    <p className="text-red-500">Error loading measurement data</p>
+                </div>
+            );
+        }
+
+        if (measurementData.length === 0) {
+            return (
+                <div className="flex flex-col items-center justify-center h-64">
+                    <Activity size={48} className="text-[#666] mb-4" />
+                    <p className="text-white text-lg">No measurement data available</p>
+                </div>
+            );
+        }
+
+        return (
+            <div className="mt-4">
+                <div className="flex justify-between items-center mb-2">
+                    <select
+                        className="bg-[#1A1F2C] text-white rounded-md p-1 border border-[#333]"
+                        value={metricType}
+                        onChange={(e) => setMetricType(e.target.value)}
+                    >
+                        <option value="chest">Chest</option>
+                        <option value="waist">Waist</option>
+                        <option value="hips">Hips</option>
+                    </select>
+                    <select
+                        className="bg-[#1A1F2C] text-white rounded-md p-1 border border-[#333]"
+                        value={measurementTimeFrame}
+                        onChange={(e) => setMeasurementTimeFrame(e.target.value)}
+                    >
+                        <option value="7d">7 Days</option>
+                        <option value="30d">30 Days</option>
+                        <option value="90d">90 Days</option>
+                    </select>
+                </div>
+                <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={measurementData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                        <XAxis dataKey="date" stroke="#666" />
+                        <YAxis stroke="#666" />
+                        <Tooltip content={renderCustomTooltip} />
+                        <Line type="monotone" dataKey="value" stroke="#00C4B4" activeDot={{ r: 8 }} />
+                    </LineChart>
+                </ResponsiveContainer>
+            </div>
+        );
+    };
+
+    const renderWorkoutsContent = () => {
+        if (workoutLoading) {
+            return (
+                <div className="flex justify-center items-center h-64">
+                    <div className="animate-spin h-10 w-10 border-4 border-[#00C4B4] rounded-full border-t-transparent"></div>
+                </div>
+            );
+        }
+
+        if (workoutError) {
+            return (
+                <div className="flex flex-col items-center justify-center h-64">
+                    <p className="text-red-500">Error loading workout data</p>
+                </div>
+            );
+        }
+
+        if (workoutData.length === 0) {
+            return (
+                <div className="flex flex-col items-center justify-center h-64">
+                    <ChartBar size={48} className="text-[#666] mb-4" />
+                    <p className="text-white text-lg">No workout data available</p>
+                </div>
+            );
+        }
+
+        return (
+            <div className="mt-4">
+                <div className="flex justify-end mb-2">
+                    <select
+                        className="bg-[#1A1F2C] text-white rounded-md p-1 border border-[#333]"
+                        value={workoutTimeFrame}
+                        onChange={(e) => setWorkoutTimeFrame(e.target.value)}
+                    >
+                        <option value="7d">7 Days</option>
+                        <option value="30d">30 Days</option>
+                        <option value="90d">90 Days</option>
+                    </select>
+                </div>
+                <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={workoutData}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#333" />
+                        <XAxis dataKey="date" stroke="#666" />
+                        <YAxis stroke="#666" />
+                        <Tooltip content={renderCustomTooltip} />
+                        <Bar dataKey="duration" fill="#00C4B4" />
+                    </BarChart>
+                </ResponsiveContainer>
+            </div>
+        );
+    };
 
     return (
-        <PageContainer>
-            <Button variant="ghost" className="absolute top-4 left-4 md:left-8" onClick={() => navigate(-1)}>
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back
-            </Button>
-            <h1 className="text-2xl font-bold text-center mb-6">Trends</h1>
-            <Tabs defaultValue="weight">
-                <TabsList className="w-full flex justify-center mb-4">
-                    <TabsTrigger value="weight" className="data-[state=active]:bg-formcoach-primary data-[state=active]:text-formcoach-background">
-                        <ChartLine className="mr-2 h-4 w-4" />
-                        Weight
-                    </TabsTrigger>
-                    <TabsTrigger value="measurements" className="data-[state=active]:bg-formcoach-primary data-[state=active]:text-formcoach-background">
-                        <Activity className="mr-2 h-4 w-4" />
-                        Measurements
-                    </TabsTrigger>
-                    <TabsTrigger value="workouts" className="data-[state=active]:bg-formcoach-primary data-[state=active]:text-formcoach-background">
-                        <BarChartHorizontal className="mr-2 h-4 w-4" />
-                        Workouts
-                    </TabsTrigger>
-                </TabsList>
-                <TabsContent value="weight">
-                    {weightLoading ? (
-                        <div className="flex justify-center items-center h-48">
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                        </div>
-                    ) : weightError ? (
-                        <p className="text-red-500">Error: {weightError.message}</p>
-                    ) : (
-                        <WeightTab />
-                    )}
-                </TabsContent>
-                <TabsContent value="measurements">
-                    {measurementLoading ? (
-                        <div className="flex justify-center items-center h-48">
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                        </div>
-                    ) : measurementError ? (
-                        <p className="text-red-500">Error: {measurementError.message}</p>
-                    ) : (
-                        <MeasurementsTab />
-                    )}
-                </TabsContent>
-                <TabsContent value="workouts">
-                    {workoutLoading ? (
-                        <div className="flex justify-center items-center h-48">
-                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                        </div>
-                    ) : workoutError ? (
-                        <p className="text-red-500">Error: {workoutError.message}</p>
-                    ) : (
-                        <WorkoutTab />
-                    )}
-                </TabsContent>
-            </Tabs>
-            <BottomNav/>
+        <PageContainer hideBottomNav={false}>
+            <div className="flex flex-col items-center">
+                <h1 className="text-2xl font-bold text-white mb-6">Trends</h1>
+                
+                <div className="w-full max-w-md bg-[#1A1F2C] rounded-lg p-1 mb-6">
+                    <div className="flex">
+                        <button 
+                            className={`flex-1 flex items-center justify-center py-2 px-3 rounded-md ${activeTab === 'weight' ? 'bg-[#00C4B4] text-black' : 'text-white'}`}
+                            onClick={() => setActiveTab('weight')}
+                        >
+                            <ChartLine className="mr-2 h-4 w-4" />
+                            <span>Weight</span>
+                        </button>
+                        <button 
+                            className={`flex-1 flex items-center justify-center py-2 px-3 rounded-md ${activeTab === 'measurements' ? 'bg-[#00C4B4] text-black' : 'text-white'}`}
+                            onClick={() => setActiveTab('measurements')}
+                        >
+                            <Activity className="mr-2 h-4 w-4" />
+                            <span>Measurements</span>
+                        </button>
+                        <button 
+                            className={`flex-1 flex items-center justify-center py-2 px-3 rounded-md ${activeTab === 'workouts' ? 'bg-[#00C4B4] text-black' : 'text-white'}`}
+                            onClick={() => setActiveTab('workouts')}
+                        >
+                            <ChartBar className="mr-2 h-4 w-4" />
+                            <span>Workouts</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div className="w-full">
+                    {renderContent()}
+                </div>
+            </div>
         </PageContainer>
     );
 };
