@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {useAuth} from '@/features/auth/hooks/useAuth';
 import {createProfile, getProfile, Profile, ProfileUpdate, updateProfile} from '@/services/supabase';
 
@@ -6,13 +6,20 @@ import {createProfile, getProfile, Profile, ProfileUpdate, updateProfile} from '
  * Hook for accessing and managing the current user's profile
  */
 export function useProfile() {
-    const {user} = useAuth();
+    const {user, loading: authLoading} = useAuth();
     const [profile, setProfile] = useState<Profile | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
+    // Add profile cache
+    const profileCache = useRef<{ [key: string]: Profile | null }>({});
 
-    // Fetch profile when user changes
+    // Fetch profile when user changes or auth loading state changes
     useEffect(() => {
+        // Don't fetch if auth is still loading
+        if (authLoading) {
+            return;
+        }
+
         if (!user) {
             setProfile(null);
             setLoading(false);
@@ -23,8 +30,17 @@ export function useProfile() {
             setLoading(true);
             setError(null);
 
+            // Check cache first
+            if (profileCache.current[user.id]) {
+                setProfile(profileCache.current[user.id]);
+                setLoading(false);
+                return;
+            }
+
             try {
                 const profileData = await getProfile(user.id);
+                // Cache the result
+                profileCache.current[user.id] = profileData;
                 setProfile(profileData);
             } catch (err) {
                 setError(err instanceof Error ? err : new Error('Failed to fetch profile'));
@@ -35,7 +51,7 @@ export function useProfile() {
         };
 
         fetchProfile();
-    }, [user]);
+    }, [user, authLoading]);
 
     /**
      * Update the current user's profile
