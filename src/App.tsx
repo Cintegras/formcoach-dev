@@ -1,3 +1,4 @@
+
 import React from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import AuthProvider from '@/features/auth/components/AuthProvider';
@@ -20,6 +21,8 @@ import MedicalDisclaimer from './pages/MedicalDisclaimer';
 import Welcome from './pages/Welcome';
 import TestOptionsPage from './pages/TestOptionsPage';
 import TrendsPage from './pages/TrendsPage';
+import CardioTypeSelect from './pages/CardioTypeSelect';
+import CardioWarmUp from './pages/CardioWarmUp';
 
 function App() {
   return (
@@ -133,6 +136,27 @@ function App() {
                             <RequireFormCoachAccess>
                                 <TrendsPage/>
                             </RequireFormCoachAccess>
+                        </RequireProfile>
+                    </ProtectedRoute>
+                }
+            />
+            {/* Add the missing routes */}
+            <Route
+                path="/cardio-type-select"
+                element={
+                    <ProtectedRoute>
+                        <RequireProfile>
+                            <CardioTypeSelect/>
+                        </RequireProfile>
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/cardio-warmup"
+                element={
+                    <ProtectedRoute>
+                        <RequireProfile>
+                            <CardioWarmUp/>
                         </RequireProfile>
                     </ProtectedRoute>
                 }
