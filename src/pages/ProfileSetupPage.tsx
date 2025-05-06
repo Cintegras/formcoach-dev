@@ -220,6 +220,9 @@ const ProfileSetupPage = () => {
       };
       localStorage.setItem('userData', JSON.stringify(userData));
 
+      // Set profile_complete flag to prevent redirect loops
+      localStorage.setItem("profile_complete", "true");
+
       toast({
         title: `Welcome, ${formValues.firstName}!`,
         description: "Your profile has been set up successfully.",

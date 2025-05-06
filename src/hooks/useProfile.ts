@@ -1,6 +1,7 @@
 import {useEffect, useRef, useState} from 'react';
 import {useAuth} from '@/features/auth/hooks/useAuth';
 import {createProfile, getProfile, Profile, ProfileUpdate, updateProfile} from '@/services/supabase';
+import {hasCompleteProfile} from '@/utils/profile-utils';
 
 /**
  * Hook for accessing and managing the current user's profile
@@ -10,18 +11,26 @@ export function useProfile() {
     const [profile, setProfile] = useState<Profile | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<Error | null>(null);
-    // Add profile cache
+    // Add profile cache with useRef to persist across renders
     const profileCache = useRef<{ [key: string]: Profile | null }>({});
+    // Add a ref to track the current profile to prevent null resets during re-renders
+    const profileRef = useRef<Profile | null>(null);
 
     // Fetch profile when user changes or auth loading state changes
     useEffect(() => {
-        // Don't fetch if auth is still loading
+        // Set loading to true when auth is loading
         if (authLoading) {
+            setLoading(true);
             return;
         }
 
         if (!user) {
-            setProfile(null);
+            // Check localStorage fallback before setting profile to null
+            const hasProfileComplete = localStorage.getItem("profile_complete") === "true";
+            if (!hasProfileComplete) {
+                setProfile(null);
+                profileRef.current = null;
+            }
             setLoading(false);
             return;
         }
@@ -33,6 +42,7 @@ export function useProfile() {
             // Check cache first
             if (profileCache.current[user.id]) {
                 setProfile(profileCache.current[user.id]);
+                profileRef.current = profileCache.current[user.id];
                 setLoading(false);
                 return;
             }
@@ -42,9 +52,21 @@ export function useProfile() {
                 // Cache the result
                 profileCache.current[user.id] = profileData;
                 setProfile(profileData);
+                profileRef.current = profileData;
+
+                // Update localStorage based on profile completeness
+                if (hasCompleteProfile(profileData)) {
+                    localStorage.setItem("profile_complete", "true");
+                }
             } catch (err) {
                 setError(err instanceof Error ? err : new Error('Failed to fetch profile'));
                 console.error('Error fetching profile:', err);
+
+                // Check localStorage fallback if profile fetch fails
+                const hasProfileComplete = localStorage.getItem("profile_complete") === "true";
+                if (hasProfileComplete) {
+                    console.log("Using localStorage fallback for profile_complete");
+                }
             } finally {
                 setLoading(false);
             }
@@ -70,7 +92,15 @@ export function useProfile() {
         try {
             const updatedProfile = await updateProfile(user.id, updates);
             if (updatedProfile) {
+                // Update state and cache
                 setProfile(updatedProfile);
+                profileRef.current = updatedProfile;
+                profileCache.current[user.id] = updatedProfile;
+
+                // Update localStorage if profile is now complete
+                if (hasCompleteProfile(updatedProfile)) {
+                    localStorage.setItem("profile_complete", "true");
+                }
             }
             return updatedProfile;
         } catch (err) {
@@ -103,7 +133,15 @@ export function useProfile() {
             });
 
             if (newProfile) {
+                // Update state and cache
                 setProfile(newProfile);
+                profileRef.current = newProfile;
+                profileCache.current[user.id] = newProfile;
+
+                // Update localStorage if profile is complete
+                if (hasCompleteProfile(newProfile)) {
+                    localStorage.setItem("profile_complete", "true");
+                }
             }
             return newProfile;
         } catch (err) {

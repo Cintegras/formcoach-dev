@@ -1,4 +1,3 @@
-
 import {useEffect, useState} from 'react';
 import {supabase} from '@/integrations/supabase/client';
 import {Session, User} from '@supabase/supabase-js';
@@ -13,8 +12,12 @@ export function useAuth() {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
+      // Start with loading true
+      setLoading(true);
+
     // Set up auth state listener FIRST
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (event, session) => {
@@ -25,11 +28,18 @@ export function useAuth() {
     );
 
     // THEN check for existing session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      setLoading(false);
-    });
+      supabase.auth.getSession()
+          .then(({data: {session}}) => {
+              setSession(session);
+              setUser(session?.user ?? null);
+          })
+          .catch((err) => {
+              console.error("Error getting session:", err);
+              setError(err instanceof Error ? err : new Error('Failed to get session'));
+          })
+          .finally(() => {
+              setLoading(false);
+          });
 
     return () => subscription.unsubscribe();
   }, []);
@@ -73,6 +83,12 @@ export function useAuth() {
     const signOut = async (): Promise<{ error: AuthError | null }> => {
     try {
       setLoading(true);
+
+        // Clear profile_complete flag from localStorage
+        localStorage.removeItem("profile_complete");
+        localStorage.removeItem("userData");
+
+        // Clear profile cache
       const { error } = await supabase.auth.signOut();
       if (error) throw error;
       return { error: null };
@@ -91,6 +107,7 @@ export function useAuth() {
     user,
     session,
     loading,
+      error,
     isAuthenticated,
     signIn,
     signUp,
