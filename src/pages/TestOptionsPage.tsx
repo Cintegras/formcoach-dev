@@ -11,15 +11,17 @@ import {
     DialogTitle
 } from '@/components/ui/dialog';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
-import {ArrowLeft, Database, HelpCircle, Trash2, UserCircle, UserX} from 'lucide-react';
+import {ArrowLeft, ChevronDown, Database, HelpCircle, Settings, Trash2, UserCircle, UserX} from 'lucide-react';
 import {useToast} from '@/hooks/use-toast';
 import {useAuth} from '@/features/auth/hooks/useAuth';
-import {deleteProfile, getAllProfiles} from '@/services/supabase/profiles';
+import {getAllProfiles} from '@/services/supabase/profiles';
 import {supabase} from '@/integrations/supabase/client';
 import {useWorkoutPlans} from '@/hooks/useWorkoutPlans';
 import {useWorkoutSessions} from '@/hooks/useWorkoutSessions';
 import {useFeatureToggles} from '@/hooks/useFeatureToggles';
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,} from "@/components/ui/tooltip";
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu";
+import {resetUserAppData} from '@/utils/resetUserAppData';
 
 const TestOptionsPage = () => {
   const navigate = useNavigate();
@@ -128,32 +130,165 @@ const TestOptionsPage = () => {
     }, [selectedUserId, profiles]);
 
     // Handle generating test data
-    const handleGenerateFakeData = async () => {
-        // Implementation for generating test data
-        toast({
-            title: "Test Data Generated",
-            description: "Fake workout data has been created for testing"
-        });
+    // Generate test data including workout plans, sessions, and exercise logs
+    const handleGenerateTestData = async () => {
+        if (!user) {
+            toast({
+                title: "Error",
+                description: "No authenticated user found",
+                variant: "destructive"
+            });
+            return;
+        }
+
         setIsGenerateDataDialogOpen(false);
+
+        // Show loading toast
+        toast({
+            title: "Generating test data...",
+            description: "Please wait while we create sample workout data.",
+        });
+
+        try {
+            // 1. Create a workout plan
+            const {data: workoutPlan, error: planError} = await supabase
+                .from('workout_plans')
+                .insert({
+                    user_id: user.id,
+                    name: `Test Plan ${new Date().toLocaleDateString()}`,
+                    description: 'Automatically generated test plan',
+                    is_active: true,
+                    difficulty: 'intermediate',
+                    created_at: new Date().toISOString()
+                })
+                .select()
+                .single();
+
+            if (planError) {
+                throw new Error(`Error creating workout plan: ${planError.message}`);
+            }
+
+            // 2. Create workout sessions (3 sessions)
+            const sessionPromises = [];
+            for (let i = 0; i < 3; i++) {
+                // Create session with date offset (today, yesterday, 2 days ago)
+                const sessionDate = new Date();
+                sessionDate.setDate(sessionDate.getDate() - i);
+
+                const sessionPromise = supabase
+                    .from('workout_sessions')
+                    .insert({
+                        user_id: user.id,
+                        workout_plan_id: workoutPlan.id,
+                        name: `Test Session ${i + 1}`,
+                        status: i === 0 ? 'in_progress' : 'completed',
+                        created_at: sessionDate.toISOString(),
+                        completed_at: i === 0 ? null : sessionDate.toISOString()
+                    })
+                    .select()
+                    .single();
+
+                sessionPromises.push(sessionPromise);
+            }
+
+            const sessionResults = await Promise.all(sessionPromises);
+            const sessions = sessionResults.map(result => {
+                if (result.error) {
+                    console.error('Error creating session:', result.error);
+                    return null;
+                }
+                return result.data;
+            }).filter(Boolean);
+
+            // 3. Create exercise logs for each session
+            const exerciseTypes = ['squat', 'bench_press', 'deadlift', 'shoulder_press', 'row'];
+            const exercisePromises = [];
+
+            for (const session of sessions) {
+                // Add 2-3 exercises per session
+                const exerciseCount = Math.floor(Math.random() * 2) + 2;
+
+                for (let i = 0; i < exerciseCount; i++) {
+                    const exerciseType = exerciseTypes[Math.floor(Math.random() * exerciseTypes.length)];
+                    const sets = Math.floor(Math.random() * 3) + 2; // 2-4 sets
+
+                    const exercisePromise = supabase
+                        .from('exercise_logs')
+                        .insert({
+                            workout_session_id: session.id,
+                            exercise_type: exerciseType,
+                            sets: sets,
+                            reps: Math.floor(Math.random() * 5) + 8, // 8-12 reps
+                            weight: Math.floor(Math.random() * 50) + 50, // 50-100 lbs
+                            notes: 'Automatically generated test exercise',
+                            created_at: session.created_at
+                        })
+                        .select()
+                        .single();
+
+                    exercisePromises.push(exercisePromise);
+                }
+            }
+
+            await Promise.all(exercisePromises);
+
+            toast({
+                title: "Test Data Generated",
+                description: `Created 1 workout plan, ${sessions.length} sessions, and multiple exercises`
+            });
+        } catch (error) {
+            console.error("Error generating test data:", error);
+            toast({
+                title: "Error",
+                description: "Failed to generate test data",
+                variant: "destructive"
+            });
+        }
     };
 
-  // Handle clearing app data (same as in ProfilePage)
-  const handleClearCache = () => {
-    localStorage.clear();
+    // Handle clearing app data using the shared utility
+    const handleClearCache = async () => {
     setIsClearCacheDialogOpen(false);
 
+        // Show loading toast
     toast({
-      title: "Cache Cleared",
-      description: "All app data has been reset. Redirecting to login...",
+        title: "Clearing data...",
+        description: "Please wait while we reset your app data.",
     });
 
-    // Short delay before redirecting to login page
-    setTimeout(() => {
-      navigate('/login');
-    }, 1500);
+        try {
+            // First reset server-side data if user is logged in
+            if (user) {
+                const success = await resetUserAppData(user.id);
+                if (!success) {
+                    console.warn("Failed to reset user app data");
+                }
+            }
+
+            // Then clear localStorage and set the force_profile_setup flag
+            localStorage.clear();
+            localStorage.setItem("force_profile_setup", "true");
+
+            toast({
+                title: "Data Cleared",
+                description: "App data cleared and profile reset. Redirecting to login...",
+            });
+
+            // Redirect to login
+            setTimeout(() => {
+                navigate('/login');
+            }, 1500);
+        } catch (error) {
+            console.error("Error clearing data:", error);
+            toast({
+                title: "Error",
+                description: "There was a problem clearing your data. Please try again.",
+                variant: "destructive",
+            });
+        }
   };
 
-  // Handle simulating missing profile
+    // Handle simulating missing profile using the shared utility
   const handleSimulateMissingProfile = async () => {
     if (!user) {
       toast({
@@ -164,35 +299,45 @@ const TestOptionsPage = () => {
       return;
     }
 
+      setIsSimulateDialogOpen(false);
+
+      // Show loading toast
+      toast({
+          title: "Simulating missing profile...",
+          description: "Please wait while we reset your profile data.",
+      });
+
     try {
-      const success = await deleteProfile(user.id);
+        // Use the shared utility to reset user data
+        const success = await resetUserAppData(user.id);
 
       if (success) {
         toast({
-          title: "Profile Deleted",
+            title: "Profile Reset",
           description: "Successfully simulated missing profile. Redirecting to profile setup..."
         });
+
+          // Set force_profile_setup flag
+          localStorage.setItem("force_profile_setup", "true");
 
         // Short delay before redirecting to profile setup
         setTimeout(() => {
           navigate('/profile-setup');
         }, 1500);
       } else {
-        throw new Error("Failed to delete profile");
+          throw new Error("Failed to reset profile");
       }
     } catch (error) {
-      console.error("Error deleting profile:", error);
+        console.error("Error simulating missing profile:", error);
       toast({
         title: "Error",
         description: "Failed to simulate missing profile",
         variant: "destructive"
       });
     }
-
-    setIsSimulateDialogOpen(false);
   };
 
-  // Handle resetting progress metrics
+    // Handle resetting progress metrics using the shared utility
   const handleResetProgressMetrics = async () => {
     if (!user) {
       toast({
@@ -203,8 +348,17 @@ const TestOptionsPage = () => {
       return;
     }
 
+      setIsResetMetricsDialogOpen(false);
+
+      // Show loading toast
+      toast({
+          title: "Resetting metrics...",
+          description: "Please wait while we reset your progress metrics.",
+      });
+
     try {
-      // Delete all progress metrics for this user
+        // Delete all progress metrics for this user using the shared utility
+        // This will only delete progress_metrics and not affect other tables
       const { error } = await supabase
         .from('progress_metrics')
         .delete()
@@ -224,11 +378,9 @@ const TestOptionsPage = () => {
         variant: "destructive"
       });
     }
-
-    setIsResetMetricsDialogOpen(false);
   };
 
-    // Handle deleting a specific user's data
+    // Handle deleting a specific user's data using the shared utility
     const handleDeleteUserData = async () => {
         if (!selectedUserId || !selectedUserProfile) {
             toast({
@@ -239,25 +391,42 @@ const TestOptionsPage = () => {
             return;
         }
 
+        setIsDeleteUserDataDialogOpen(false);
+
+        // Show loading toast
+        toast({
+            title: "Deleting data...",
+            description: "Please wait while we delete the user data.",
+        });
+
         try {
-            const success = await deleteProfile(selectedUserId);
+            // Use the shared utility to reset all user data
+            const success = await resetUserAppData(selectedUserId);
 
             if (success) {
                 toast({
                     title: "User Data Deleted",
-                    description: `Successfully deleted profile data for ${selectedUserProfile.first_name || 'user'}`
+                    description: `Successfully reset data for ${selectedUserProfile.full_name || 'user'}`
                 });
 
                 // Refresh the profiles list
                 const allProfiles = await getAllProfiles();
                 setProfiles(allProfiles);
 
-                // Reset selected user if it was deleted
-                if (!allProfiles.some(p => p.id === selectedUserId)) {
-                    setSelectedUserId(allProfiles.length > 0 ? allProfiles[0].id : "");
+                // Reset selected user if needed
+                if (allProfiles.length > 0) {
+                    // Find the same user (they should still exist but with reset fields)
+                    const updatedUser = allProfiles.find(p => p.id === selectedUserId);
+                    if (updatedUser) {
+                        setSelectedUserId(updatedUser.id);
+                    } else {
+                        setSelectedUserId(allProfiles[0].id);
+                    }
+                } else {
+                    setSelectedUserId("");
                 }
             } else {
-                throw new Error("Failed to delete profile");
+                throw new Error("Failed to reset user data");
             }
         } catch (error) {
             console.error("Error deleting user data:", error);
@@ -267,8 +436,6 @@ const TestOptionsPage = () => {
                 variant: "destructive"
             });
         }
-
-        setIsDeleteUserDataDialogOpen(false);
     };
 
     // Handle setting the selected user as the current user
@@ -493,116 +660,68 @@ const TestOptionsPage = () => {
         </div>
 
       <div className="w-full max-w-[300px] mx-auto space-y-4">
-          {/* Generate Test Data Button */}
+          {/* Developer Actions Dropdown */}
           <div className="flex items-center">
-              <Button
-                  variant="outline"
-                  className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
-                  onClick={() => setIsGenerateDataDialogOpen(true)}
-              >
-                  <Database className="mr-2 text-[#00C4B4]" size={18}/>
-                  Generate Test Data
-              </Button>
+              <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                      <Button
+                          variant="outline"
+                          className="w-full justify-between bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
+                      >
+                          <div className="flex items-center">
+                              <Settings className="mr-2 text-[#00C4B4]" size={18}/>
+                              ⚙️ Developer Actions
+                          </div>
+                          <ChevronDown className="ml-2 h-4 w-4 text-[#A4B1B7]"/>
+                      </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent className="w-56 bg-[#0C1518] border-[#243137] text-white">
+                      <DropdownMenuItem
+                          onClick={() => setIsClearCacheDialogOpen(true)}
+                          className="cursor-pointer hover:bg-[rgba(176,232,227,0.12)]"
+                      >
+                          <Trash2 className="mr-2 text-[#00C4B4]" size={16}/>
+                          Clear App Data (Dev)
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                          onClick={() => setIsDeleteUserDataDialogOpen(true)}
+                          className="cursor-pointer hover:bg-[rgba(176,232,227,0.12)]"
+                          disabled={!selectedUserId}
+                      >
+                          <UserX className="mr-2 text-[#00C4B4]" size={16}/>
+                          Delete Selected User Data
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                          onClick={() => setIsSimulateDialogOpen(true)}
+                          className="cursor-pointer hover:bg-[rgba(176,232,227,0.12)]"
+                      >
+                          <Trash2 className="mr-2 text-[#00C4B4]" size={16}/>
+                          Simulate Missing Profile
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                          onClick={() => setIsResetMetricsDialogOpen(true)}
+                          className="cursor-pointer hover:bg-[rgba(176,232,227,0.12)]"
+                      >
+                          <Trash2 className="mr-2 text-red-500" size={16}/>
+                          Reset Progress Metrics
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                          onClick={() => setIsGenerateDataDialogOpen(true)}
+                          className="cursor-pointer hover:bg-[rgba(176,232,227,0.12)]"
+                      >
+                          <Database className="mr-2 text-[#00C4B4]" size={16}/>
+                          Generate Test Data
+                      </DropdownMenuItem>
+                  </DropdownMenuContent>
+              </DropdownMenu>
               <TooltipProvider>
                   <Tooltip>
                       <TooltipTrigger asChild>
                           <HelpCircle className="ml-2 text-[#A4B1B7]" size={16}/>
                       </TooltipTrigger>
                       <TooltipContent className="bg-[#243137] text-white border-[#0C1518] max-w-[250px]">
-                          <p>Creates sample workout data for testing purposes, including a workout plan, sessions, and
-                              exercise logs.</p>
-                      </TooltipContent>
-                  </Tooltip>
-              </TooltipProvider>
-          </div>
-
-        {/* Clear App Data Button */}
-          <div className="flex items-center">
-              <Button
-                  variant="outline"
-                  className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
-                  onClick={() => setIsClearCacheDialogOpen(true)}
-              >
-                  <Trash2 className="mr-2 text-[#00C4B4]" size={18}/>
-                  Clear App Data (Dev)
-              </Button>
-              <TooltipProvider>
-                  <Tooltip>
-                      <TooltipTrigger asChild>
-                          <HelpCircle className="ml-2 text-[#A4B1B7]" size={16}/>
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-[#243137] text-white border-[#0C1518] max-w-[250px]">
-                          <p>Clears all locally stored app data and returns you to the login screen. Your email will
-                              remain saved.</p>
-                      </TooltipContent>
-                  </Tooltip>
-              </TooltipProvider>
-          </div>
-
-          {/* Delete User Data Button */}
-          <div className="flex items-center">
-              <Button
-                  variant="outline"
-                  className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
-                  onClick={() => setIsDeleteUserDataDialogOpen(true)}
-                  disabled={!selectedUserId}
-              >
-                  <UserX className="mr-2 text-[#00C4B4]" size={18}/>
-                  Delete Selected User Data
-              </Button>
-              <TooltipProvider>
-                  <Tooltip>
-                      <TooltipTrigger asChild>
-                          <HelpCircle className="ml-2 text-[#A4B1B7]" size={16}/>
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-[#243137] text-white border-[#0C1518] max-w-[250px]">
-                          <p>Deletes the profile data for the selected user. This action cannot be undone.</p>
-                      </TooltipContent>
-                  </Tooltip>
-              </TooltipProvider>
-          </div>
-
-        {/* Simulate Missing Profile Button */}
-          <div className="flex items-center">
-              <Button
-                  variant="outline"
-                  className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
-                  onClick={() => setIsSimulateDialogOpen(true)}
-              >
-                  <Trash2 className="mr-2 text-[#00C4B4]" size={18}/>
-                  Simulate Missing Profile
-              </Button>
-              <TooltipProvider>
-                  <Tooltip>
-                      <TooltipTrigger asChild>
-                          <HelpCircle className="ml-2 text-[#A4B1B7]" size={16}/>
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-[#243137] text-white border-[#0C1518] max-w-[250px]">
-                          <p>Deletes your profile data but keeps your authentication. You'll be redirected to the
-                              profile setup page.</p>
-                      </TooltipContent>
-                  </Tooltip>
-              </TooltipProvider>
-          </div>
-
-        {/* Reset Progress Metrics Button (admin only) */}
-          <div className="flex items-center">
-              <Button
-                  variant="outline"
-                  className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
-                  onClick={() => setIsResetMetricsDialogOpen(true)}
-              >
-                  <Trash2 className="mr-2 text-red-500" size={18}/>
-                  Reset Progress Metrics
-              </Button>
-              <TooltipProvider>
-                  <Tooltip>
-                      <TooltipTrigger asChild>
-                          <HelpCircle className="ml-2 text-[#A4B1B7]" size={16}/>
-                      </TooltipTrigger>
-                      <TooltipContent className="bg-[#243137] text-white border-[#0C1518] max-w-[250px]">
-                          <p>Deletes all your progress metrics data including weight history, measurements, and other
-                              tracked metrics.</p>
+                          <p>Developer tools for testing and data management. Use these actions to reset data, generate
+                              test content, or simulate specific user scenarios.</p>
                       </TooltipContent>
                   </Tooltip>
               </TooltipProvider>
@@ -616,7 +735,9 @@ const TestOptionsPage = () => {
             <DialogTitle className="text-red-400">Clear App Data</DialogTitle>
           </DialogHeader>
           <DialogDescription className="text-[#A4B1B7]">
-            This will reset all app data and return you to the profile setup screen. Your email will remain saved.
+              This will reset all app data including workout plans, sessions, exercise logs, and profile information.
+              Your account will remain but you'll be redirected to login. User type and tester description will be
+              preserved.
             This action cannot be undone.
           </DialogDescription>
           <DialogFooter>
@@ -644,8 +765,9 @@ const TestOptionsPage = () => {
             <DialogTitle className="text-red-400">Simulate Missing Profile</DialogTitle>
           </DialogHeader>
           <DialogDescription className="text-[#A4B1B7]">
-            This will delete your profile data but keep your authentication. You'll be redirected to the profile setup page.
-            This action cannot be undone.
+              This will reset your profile data (name, height, goals, etc.) while preserving your account.
+              All workout data will also be cleared. You'll be redirected to the profile setup page.
+              User type and tester description will be preserved.
           </DialogDescription>
           <DialogFooter>
             <Button 
@@ -672,7 +794,9 @@ const TestOptionsPage = () => {
             <DialogTitle className="text-red-400">Reset Progress Metrics</DialogTitle>
           </DialogHeader>
           <DialogDescription className="text-[#A4B1B7]">
-            This will delete all your progress metrics data including weight history, measurements, and other tracked metrics.
+              This will delete only your progress metrics data including weight history, measurements, and other tracked
+              metrics.
+              Your workout plans, sessions, and profile information will remain intact.
             This action cannot be undone.
           </DialogDescription>
           <DialogFooter>
@@ -700,8 +824,11 @@ const TestOptionsPage = () => {
                     <DialogTitle className="text-[#B0E8E3]">Generate Test Data</DialogTitle>
                 </DialogHeader>
                 <DialogDescription className="text-[#A4B1B7]">
-                    This will create sample workout data for testing purposes, including a workout plan, sessions, and
-                    exercise logs.
+                    This will create a complete set of sample workout data for testing purposes:
+                    • 1 workout plan with today's date
+                    • 3 workout sessions (today, yesterday, and 2 days ago)
+                    • Multiple exercise logs with random exercises, sets, reps, and weights
+                    This data will be added to your current account without affecting existing data.
                 </DialogDescription>
                 <DialogFooter>
                     <Button
@@ -712,7 +839,7 @@ const TestOptionsPage = () => {
                         Cancel
                     </Button>
                     <Button
-                        onClick={handleGenerateFakeData}
+                        onClick={handleGenerateTestData}
                         className="bg-[#00C4B4] text-black hover:bg-[#00C4B4]/80"
                     >
                         Generate Data
@@ -730,9 +857,11 @@ const TestOptionsPage = () => {
                 <DialogDescription className="text-[#A4B1B7]">
                     {selectedUserProfile ? (
                         <>
-                            This will delete the profile data for <span className="text-white font-semibold">
-                            {selectedUserProfile.first_name} {selectedUserProfile.last_name}</span>.
-                            This action cannot be undone.
+                            This will reset all data for <span className="text-white font-semibold">
+                            {selectedUserProfile.full_name || selectedUserProfile.username || 'the selected user'}</span> including
+                            workout plans, sessions, exercise logs, and profile information.
+                            Their account will remain but all personal data will be cleared.
+                            User type and tester description will be preserved.
                         </>
                     ) : (
                         "Please select a user first."
