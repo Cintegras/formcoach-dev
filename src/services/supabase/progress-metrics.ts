@@ -1,6 +1,5 @@
 import {supabase} from '@/integrations/supabase/client';
 import {Database} from '@/integrations/supabase/types';
-import {getEnvironment} from '@/lib/environment';
 
 // Type definitions
 type ProgressMetric = Database['public']['Tables']['progress_metrics']['Row'];
@@ -87,15 +86,12 @@ export const getCurrentUserProgressMetrics = async (
 export const createProgressMetric = async (
     metric: ProgressMetricInsert
 ): Promise<ProgressMetric | null> => {
-    // Ensure environment is set
-    const environment = getEnvironment();
-
     // Set recorded_date to today if not provided
     const recordedDate = metric.recorded_date || new Date().toISOString().split('T')[0];
 
     const {data, error} = await supabase
         .from('progress_metrics')
-        .insert({...metric, recorded_date: recordedDate, environment})
+        .insert({...metric, recorded_date: recordedDate})
         .select()
         .single();
 
@@ -236,6 +232,36 @@ export const getLatestMetricValue = async (
 };
 
 /**
+ * Get the latest weight metric for a user
+ * @param userId - The user's ID
+ * @returns The latest weight metric or null if none found
+ *
+ * -- RLS POLICY (if missing):
+ * -- CREATE POLICY "Allow user to read own metrics"
+ * -- ON public.progress_metrics
+ * -- FOR SELECT
+ * -- USING (auth.uid() = user_id);
+ */
+export const getLatestWeight = async (
+    userId: string
+): Promise<ProgressMetric | null> => {
+    const {data, error} = await supabase
+        .from('progress_metrics')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('metric_type', 'weight')
+        .order('recorded_date', {ascending: false})
+        .limit(1);
+
+    if (error) {
+        console.error('Error fetching latest weight:', error.message);
+        return null;
+    }
+
+    return data?.[0] || null;
+};
+
+/**
  * Subscribe to real-time updates for a user's progress metrics
  * @param userId - The user's ID
  * @param callback - Function to call when data changes
@@ -245,8 +271,6 @@ export const subscribeToProgressMetrics = (
     userId: string,
     callback: (metric: ProgressMetric, eventType: 'INSERT' | 'UPDATE' | 'DELETE') => void
 ) => {
-    const environment = getEnvironment();
-
     const subscription = supabase
         .channel('progress_metrics_changes')
         .on(
@@ -255,7 +279,7 @@ export const subscribeToProgressMetrics = (
                 event: '*',
                 schema: 'public',
                 table: 'progress_metrics',
-                filter: `user_id=eq.${userId} AND environment=eq.${environment}`,
+                filter: `user_id=eq.${userId}`,
             },
             (payload) => {
                 // @ts-ignore - payload.new and payload.old types are not properly defined

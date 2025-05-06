@@ -10,28 +10,12 @@
 
 import {supabase} from '../src/integrations/supabase/client';
 import {withEnvironmentFilter} from '../src/lib/supabase-utils';
-import {getEnvironment} from '../src/lib/environment';
 
 // Mock user UUID
 const MOCK_USER_ID = 'df85e454-730d-460c-a34e-8e1fce3bf648';
 
 async function seedDevEnvironment() {
     console.log('Starting seed script for FormCoach development environment...');
-
-    // Get the current environment
-    const env = getEnvironment();
-    console.log(`Current environment: ${env}`);
-
-    // Ensure we're in the dev environment
-    if (env !== 'dev') {
-        console.warn(`Warning: You are running the dev seed script in the '${env}' environment.`);
-        console.warn('This script is intended for the dev environment only.');
-        const proceed = await promptToContinue();
-        if (!proceed) {
-            console.log('Seed script aborted.');
-            return;
-        }
-    }
 
     try {
         // 1. Create a mock profile
@@ -62,8 +46,7 @@ async function createProfile() {
             username: 'testuser',
             full_name: 'Test User',
             goals: ['strength', 'mobility'],
-            fitness_level: 'beginner',
-            environment: 'dev'
+          fitness_level: 'beginner'
         }, {
             onConflict: 'id'
         });
@@ -86,16 +69,14 @@ async function createExercises() {
             description: 'A chest exercise performed with dumbbells while lying on a bench.',
             muscle_groups: ['chest', 'triceps', 'shoulders'],
             equipment: ['dumbbells', 'bench'],
-            difficulty_level: 'intermediate',
-            environment: 'dev'
+          difficulty_level: 'intermediate'
         },
         {
             name: 'Seated Row',
             description: 'A back exercise performed on a seated row machine or with cables.',
             muscle_groups: ['back', 'biceps', 'forearms'],
             equipment: ['cable machine', 'bench'],
-            difficulty_level: 'beginner',
-            environment: 'dev'
+          difficulty_level: 'beginner'
         }
     ];
 
@@ -104,9 +85,10 @@ async function createExercises() {
 
     for (const exercise of exercises) {
         // Check if exercise already exists
-        const {data: existingExercises, error: findError} = await withEnvironmentFilter(
-            supabase.from('exercises').select('id').eq('name', exercise.name)
-        );
+      const {data: existingExercises, error: findError} = await supabase
+          .from('exercises')
+          .select('id')
+          .eq('name', exercise.name);
 
         if (findError) {
             console.error(`Error finding exercise ${exercise.name}:`, findError);
@@ -208,8 +190,7 @@ async function createWorkoutPlan(exerciseIds: string[]) {
                 description: 'A beginner-friendly upper body workout plan',
                 frequency: 'twice_weekly',
                 duration_weeks: 4,
-                is_active: true,
-                environment: 'dev'
+              is_active: true
             })
             .select('id');
 
@@ -239,8 +220,7 @@ async function createWorkoutPlan(exerciseIds: string[]) {
                 sets: 3,
                 reps: '8-12',
                 rest_seconds: 60,
-                order_index: i,
-                environment: 'dev'
+              order_index: i
             }, {
                 onConflict: 'workout_plan_id,exercise_id'
             });
@@ -307,8 +287,7 @@ async function createWorkoutSession(workoutPlanId: string, exerciseIds: string[]
             start_time: new Date().toISOString(),
             end_time: new Date(Date.now() + 3600000).toISOString(), // 1 hour later
             notes: 'Felt good, kept form clean.',
-            overall_feeling: 'good',
-            environment: 'dev'
+          overall_feeling: 'good'
         })
         .select('id');
 
@@ -340,8 +319,7 @@ async function createWorkoutSession(workoutPlanId: string, exerciseIds: string[]
                 reps_completed: reps,
                 weights_used: weights,
                 form_feedback: 'Good form overall, focus on keeping shoulders back',
-                soreness_rating: 2,
-                environment: 'dev'
+              soreness_rating: 2
             })
             .select('id');
 

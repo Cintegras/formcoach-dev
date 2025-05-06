@@ -1,6 +1,4 @@
-
 import {supabase} from '@/integrations/supabase/client';
-import {getEnvironment} from '@/lib/environment';
 import {ExerciseLog} from './types';
 
 // Export exercise log functions
@@ -8,7 +6,6 @@ export const getExerciseLogs = async (sessionId: string): Promise<ExerciseLog[]>
   const { data, error } = await supabase
     .from('exercise_logs')
     .select('*')
-    .eq('environment', getEnvironment())
     .eq('workout_session_id', sessionId)
     .order('created_at', { ascending: true });
 
@@ -30,8 +27,7 @@ export const logExercise = async (
     sets_completed: setsCompleted,
     reps_completed: repsCompleted,
     weights_used: weightsUsed,
-    video_url: videoUrl,
-    environment: getEnvironment()
+      video_url: videoUrl
   };
 
   const { data, error } = await supabase
@@ -56,7 +52,6 @@ export const addFormFeedback = async (
       soreness_rating: sorenessRating
     })
     .eq('id', logId)
-    .eq('environment', getEnvironment())
     .select('*')
     .single();
 
@@ -77,8 +72,7 @@ export const createExerciseLog = async (
   }
 ): Promise<ExerciseLog | null> => {
   const insertData = {
-    ...log,
-    environment: getEnvironment()
+      ...log
   };
 
   const { data, error } = await supabase
@@ -106,7 +100,6 @@ export const updateExerciseLog = async (
     .from('exercise_logs')
     .update(updates)
     .eq('id', logId)
-    .eq('environment', getEnvironment())
     .select('*')
     .single();
 
@@ -118,8 +111,7 @@ export const deleteExerciseLog = async (logId: string): Promise<boolean> => {
   const { error } = await supabase
     .from('exercise_logs')
     .delete()
-    .eq('id', logId)
-    .eq('environment', getEnvironment());
+      .eq('id', logId);
 
   if (error) throw error;
   return true;

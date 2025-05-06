@@ -1,13 +1,11 @@
-import {supabase} from '@/integrations/supabase/client';
 import {PostgrestFilterBuilder} from '@supabase/postgrest-js';
-import {getEnvironment} from '@/lib/environment';
 
 /**
- * Apply environment filtering to a Supabase query
- * This ensures that all queries only return data for the current environment
+ * Previously applied environment filtering to a Supabase query
+ * Now simply returns the query as-is since environment column has been removed
  *
- * @param query The Supabase query to filter
- * @returns The query with environment filtering applied
+ * @param query The Supabase query
+ * @returns The original query unchanged
  *
  * @example
  * // Basic usage
@@ -23,6 +21,6 @@ import {getEnvironment} from '@/lib/environment';
 export const withEnvironmentFilter = <T>(
     query: PostgrestFilterBuilder<any, any, T[]>
 ): PostgrestFilterBuilder<any, any, T[]> => {
-    const ENV = getEnvironment();
-    return query.eq('environment', ENV);
+    // Environment column has been removed, so we just return the query as-is
+    return query;
 };
