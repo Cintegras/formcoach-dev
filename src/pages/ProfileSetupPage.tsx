@@ -160,6 +160,20 @@ const ProfileSetupPage = () => {
         return;
       }
 
+      // Save profile data to localStorage to prevent redirect back to profile setup
+      const userData = {
+        firstName: formValues.firstName,
+        email: user.email,
+        weight: formValues.weight.toString(),
+        height: {
+          feet: formValues.heightFeet,
+          inches: formValues.heightInches
+        },
+        age: formValues.age.toString(),
+        sex: formValues.sex || ''
+      };
+      localStorage.setItem('userData', JSON.stringify(userData));
+
       toast({
         title: `Welcome, ${formValues.firstName}!`,
         description: "Your profile has been set up successfully.",
