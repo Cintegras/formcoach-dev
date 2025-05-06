@@ -22,6 +22,13 @@ export function useWorkoutSessions(workoutPlanId: string | null = null) {
     const [activeSession, setActiveSession] = useState<WorkoutSession | null>(null);
 
     /**
+     * Determine if a session is active based on having a start_time but no end_time
+     */
+    const isSessionActive = (session: WorkoutSession): boolean => {
+        return session.start_time != null && session.end_time == null;
+    };
+
+    /**
      * Fetch workout sessions for the current workout plan
      */
     const fetchSessions = useCallback(async () => {
@@ -38,7 +45,8 @@ export function useWorkoutSessions(workoutPlanId: string | null = null) {
             setSessions(sessionsData || []);
 
             // Check if there's an active session among the fetched sessions
-            const active = sessionsData?.find(session => session.status === 'active') || null;
+            // A session is considered active if it has a start_time but no end_time
+            const active = sessionsData?.find(session => isSessionActive(session)) || null;
             setActiveSession(active);
         } catch (err) {
             const error = err instanceof Error ? err : new Error('Failed to fetch workout sessions');
@@ -123,7 +131,7 @@ export function useWorkoutSessions(workoutPlanId: string | null = null) {
                 setActiveSession(null);
                 setSessions(prevSessions =>
                     prevSessions.map(session =>
-                        session.id === sessionId ? {...session, status: 'completed'} : session
+                        session.id === sessionId ? {...session, end_time: new Date().toISOString()} : session
                     )
                 );
             }
