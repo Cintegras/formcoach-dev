@@ -5,7 +5,8 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { 
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, 
-  ResponsiveContainer, BarChart, Bar, Legend 
+  ResponsiveContainer, BarChart, Bar, Legend,
+  TooltipProps
 } from 'recharts';
 import { 
   ChartLine, BarChartHorizontal, Activity, 
@@ -78,7 +79,8 @@ const TrendsPage = () => {
         }));
     }, [measurementMetrics]);
 
-    const renderCustomTooltip = (props: any) => {
+    // Fix the type for the tooltip function to match Recharts' expected types
+    const renderCustomTooltip = (props: TooltipProps<number, string>) => {
         const { active, payload, label } = props;
         if (active && payload && payload.length) {
             return (
@@ -93,13 +95,151 @@ const TrendsPage = () => {
         return null;
     };
 
-    // ... Leave the three tabs: WeightTab, MeasurementsTab, WorkoutTab unchanged except:
-    // In WorkoutTab, replace ChartBarHorizontal with BarChartHorizontal
+    const WeightTab = () => (
+        <Card className="bg-formcoach-card p-4">
+            <h3 className="text-lg font-semibold mb-4 text-formcoach-text">Weight Trend</h3>
+            <div className="flex justify-end mb-2">
+                <select
+                    className="bg-formcoach-comingsoon text-formcoach-text rounded-md p-1"
+                    value={weightTimeFrame}
+                    onChange={(e) => setWeightTimeFrame(e.target.value)}
+                >
+                    <option value="7d">7 Days</option>
+                    <option value="30d">30 Days</option>
+                    <option value="90d">90 Days</option>
+                </select>
+            </div>
+            <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={weightData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                    <XAxis dataKey="date" stroke="#D7E4E3" />
+                    <YAxis stroke="#D7E4E3" />
+                    <Tooltip content={renderCustomTooltip} />
+                    <Line type="monotone" dataKey="value" stroke="#00C4B4" activeDot={{ r: 8 }} />
+                </LineChart>
+            </ResponsiveContainer>
+        </Card>
+    );
+
+    const MeasurementsTab = () => (
+        <Card className="bg-formcoach-card p-4">
+            <h3 className="text-lg font-semibold mb-4 text-formcoach-text">Measurements Trend</h3>
+            <div className="flex justify-between items-center mb-2">
+                <select
+                    className="bg-formcoach-comingsoon text-formcoach-text rounded-md p-1"
+                    value={measurementTimeFrame}
+                    onChange={(e) => setMeasurementTimeFrame(e.target.value)}
+                >
+                    <option value="7d">7 Days</option>
+                    <option value="30d">30 Days</option>
+                    <option value="90d">90 Days</option>
+                </select>
+                <select
+                    className="bg-formcoach-comingsoon text-formcoach-text rounded-md p-1"
+                    value={metricType}
+                    onChange={(e) => setMetricType(e.target.value)}
+                >
+                    <option value="chest">Chest</option>
+                    <option value="waist">Waist</option>
+                    <option value="hips">Hips</option>
+                    {/* Add more options as needed */}
+                </select>
+            </div>
+            <ResponsiveContainer width="100%" height={300}>
+                <LineChart data={measurementData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                    <XAxis dataKey="date" stroke="#D7E4E3" />
+                    <YAxis stroke="#D7E4E3" />
+                    <Tooltip content={renderCustomTooltip} />
+                    <Line type="monotone" dataKey="value" stroke="#00C4B4" activeDot={{ r: 8 }} />
+                </LineChart>
+            </ResponsiveContainer>
+        </Card>
+    );
+
+    const WorkoutTab = () => (
+        <Card className="bg-formcoach-card p-4">
+            <h3 className="text-lg font-semibold mb-4 text-formcoach-text">Workout Duration</h3>
+            <div className="flex justify-end mb-2">
+                <select
+                    className="bg-formcoach-comingsoon text-formcoach-text rounded-md p-1"
+                    value={workoutTimeFrame}
+                    onChange={(e) => setWorkoutTimeFrame(e.target.value)}
+                >
+                    <option value="7d">7 Days</option>
+                    <option value="30d">30 Days</option>
+                    <option value="90d">90 Days</option>
+                </select>
+            </div>
+            <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={workoutData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#444" />
+                    <XAxis dataKey="date" stroke="#D7E4E3" />
+                    <YAxis stroke="#D7E4E3" />
+                    <Tooltip content={renderCustomTooltip} />
+                    <Bar dataKey="duration" fill="#00C4B4" />
+                    <Legend />
+                </BarChart>
+            </ResponsiveContainer>
+        </Card>
+    );
 
     return (
         <PageContainer>
-            {/* Tabs and page layout... */}
-            {/* unchanged aside from the icon fix above */}
+            <Button variant="ghost" className="absolute top-4 left-4 md:left-8" onClick={() => navigate(-1)}>
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back
+            </Button>
+            <h1 className="text-2xl font-bold text-center mb-6">Trends</h1>
+            <Tabs defaultvalue="weight">
+                <TabsList className="w-full flex justify-center mb-4">
+                    <TabsTrigger value="weight" className="data-[state=active]:bg-formcoach-primary data-[state=active]:text-formcoach-background">
+                        <ChartLine className="mr-2 h-4 w-4" />
+                        Weight
+                    </TabsTrigger>
+                    <TabsTrigger value="measurements" className="data-[state=active]:bg-formcoach-primary data-[state=active]:text-formcoach-background">
+                        <Activity className="mr-2 h-4 w-4" />
+                        Measurements
+                    </TabsTrigger>
+                    <TabsTrigger value="workouts" className="data-[state=active]:bg-formcoach-primary data-[state=active]:text-formcoach-background">
+                        <BarChartHorizontal className="mr-2 h-4 w-4" />
+                        Workouts
+                    </TabsTrigger>
+                </TabsList>
+                <TabsContent value="weight">
+                    {weightLoading ? (
+                        <div className="flex justify-center items-center h-48">
+                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                        </div>
+                    ) : weightError ? (
+                        <p className="text-red-500">Error: {weightError.message}</p>
+                    ) : (
+                        <WeightTab />
+                    )}
+                </TabsContent>
+                <TabsContent value="measurements">
+                    {measurementLoading ? (
+                        <div className="flex justify-center items-center h-48">
+                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                        </div>
+                    ) : measurementError ? (
+                        <p className="text-red-500">Error: {measurementError.message}</p>
+                    ) : (
+                        <MeasurementsTab />
+                    )}
+                </TabsContent>
+                <TabsContent value="workouts">
+                    {workoutLoading ? (
+                        <div className="flex justify-center items-center h-48">
+                            <Loader2 className="mr-2 h-6 w-6 animate-spin" />
+                        </div>
+                    ) : workoutError ? (
+                        <p className="text-red-500">Error: {workoutError.message}</p>
+                    ) : (
+                        <WorkoutTab />
+                    )}
+                </TabsContent>
+            </Tabs>
             <BottomNav/>
         </PageContainer>
     );
