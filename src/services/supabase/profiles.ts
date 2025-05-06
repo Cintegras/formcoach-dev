@@ -1,5 +1,4 @@
 import {supabase} from '@/integrations/supabase/client';
-import {getEnvironment} from '@/lib/environment';
 
 // Import types
 import {Profile, ProfileInsert, ProfileUpdate} from './types/profiles';
@@ -50,12 +49,9 @@ export const getCurrentProfile = async (): Promise<Profile | null> => {
  * @returns The created profile or null if there was an error
  */
 export const createProfile = async (profile: ProfileInsert): Promise<Profile | null> => {
-    // Ensure environment is set
-    const environment = getEnvironment();
-
     const {data, error} = await supabase
         .from('profiles')
-        .insert({...profile, environment})
+        .insert(profile)
         .select()
         .maybeSingle();
 
