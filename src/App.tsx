@@ -1,7 +1,6 @@
-
 import React from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
-import {AuthProvider} from '@/features/auth/components/AuthProvider';
+import AuthProvider from '@/features/auth/components/AuthProvider';
 import ProtectedRoute from '@/features/auth/components/ProtectedRoute';
 import RequireProfile from '@/features/auth/components/RequireProfile';
 import RedirectIfProfileExists from '@/features/auth/components/RedirectIfProfileExists';

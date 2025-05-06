@@ -9,8 +9,6 @@
  */
 
 import {supabase} from '@/integrations/supabase/client';
-import {withEnvironmentFilter} from '@/lib/supabase-utils';
-import {getEnvironment} from '@/lib/environment';
 
 async function testSupabaseConnection() {
     console.log(`Testing Supabase connection...`);

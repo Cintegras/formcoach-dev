@@ -137,7 +137,7 @@ export function useProfile() {
             // Ensure birthdate is not undefined
             const profileDataWithValidBirthdate = {
                 ...profileData,
-                birthdate: profileData.birthdate || new Date().toISOString().split('T')[0] // Default to today if not provided
+                birthdate: profileData.birthdate as string // Cast to string to ensure it's not undefined
             };
 
             const newProfile = await createProfile({

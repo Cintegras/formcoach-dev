@@ -216,8 +216,8 @@ const LogWorkout = () => {
             const repsCompleted = sets.map(set => parseInt(set.reps) || 0);
             const weightsUsed = sets.map(set => parseInt(set.weight) || 0);
 
-            // Log the completed exercise - pass serialized arrays
-            await logCompletedExercise(
+            // Log the completed exercise - with activeSession.id as string
+            const logResult = await logCompletedExercise(
                 exerciseId,
                 setsCompleted,
                 JSON.stringify(repsCompleted),

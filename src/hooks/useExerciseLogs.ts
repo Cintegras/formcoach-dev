@@ -7,7 +7,6 @@ import type { ExerciseLog } from '@/services/supabase/types/exercise-logs';
 
 // Function to log a completed exercise
 export const logCompletedExercise = async (
-  workoutSessionId: string,
   exerciseId: string,
   setsCompleted: number,
   repsCompleted: number[] | string,
@@ -18,7 +17,6 @@ export const logCompletedExercise = async (
     const { data, error } = await supabase
       .from('exercise_logs')
       .insert({
-        workout_session_id: workoutSessionId, 
         exercise_id: exerciseId,
         sets_completed: setsCompleted,
         reps_completed: repsCompleted,
@@ -93,15 +91,24 @@ export function useExerciseLogs(workoutSessionId: string | null = null, fetchLog
     setError(null);
 
     try {
-      const result = await logCompletedExercise(
-        workoutSessionId,
-        exerciseId,
-        setsCompleted,
-        repsCompleted,
-        weightsUsed
-      );
+      // First create the object to insert
+      const exerciseLogData = {
+        workout_session_id: workoutSessionId,
+        exercise_id: exerciseId,
+        sets_completed: setsCompleted,
+        reps_completed: repsCompleted,
+        weights_used: weightsUsed
+      };
+
+      // Then insert it
+      const { data, error } = await supabase
+        .from('exercise_logs')
+        .insert(exerciseLogData)
+        .select();
       
-      return result;
+      if (error) throw error;
+      
+      return data[0] as ExerciseLog;
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Failed to log exercise');
       setError(error);
