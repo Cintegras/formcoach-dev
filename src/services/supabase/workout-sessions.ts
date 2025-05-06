@@ -46,7 +46,7 @@ export const getWorkoutSession = async (sessionId: string): Promise<WorkoutSessi
         .from('workout_sessions')
         .select('*')
         .eq('id', sessionId)
-        .single();
+        .maybeSingle();
 
     if (error) {
         console.error('Error fetching workout session:', error);
@@ -86,7 +86,7 @@ export const createWorkoutSession = async (
         .from('workout_sessions')
         .insert({...session, environment})
         .select()
-        .single();
+        .maybeSingle();
 
     if (error) {
         console.error('Error creating workout session:', error);
@@ -111,7 +111,7 @@ export const updateWorkoutSession = async (
         .update(updates)
         .eq('id', sessionId)
         .select()
-        .single();
+        .maybeSingle();
 
     if (error) {
         console.error('Error updating workout session:', error);

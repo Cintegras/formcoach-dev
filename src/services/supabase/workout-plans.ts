@@ -1,7 +1,6 @@
-
-import { supabase } from './client';
-import { Database } from '@/integrations/supabase/types';
-import { WorkoutPlan, WorkoutPlanExercise } from './types';
+import {supabase} from './client';
+import {Database} from '@/integrations/supabase/types';
+import {WorkoutPlan, WorkoutPlanExercise} from './types';
 
 // Export workout plan functions
 export const getWorkoutPlans = async (userId: string): Promise<WorkoutPlan[]> => {
@@ -20,7 +19,7 @@ export const getWorkoutPlan = async (planId: string): Promise<WorkoutPlan | null
     .from('workout_plans')
     .select('*')
     .eq('id', planId)
-    .single();
+      .maybeSingle();
 
   if (error) throw error;
   return data;
@@ -31,7 +30,7 @@ export const createWorkoutPlan = async (plan: Database['public']['Tables']['work
     .from('workout_plans')
     .insert(plan)
     .select('*')
-    .single();
+      .maybeSingle();
 
   if (error) throw error;
   return data;
@@ -46,7 +45,7 @@ export const updateWorkoutPlan = async (
     .update(updates)
     .eq('id', planId)
     .select('*')
-    .single();
+      .maybeSingle();
 
   if (error) throw error;
   return data;
@@ -81,7 +80,7 @@ export const addExerciseToWorkoutPlan = async (
     .from('workout_plan_exercises')
     .insert(exercise)
     .select('*')
-    .single();
+      .maybeSingle();
 
   if (error) throw error;
   return data;
@@ -96,7 +95,7 @@ export const updateWorkoutPlanExercise = async (
     .update(updates)
     .eq('id', exerciseId)
     .select('*')
-    .single();
+      .maybeSingle();
 
   if (error) throw error;
   return data;

@@ -34,7 +34,7 @@ export const logExercise = async (
     .from('exercise_logs')
     .insert(insertData as any)
     .select('*')
-    .single();
+      .maybeSingle();
 
   if (error) throw error;
   return data as unknown as ExerciseLog;
@@ -53,7 +53,7 @@ export const addFormFeedback = async (
     })
     .eq('id', logId)
     .select('*')
-    .single();
+      .maybeSingle();
 
   if (error) throw error;
   return data as unknown as ExerciseLog;
@@ -79,7 +79,7 @@ export const createExerciseLog = async (
     .from('exercise_logs')
     .insert(insertData as any)
     .select('*')
-    .single();
+      .maybeSingle();
 
   if (error) throw error;
   return data as unknown as ExerciseLog;
@@ -101,7 +101,7 @@ export const updateExerciseLog = async (
     .update(updates)
     .eq('id', logId)
     .select('*')
-    .single();
+      .maybeSingle();
 
   if (error) throw error;
   return data as unknown as ExerciseLog;

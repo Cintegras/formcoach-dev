@@ -1,5 +1,4 @@
 import {supabase} from '@/integrations/supabase/client';
-import {Database} from '@/integrations/supabase/types';
 import {getEnvironment} from '@/lib/environment';
 
 // Import types
@@ -21,7 +20,7 @@ export const getProfile = async (userId: string): Promise<Profile | null> => {
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single();
+        .maybeSingle();
 
     if (error) {
         console.error('Error fetching profile:', error);
@@ -58,7 +57,7 @@ export const createProfile = async (profile: ProfileInsert): Promise<Profile | n
         .from('profiles')
         .insert({...profile, environment})
         .select()
-        .single();
+        .maybeSingle();
 
     if (error) {
         console.error('Error creating profile:', error);
@@ -80,7 +79,7 @@ export const updateProfile = async (userId: string, updates: ProfileUpdate): Pro
         .update(updates)
         .eq('id', userId)
         .select()
-        .single();
+        .maybeSingle();
 
     if (error) {
         console.error('Error updating profile:', error);

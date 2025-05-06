@@ -49,7 +49,7 @@ export const getProgressMetric = async (metricId: string): Promise<ProgressMetri
         .from('progress_metrics')
         .select('*')
         .eq('id', metricId)
-        .single();
+        .maybeSingle();
 
     if (error) {
         console.error('Error fetching progress metric:', error);
@@ -93,7 +93,7 @@ export const createProgressMetric = async (
         .from('progress_metrics')
         .insert({...metric, recorded_date: recordedDate})
         .select()
-        .single();
+        .maybeSingle();
 
     if (error) {
         console.error('Error creating progress metric:', error);
@@ -118,7 +118,7 @@ export const updateProgressMetric = async (
         .update(updates)
         .eq('id', metricId)
         .select()
-        .single();
+        .maybeSingle();
 
     if (error) {
         console.error('Error updating progress metric:', error);
@@ -217,13 +217,9 @@ export const getLatestMetricValue = async (
         .eq('metric_type', metricType)
         .order('recorded_date', {ascending: false})
         .limit(1)
-        .single();
+        .maybeSingle();
 
     if (error) {
-        // If no rows match, don't log as an error
-        if (error.code === 'PGRST116') {
-            return null;
-        }
         console.error(`Error fetching latest ${metricType}:`, error);
         return null;
     }
@@ -251,14 +247,15 @@ export const getLatestWeight = async (
         .eq('user_id', userId)
         .eq('metric_type', 'weight')
         .order('recorded_date', {ascending: false})
-        .limit(1);
+        .limit(1)
+        .maybeSingle();
 
     if (error) {
         console.error('Error fetching latest weight:', error.message);
         return null;
     }
 
-    return data?.[0] || null;
+    return data;
 };
 
 /**
