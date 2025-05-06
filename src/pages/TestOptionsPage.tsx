@@ -1,14 +1,23 @@
-
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import PageContainer from '@/components/PageContainer';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ArrowLeft, Trash2 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { useAuth } from '@/features/auth/hooks/useAuth';
-import { deleteProfile } from '@/services/supabase/profiles';
-import { supabase } from '@/integrations/supabase/client';
+import {Button} from '@/components/ui/button';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from '@/components/ui/dialog';
+import {ArrowLeft, Database, Trash2} from 'lucide-react';
+import {useToast} from '@/hooks/use-toast';
+import {useAuth} from '@/features/auth/hooks/useAuth';
+import {deleteProfile} from '@/services/supabase/profiles';
+import {supabase} from '@/integrations/supabase/client';
+import {useWorkoutPlans} from '@/hooks/useWorkoutPlans';
+import {useWorkoutSessions} from '@/hooks/useWorkoutSessions';
+import {useFeatureToggles} from '@/hooks/useFeatureToggles';
 
 const TestOptionsPage = () => {
   const navigate = useNavigate();
@@ -17,6 +26,73 @@ const TestOptionsPage = () => {
   const [isClearCacheDialogOpen, setIsClearCacheDialogOpen] = useState(false);
   const [isSimulateDialogOpen, setIsSimulateDialogOpen] = useState(false);
   const [isResetMetricsDialogOpen, setIsResetMetricsDialogOpen] = useState(false);
+    const [isGenerateDataDialogOpen, setIsGenerateDataDialogOpen] = useState(false);
+
+    // Get user's workout plans
+    const {plans} = useWorkoutPlans();
+    // Find the active plan (assuming the first plan is the active one, or the one with is_active=true if available)
+    const activePlan = plans.find(p => p.is_active) || plans[0] || null;
+
+    // Get recent workout sessions (limit to 3)
+    const {sessions} = useWorkoutSessions(null);
+    const recentSessions = sessions.slice(0, 3);
+
+    // Track which sessions have exercise logs
+    const [sessionsWithLogs, setSessionsWithLogs] = useState<Record<string, boolean>>({});
+
+    // Get form coach access status
+    const {formCoachEnabled, workoutCount} = useFeatureToggles();
+
+    // Format date for display
+    const formatDate = (dateString: string | null) => {
+        if (!dateString) return 'Unknown';
+        return new Date(dateString).toLocaleDateString();
+    };
+
+    // Check if a session has exercise logs
+    const hasExerciseLogs = (sessionId: string) => {
+        return sessionsWithLogs[sessionId] || false;
+    };
+
+    // Effect to check for exercise logs
+    useEffect(() => {
+        const checkExerciseLogs = async () => {
+            const logsMap: Record<string, boolean> = {};
+
+            for (const session of recentSessions) {
+                if (session.id) {
+                    try {
+                        const {data, error} = await supabase
+                            .from('exercise_logs')
+                            .select('id')
+                            .eq('workout_session_id', session.id)
+                            .limit(1);
+
+                        logsMap[session.id] = data && data.length > 0;
+                    } catch (error) {
+                        console.error('Error checking exercise logs:', error);
+                        logsMap[session.id] = false;
+                    }
+                }
+            }
+
+            setSessionsWithLogs(logsMap);
+        };
+
+        if (recentSessions.length > 0) {
+            checkExerciseLogs();
+        }
+    }, [recentSessions]);
+
+    // Handle generating test data
+    const handleGenerateFakeData = async () => {
+        // Implementation for generating test data
+        toast({
+            title: "Test Data Generated",
+            description: "Fake workout data has been created for testing"
+        });
+        setIsGenerateDataDialogOpen(false);
+    };
 
   // Handle clearing app data (same as in ProfilePage)
   const handleClearCache = () => {
@@ -47,7 +123,7 @@ const TestOptionsPage = () => {
 
     try {
       const success = await deleteProfile(user.id);
-      
+
       if (success) {
         toast({
           title: "Profile Deleted",
@@ -69,7 +145,7 @@ const TestOptionsPage = () => {
         variant: "destructive"
       });
     }
-    
+
     setIsSimulateDialogOpen(false);
   };
 
@@ -129,7 +205,65 @@ const TestOptionsPage = () => {
         Back to Profile
       </Button>
 
+        {/* User Workout Plan Section */}
+        <div className="w-full max-w-[300px] mx-auto mb-6 p-4 bg-[rgba(176,232,227,0.08)] rounded-lg">
+            <h3 className="text-[#B0E8E3] text-lg mb-2">Current Workout Plan</h3>
+            {activePlan ? (
+                <>
+                    <div className="text-white">Name: {activePlan.name}</div>
+                    <div className="text-[#A4B1B7]">ID: {activePlan.id}</div>
+                </>
+            ) : (
+                <div className="text-[#A4B1B7]">No active workout plan</div>
+            )}
+        </div>
+
+        {/* Recent Workout Sessions Section */}
+        <div className="w-full max-w-[300px] mx-auto mb-6 p-4 bg-[rgba(176,232,227,0.08)] rounded-lg">
+            <h3 className="text-[#B0E8E3] text-lg mb-2">Recent Workout Sessions</h3>
+            {recentSessions.length > 0 ? (
+                recentSessions.map(session => (
+                    <div key={session.id} className="mb-3 pb-3 border-b border-[#243137]">
+                        <div className="text-white">Session: {formatDate(session.created_at)}</div>
+                        <div className="text-[#A4B1B7]">
+                            Plan ID: {session.workout_plan_id ?
+                            <span className="text-green-400">✓</span> :
+                            <span className="text-red-400">✗</span>}
+                        </div>
+                        <div className="text-[#A4B1B7]">
+                            Exercise Logs: {hasExerciseLogs(session.id) ?
+                            <span className="text-green-400">✓</span> :
+                            <span className="text-red-400">✗</span>}
+                        </div>
+                    </div>
+                ))
+            ) : (
+                <div className="text-[#A4B1B7]">No recent workout sessions</div>
+            )}
+        </div>
+
+        {/* Form Coach Access Section */}
+        <div className="w-full max-w-[300px] mx-auto mb-6 p-4 bg-[rgba(176,232,227,0.08)] rounded-lg">
+            <h3 className="text-[#B0E8E3] text-lg mb-2">Form Coach Access</h3>
+            <div className="text-white">
+                Status: {formCoachEnabled ?
+                <span className="text-green-400">Enabled</span> :
+                <span className="text-red-400">Disabled</span>}
+            </div>
+            <div className="text-[#A4B1B7]">Workout Count: {workoutCount}</div>
+        </div>
+
       <div className="w-full max-w-[300px] mx-auto space-y-4">
+          {/* Generate Test Data Button */}
+          <Button
+              variant="outline"
+              className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
+              onClick={() => setIsGenerateDataDialogOpen(true)}
+          >
+              <Database className="mr-2 text-[#00C4B4]" size={18}/>
+              Generate Test Data
+          </Button>
+
         {/* Clear App Data Button */}
         <Button 
           variant="outline" 
@@ -244,6 +378,34 @@ const TestOptionsPage = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+        {/* Generate Test Data Dialog */}
+        <Dialog open={isGenerateDataDialogOpen} onOpenChange={setIsGenerateDataDialogOpen}>
+            <DialogContent className="bg-[#0C1518] border-[#243137] text-white">
+                <DialogHeader>
+                    <DialogTitle className="text-[#B0E8E3]">Generate Test Data</DialogTitle>
+                </DialogHeader>
+                <DialogDescription className="text-[#A4B1B7]">
+                    This will create sample workout data for testing purposes, including a workout plan, sessions, and
+                    exercise logs.
+                </DialogDescription>
+                <DialogFooter>
+                    <Button
+                        variant="outline"
+                        onClick={() => setIsGenerateDataDialogOpen(false)}
+                        className="border-[#243137] text-[#A4B1B7] hover:bg-[#243137]"
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleGenerateFakeData}
+                        className="bg-[#00C4B4] text-black hover:bg-[#00C4B4]/80"
+                    >
+                        Generate Data
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
     </PageContainer>
   );
 };
