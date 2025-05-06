@@ -4,7 +4,8 @@ import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import SecondaryButton from '@/components/SecondaryButton';
 import {AlertCircle, Clock, Dumbbell, Edit, Flame, ThumbsUp, Video} from 'lucide-react';
-import {useExerciseLogs, useWorkoutSessions} from '@/hooks';
+import {useExerciseLogs} from '@/hooks/useExerciseLogs';
+import {useWorkoutSessions} from '@/hooks/useWorkoutSessions';
 import {differenceInMinutes} from 'date-fns';
 import {safeParseDate} from '@/utils/dateUtils';
 

@@ -1,6 +1,5 @@
 import {supabase} from '@/integrations/supabase/client';
 import {Database} from '@/integrations/supabase/types';
-import {getEnvironment} from '@/lib/environment';
 
 // Type definitions
 type WorkoutSession = Database['public']['Tables']['workout_sessions']['Row'];
@@ -79,12 +78,9 @@ export const getCurrentUserWorkoutSessions = async (limit = 50): Promise<Workout
 export const createWorkoutSession = async (
     session: WorkoutSessionInsert
 ): Promise<WorkoutSession | null> => {
-    // Ensure environment is set
-    const environment = getEnvironment();
-
     const {data, error} = await supabase
         .from('workout_sessions')
-        .insert({...session, environment})
+        .insert(session)
         .select()
         .maybeSingle();
 
@@ -189,8 +185,6 @@ export const subscribeToWorkoutSessions = (
     userId: string,
     callback: (session: WorkoutSession, eventType: 'INSERT' | 'UPDATE' | 'DELETE') => void
 ) => {
-    const environment = getEnvironment();
-
     const subscription = supabase
         .channel('workout_sessions_changes')
         .on(
@@ -199,7 +193,7 @@ export const subscribeToWorkoutSessions = (
                 event: '*',
                 schema: 'public',
                 table: 'workout_sessions',
-                filter: `user_id=eq.${userId} AND environment=eq.${environment}`,
+                filter: `user_id=eq.${userId}`,
             },
             (payload) => {
                 // @ts-ignore - payload.new and payload.old types are not properly defined

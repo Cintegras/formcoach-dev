@@ -36,12 +36,23 @@ const Home = () => {
     }
   }, [navigate]);
 
-    // Get weight from profile
+    // Get weight from latest progress metric
     useEffect(() => {
-        if (profile && profile.weight) {
-            setWeightData({value: profile.weight});
+        if (metrics && metrics.length > 0) {
+            // Find the latest weight metric
+            const weightMetrics = metrics
+                .filter(metric => metric.metric_type === 'weight')
+                .sort((a, b) => {
+                    const dateA = new Date(a.recorded_date || a.created_at || '');
+                    const dateB = new Date(b.recorded_date || b.created_at || '');
+                    return dateB.getTime() - dateA.getTime();
+                });
+
+            if (weightMetrics.length > 0) {
+                setWeightData({value: weightMetrics[0].metric_value});
+            }
         }
-    }, [profile]);
+    }, [metrics]);
 
     // Calculate workout stats
     const totalWorkouts = sessions.length;

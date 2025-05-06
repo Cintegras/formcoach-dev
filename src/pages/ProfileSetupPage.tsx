@@ -215,7 +215,7 @@ const ProfileSetupPage = () => {
           feet: formValues.heightFeet,
           inches: formValues.heightInches
         },
-        age: formValues.age.toString(),
+        age: calculateAge(formValues.birthdate).toString(),
         sex: formValues.sex || ''
       };
       localStorage.setItem('userData', JSON.stringify(userData));
