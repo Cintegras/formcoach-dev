@@ -4,12 +4,13 @@ import PageContainer from '@/components/PageContainer';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from '@/components/ui/dialog';
-import {Lock, LogOut, Scale, Trash2} from 'lucide-react';
+import {Lock, LogOut, Scale, Trash2, Settings} from 'lucide-react';
 import {useToast} from '@/hooks/use-toast';
 import {format} from 'date-fns';
 import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
 import {Slider} from '@/components/ui/slider';
 import {useProfile} from '@/hooks/useProfile';
+import {useAdminAccess} from '@/hooks/useAdminAccess';
 import {createProgressMetric, getLatestWeight} from '@/services/supabase/progress-metrics';
 import {calculateAge} from '@/utils/date-utils';
 import {useAuth} from '@/features/auth/hooks/useAuth';
@@ -52,6 +53,7 @@ const ProfilePage = () => {
     age: '0',
     sex: ''
   });
+  const { hasAccess } = useAdminAccess();
 
     // Fetch latest weight from progress_metrics
     useEffect(() => {
@@ -292,35 +294,35 @@ const ProfilePage = () => {
         </p>
       </div>
 
-        <div className="mt-8 flex flex-col items-center">
+      <div className="mt-8 flex flex-col items-center">
         {/* Profile Avatar */}
         <div className="bg-[#00C4B4] rounded-full w-20 h-20 flex items-center justify-center text-black text-2xl font-bold mb-4">
           {user.firstName ? user.firstName.charAt(0) : '?'}
         </div>
 
-            <h2 className="font-medium text-[20px] text-white">{user.firstName || 'User'}</h2>
+        <h2 className="font-medium text-[20px] text-white">{user.firstName || 'User'}</h2>
         <p className="text-[#A4B1B7] mb-2">{user.email}</p>
 
-            {/* User Stats */}
+        {/* User Stats */}
         <div className="flex gap-4 mb-8 text-sm text-[#A4B1B7]">
           <div>Height: {user.height?.feet || 0}'{user.height?.inches || 0}"</div>
           <div>Weight: {user.weight} lbs</div>
-            <div>Age: {user.birthdate ? calculateAge(user.birthdate) : user.age}</div>
+          <div>Age: {user.birthdate ? calculateAge(user.birthdate) : user.age}</div>
         </div>
 
-            {/* Complete Profile Button - only show if profile is incomplete */}
-            {(!profile || !profile.full_name || !profile.height || !profile.birthdate) && (
-                <Button
-                    variant="outline"
-                    className="w-full max-w-[300px] mb-8 justify-center bg-[#00C4B4] border-none text-black hover:bg-[#00C4B4]/80"
-                    onClick={() => {
-                        console.log("Complete Profile clicked");
-                        navigate("/profile-setup");
-                    }}
-                >
-                    Complete Profile
-                </Button>
-            )}
+        {/* Complete Profile Button - only show if profile is incomplete */}
+        {(!profile || !profile.full_name || !profile.height || !profile.birthdate) && (
+            <Button
+                variant="outline"
+                className="w-full max-w-[300px] mb-8 justify-center bg-[#00C4B4] border-none text-black hover:bg-[#00C4B4]/80"
+                onClick={() => {
+                    console.log("Complete Profile clicked");
+                    navigate("/profile-setup");
+                }}
+            >
+                Complete Profile
+            </Button>
+        )}
 
         {/* Weight trend chart if available */}
         {user.weightHistory && user.weightHistory.length > 1 && (
@@ -364,7 +366,7 @@ const ProfilePage = () => {
             Update Weight
           </Button>
 
-            <Button
+          <Button
             variant="outline" 
             className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
             onClick={() => setIsPasswordDialogOpen(true)}
@@ -372,6 +374,18 @@ const ProfilePage = () => {
             <Lock className="mr-2 text-[#00C4B4]" size={18} />
             Change Password
           </Button>
+
+          {/* Test Options button - only shown to users with admin access */}
+          {hasAccess && (
+            <Button
+              variant="outline" 
+              className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
+              onClick={() => navigate('/test-options')}
+            >
+              <Settings className="mr-2 text-[#00C4B4]" size={18} />
+              Test Options
+            </Button>
+          )}
 
           <Button 
             variant="outline" 
@@ -382,14 +396,14 @@ const ProfilePage = () => {
             Clear App Data (Dev)
           </Button>
 
-            <Button
-                variant="outline"
-                className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
-                onClick={() => setIsDeleteAccountDialogOpen(true)}
-            >
-                <Trash2 className="mr-2 text-red-500" size={18}/>
-                <span className="text-red-500">Delete Account</span>
-            </Button>
+          <Button
+              variant="outline"
+              className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
+              onClick={() => setIsDeleteAccountDialogOpen(true)}
+          >
+              <Trash2 className="mr-2 text-red-500" size={18}/>
+              <span className="text-red-500">Delete Account</span>
+          </Button>
 
           <Button 
             variant="outline" 

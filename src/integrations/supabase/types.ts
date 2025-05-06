@@ -36,7 +36,6 @@ export type Database = {
       exercise_logs: {
         Row: {
           created_at: string | null
-          environment: string | null
           exercise_id: string | null
           form_feedback: string | null
           id: string
@@ -49,7 +48,6 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
-          environment?: string | null
           exercise_id?: string | null
           form_feedback?: string | null
           id?: string
@@ -62,7 +60,6 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
-          environment?: string | null
           exercise_id?: string | null
           form_feedback?: string | null
           id?: string
@@ -145,7 +142,6 @@ export type Database = {
           analysis_status: string | null
           created_at: string | null
           detected_issues: string[] | null
-          environment: string | null
           exercise_log_id: string | null
           feedback: string | null
           form_score: number | null
@@ -159,7 +155,6 @@ export type Database = {
           analysis_status?: string | null
           created_at?: string | null
           detected_issues?: string[] | null
-          environment?: string | null
           exercise_log_id?: string | null
           feedback?: string | null
           form_score?: number | null
@@ -173,7 +168,6 @@ export type Database = {
           analysis_status?: string | null
           created_at?: string | null
           detected_issues?: string[] | null
-          environment?: string | null
           exercise_log_id?: string | null
           feedback?: string | null
           form_score?: number | null
@@ -196,49 +190,48 @@ export type Database = {
       profiles: {
         Row: {
           avatar_url: string | null
+          birthdate: string
           created_at: string | null
-          environment: string
           fitness_level: string | null
           full_name: string | null
           goals: string[] | null
           height: number | null
           id: string
           updated_at: string | null
+          user_type: string | null
           username: string | null
-          weight: number | null
         }
         Insert: {
           avatar_url?: string | null
+          birthdate: string
           created_at?: string | null
-          environment?: string
           fitness_level?: string | null
           full_name?: string | null
           goals?: string[] | null
           height?: number | null
           id: string
           updated_at?: string | null
+          user_type?: string | null
           username?: string | null
-          weight?: number | null
         }
         Update: {
           avatar_url?: string | null
+          birthdate?: string
           created_at?: string | null
-          environment?: string
           fitness_level?: string | null
           full_name?: string | null
           goals?: string[] | null
           height?: number | null
           id?: string
           updated_at?: string | null
+          user_type?: string | null
           username?: string | null
-          weight?: number | null
         }
         Relationships: []
       }
       progress_metrics: {
         Row: {
           created_at: string | null
-          environment: string | null
           id: string
           metric_type: string | null
           metric_value: number | null
@@ -248,7 +241,6 @@ export type Database = {
         }
         Insert: {
           created_at?: string | null
-          environment?: string | null
           id?: string
           metric_type?: string | null
           metric_value?: number | null
@@ -258,7 +250,6 @@ export type Database = {
         }
         Update: {
           created_at?: string | null
-          environment?: string | null
           id?: string
           metric_type?: string | null
           metric_value?: number | null
@@ -338,7 +329,6 @@ export type Database = {
           created_at: string | null
           description: string | null
           duration_weeks: number | null
-          environment: string
           frequency: string | null
           id: string
           is_active: boolean | null
@@ -350,7 +340,6 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           duration_weeks?: number | null
-          environment?: string
           frequency?: string | null
           id?: string
           is_active?: boolean | null
@@ -362,7 +351,6 @@ export type Database = {
           created_at?: string | null
           description?: string | null
           duration_weeks?: number | null
-          environment?: string
           frequency?: string | null
           id?: string
           is_active?: boolean | null
@@ -384,7 +372,6 @@ export type Database = {
         Row: {
           created_at: string | null
           end_time: string | null
-          environment: string | null
           id: string
           notes: string | null
           overall_feeling: string | null
@@ -395,7 +382,6 @@ export type Database = {
         Insert: {
           created_at?: string | null
           end_time?: string | null
-          environment?: string | null
           id?: string
           notes?: string | null
           overall_feeling?: string | null
@@ -406,7 +392,6 @@ export type Database = {
         Update: {
           created_at?: string | null
           end_time?: string | null
-          environment?: string | null
           id?: string
           notes?: string | null
           overall_feeling?: string | null

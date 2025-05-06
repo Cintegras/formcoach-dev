@@ -1,9 +1,11 @@
+
 import React from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import {AuthProvider} from '@/features/auth/components/AuthProvider';
 import ProtectedRoute from '@/features/auth/components/ProtectedRoute';
 import RequireProfile from '@/features/auth/components/RequireProfile';
 import RedirectIfProfileExists from '@/features/auth/components/RedirectIfProfileExists';
+import AdminRoute from '@/features/auth/components/AdminRoute';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -16,6 +18,7 @@ import WorkoutPlan from './pages/WorkoutPlan';
 import WorkoutConfirmation from './pages/WorkoutConfirmation';
 import MedicalDisclaimer from './pages/MedicalDisclaimer';
 import Welcome from './pages/Welcome';
+import TestOptionsPage from './pages/TestOptionsPage';
 
 function App() {
   return (
@@ -105,6 +108,18 @@ function App() {
                     <ProtectedRoute>
                         <RequireProfile>
                             <ProfilePage/>
+                        </RequireProfile>
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/test-options"
+                element={
+                    <ProtectedRoute>
+                        <RequireProfile>
+                            <AdminRoute>
+                                <TestOptionsPage/>
+                            </AdminRoute>
                         </RequireProfile>
                     </ProtectedRoute>
                 }
