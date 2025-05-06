@@ -19,6 +19,8 @@ class JunieService {
     private environmentInfo: EnvironmentInfo | null = null;
     private initMdUrl = '/docs/init.md';
     private isInitialized = false;
+    private hasLoggedCrossOriginWarning = false;
+    private allowedOrigins = ['gptengineer.app', 'localhost:3000'];
 
     /**
      * Initialize the Junie service
@@ -99,6 +101,46 @@ class JunieService {
      */
     getEnvironmentInfo(): EnvironmentInfo | null {
         return this.environmentInfo;
+    }
+
+    /**
+     * Safely send a postMessage to the parent window
+     * This method checks if the current host matches the allowed origins
+     * If not, it suppresses the postMessage and logs a single warning
+     *
+     * @param message The message to send
+     * @param targetOrigin The target origin (will be checked against allowed origins)
+     */
+    safePostMessage(message: any, targetOrigin: string): void {
+        // Skip if we're not in a browser environment
+        if (typeof window === 'undefined' || !window.parent || window.parent === window) {
+            return;
+        }
+
+        // Check if we're running in lovable.dev or a preview environment
+        const currentHost = window.location.host;
+        const isAllowedOrigin = this.allowedOrigins.some(origin => targetOrigin.includes(origin));
+        const isCurrentHostAllowed = this.allowedOrigins.some(origin => currentHost.includes(origin));
+
+        // If we're not in an allowed host or targeting an allowed origin, suppress the postMessage
+        if (!isCurrentHostAllowed || !isAllowedOrigin) {
+            // Log a warning only once
+            if (!this.hasLoggedCrossOriginWarning) {
+                console.warn(
+                    `Suppressed postMessage to ${targetOrigin} from ${currentHost}. ` +
+                    `Messages are only sent when running inside allowed origins.`
+                );
+                this.hasLoggedCrossOriginWarning = true;
+            }
+            return;
+        }
+
+        // If we're in an allowed host and targeting an allowed origin, send the message
+        try {
+            window.parent.postMessage(message, targetOrigin);
+        } catch (error) {
+            console.error('Error sending postMessage:', error);
+        }
     }
 }
 
