@@ -4,7 +4,7 @@
  *
  * This script:
  * 1. Connects to Supabase using the configured client
- * 2. Fetches profiles from the current environment using withEnvironmentFilter
+ * 2. Fetches profiles from the database
  * 3. Logs the results or any errors
  */
 
@@ -13,13 +13,11 @@ import {withEnvironmentFilter} from '@/lib/supabase-utils';
 import {getEnvironment} from '@/lib/environment';
 
 async function testSupabaseConnection() {
-    console.log(`Testing Supabase connection in '${getEnvironment()}' environment...`);
+    console.log(`Testing Supabase connection...`);
 
     try {
-        // Fetch profiles using the withEnvironmentFilter utility
-        const {data: profiles, error} = await withEnvironmentFilter(
-            supabase.from('profiles').select('*')
-        );
+        // Fetch profiles
+        const {data: profiles, error} = await supabase.from('profiles').select('*');
 
         if (error) {
             console.error('❌ Error fetching profiles:', error.message);
@@ -27,7 +25,7 @@ async function testSupabaseConnection() {
         }
 
         console.log(`✅ Successfully connected to Supabase and fetched profiles!`);
-        console.log(`Found ${profiles?.length || 0} profiles in the '${getEnvironment()}' environment:`);
+        console.log(`Found ${profiles?.length || 0} profiles:`);
 
         // Log the profiles (limited to 10 for readability)
         if (profiles) {
@@ -36,17 +34,6 @@ async function testSupabaseConnection() {
 
             if (profiles.length > 10) {
                 console.log(`... and ${profiles.length - 10} more profiles`);
-            }
-
-            // Verify environment filtering is working
-            const allHaveCorrectEnvironment = profiles.every(
-                profile => profile.environment === getEnvironment()
-            );
-
-            if (allHaveCorrectEnvironment) {
-                console.log(`✅ Environment filtering is working correctly!`);
-            } else {
-                console.error(`❌ Some profiles have incorrect environment values!`);
             }
         }
 

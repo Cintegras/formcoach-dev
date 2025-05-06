@@ -22,7 +22,7 @@ interface AuthProviderProps {
     children: React.ReactNode;
 }
 
-export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
+const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
     const [state, setState] = useState<AuthState>({
         user: null,
         session: null,
@@ -126,3 +126,5 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({children}) => {
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
+
+export default AuthProvider;

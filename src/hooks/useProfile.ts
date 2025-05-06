@@ -1,3 +1,4 @@
+
 import {useEffect, useRef, useState} from 'react';
 import {useAuth} from '@/features/auth/hooks/useAuth';
 import {createProfile, getProfile, Profile, ProfileUpdate, updateProfile} from '@/services/supabase';
@@ -90,7 +91,13 @@ export function useProfile() {
         setError(null);
 
         try {
-            const updatedProfile = await updateProfile(user.id, updates);
+            // Make sure birthdate is not undefined if provided in updates
+            const updatesWithValidBirthdate = {
+                ...updates,
+                birthdate: updates.birthdate || undefined
+            };
+
+            const updatedProfile = await updateProfile(user.id, updatesWithValidBirthdate);
             if (updatedProfile) {
                 // Update state and cache
                 setProfile(updatedProfile);
@@ -127,9 +134,15 @@ export function useProfile() {
         setError(null);
 
         try {
+            // Ensure birthdate is not undefined
+            const profileDataWithValidBirthdate = {
+                ...profileData,
+                birthdate: profileData.birthdate || new Date().toISOString().split('T')[0] // Default to today if not provided
+            };
+
             const newProfile = await createProfile({
                 id: user.id,
-                ...profileData
+                ...profileDataWithValidBirthdate
             });
 
             if (newProfile) {

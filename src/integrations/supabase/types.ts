@@ -197,6 +197,7 @@ export type Database = {
           goals: string[] | null
           height: number | null
           id: string
+          tester_description: string | null
           updated_at: string | null
           user_type: string | null
           username: string | null
@@ -210,6 +211,7 @@ export type Database = {
           goals?: string[] | null
           height?: number | null
           id: string
+          tester_description?: string | null
           updated_at?: string | null
           user_type?: string | null
           username?: string | null
@@ -223,6 +225,7 @@ export type Database = {
           goals?: string[] | null
           height?: number | null
           id?: string
+          tester_description?: string | null
           updated_at?: string | null
           user_type?: string | null
           username?: string | null
@@ -266,6 +269,21 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      user_roles: {
+        Row: {
+          description: string
+          role: string
+        }
+        Insert: {
+          description: string
+          role: string
+        }
+        Update: {
+          description?: string
+          role?: string
+        }
+        Relationships: []
       }
       workout_plan_exercises: {
         Row: {
