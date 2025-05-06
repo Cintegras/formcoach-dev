@@ -23,6 +23,7 @@ import TrendsPage from './pages/TrendsPage';
 import CardioTypeSelect from './pages/CardioTypeSelect';
 import CardioWarmUp from './pages/CardioWarmUp';
 import WorkoutHistoryPage from './pages/WorkoutHistoryPage';
+import WorkoutPlansPage from './pages/WorkoutPlansPage';
 
 function App() {
   return (
@@ -167,6 +168,16 @@ function App() {
                     <ProtectedRoute>
                         <RequireProfile>
                             <WorkoutHistoryPage/>
+                        </RequireProfile>
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/workout-plans"
+                element={
+                    <ProtectedRoute>
+                        <RequireProfile>
+                            <WorkoutPlansPage/>
                         </RequireProfile>
                     </ProtectedRoute>
                 }

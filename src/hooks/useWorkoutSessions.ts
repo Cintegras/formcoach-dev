@@ -1,11 +1,10 @@
-
 import {useCallback, useEffect, useState} from 'react';
 import {useAuth} from '@/features/auth/hooks/useAuth';
 import {
+    endWorkoutSession,
     getWorkoutSession,
     getWorkoutSessions,
-    startWorkoutSession,
-    endWorkoutSession
+    startWorkoutSession
 } from '@/services/supabase/workout-sessions';
 import type {Database} from '@/types/supabase';
 
@@ -32,7 +31,7 @@ export function useWorkoutSessions(workoutPlanId: string | null = null) {
      * Fetch workout sessions for the current workout plan
      */
     const fetchSessions = useCallback(async () => {
-        if (!workoutPlanId) {
+        if (!workoutPlanId || !user) {
             return;
         }
 
@@ -40,13 +39,19 @@ export function useWorkoutSessions(workoutPlanId: string | null = null) {
         setError(null);
 
         try {
-            // Using getWorkoutSessions instead of getWorkoutSessionsForPlan
-            const sessionsData = await getWorkoutSessions(workoutPlanId);
-            setSessions(sessionsData || []);
+            // Using getWorkoutSessions with user.id instead of workoutPlanId
+            const sessionsData = await getWorkoutSessions(user.id);
+
+            // Filter sessions by workoutPlanId if provided
+            const filteredSessions = workoutPlanId
+                ? sessionsData.filter(session => session.workout_plan_id === workoutPlanId)
+                : sessionsData;
+
+            setSessions(filteredSessions || []);
 
             // Check if there's an active session among the fetched sessions
             // A session is considered active if it has a start_time but no end_time
-            const active = sessionsData?.find(session => isSessionActive(session)) || null;
+            const active = filteredSessions?.find(session => isSessionActive(session)) || null;
             setActiveSession(active);
         } catch (err) {
             const error = err instanceof Error ? err : new Error('Failed to fetch workout sessions');
@@ -55,7 +60,7 @@ export function useWorkoutSessions(workoutPlanId: string | null = null) {
         } finally {
             setLoading(false);
         }
-    }, [workoutPlanId]);
+    }, [workoutPlanId, user]);
 
     /**
      * Fetch a workout session by its ID

@@ -11,7 +11,7 @@ import {
     DialogTitle
 } from '@/components/ui/dialog';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
-import {ArrowLeft, Database, Trash2, UserX} from 'lucide-react';
+import {ArrowLeft, Database, HelpCircle, Trash2, UserCircle, UserX} from 'lucide-react';
 import {useToast} from '@/hooks/use-toast';
 import {useAuth} from '@/features/auth/hooks/useAuth';
 import {deleteProfile, getAllProfiles} from '@/services/supabase/profiles';
@@ -19,11 +19,13 @@ import {supabase} from '@/integrations/supabase/client';
 import {useWorkoutPlans} from '@/hooks/useWorkoutPlans';
 import {useWorkoutSessions} from '@/hooks/useWorkoutSessions';
 import {useFeatureToggles} from '@/hooks/useFeatureToggles';
+import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,} from "@/components/ui/tooltip";
 
 const TestOptionsPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { user } = useAuth();
+    const [isSetCurrentUserDialogOpen, setIsSetCurrentUserDialogOpen] = useState(false);
   const [isClearCacheDialogOpen, setIsClearCacheDialogOpen] = useState(false);
   const [isSimulateDialogOpen, setIsSimulateDialogOpen] = useState(false);
   const [isResetMetricsDialogOpen, setIsResetMetricsDialogOpen] = useState(false);
@@ -269,6 +271,55 @@ const TestOptionsPage = () => {
         setIsDeleteUserDataDialogOpen(false);
     };
 
+    // Handle setting the selected user as the current user
+    const handleSetCurrentUser = async () => {
+        if (!selectedUserId || !selectedUserProfile) {
+            toast({
+                title: "Error",
+                description: "No user selected",
+                variant: "destructive"
+            });
+            return;
+        }
+
+        try {
+            // Store the user data in localStorage to simulate a session
+            localStorage.setItem('supabase.auth.token', JSON.stringify({
+                currentSession: {
+                    user: {
+                        id: selectedUserId,
+                        email: selectedUserProfile.email || 'test@example.com',
+                        user_metadata: {
+                            full_name: selectedUserProfile.full_name || 'Test User'
+                        }
+                    }
+                }
+            }));
+
+            // Set profile_complete flag
+            localStorage.setItem('profile_complete', 'true');
+
+            toast({
+                title: "User Set",
+                description: `Successfully set ${selectedUserProfile.full_name || 'user'} as the current user. Reloading...`
+            });
+
+            // Reload the page to apply the changes
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+        } catch (error) {
+            console.error("Error setting current user:", error);
+            toast({
+                title: "Error",
+                description: "Failed to set current user",
+                variant: "destructive"
+            });
+        }
+
+        setIsSetCurrentUserDialogOpen(false);
+    };
+
   return (
     <PageContainer>
       <div className="mt-8 mb-6">
@@ -291,7 +342,19 @@ const TestOptionsPage = () => {
 
         {/* User Workout Plan Section */}
         <div className="w-full max-w-[300px] mx-auto mb-6 p-4 bg-[rgba(176,232,227,0.08)] rounded-lg">
-            <h3 className="text-[#B0E8E3] text-lg mb-2">Current Workout Plan</h3>
+            <div className="flex items-center mb-2">
+                <h3 className="text-[#B0E8E3] text-lg">Current Workout Plan</h3>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <HelpCircle className="ml-2 text-[#A4B1B7]" size={16}/>
+                        </TooltipTrigger>
+                        <TooltipContent className="bg-[#243137] text-white border-[#0C1518] max-w-[250px]">
+                            <p>Displays information about the current user's active workout plan.</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            </div>
             {activePlan ? (
                 <>
                     <div className="text-white">Name: {activePlan.name}</div>
@@ -304,7 +367,20 @@ const TestOptionsPage = () => {
 
         {/* Recent Workout Sessions Section */}
         <div className="w-full max-w-[300px] mx-auto mb-6 p-4 bg-[rgba(176,232,227,0.08)] rounded-lg">
-            <h3 className="text-[#B0E8E3] text-lg mb-2">Recent Workout Sessions</h3>
+            <div className="flex items-center mb-2">
+                <h3 className="text-[#B0E8E3] text-lg">Recent Workout Sessions</h3>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <HelpCircle className="ml-2 text-[#A4B1B7]" size={16}/>
+                        </TooltipTrigger>
+                        <TooltipContent className="bg-[#243137] text-white border-[#0C1518] max-w-[250px]">
+                            <p>Shows the most recent workout sessions for the current user, including whether they have
+                                associated exercise logs.</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            </div>
             {recentSessions.length > 0 ? (
                 recentSessions.map(session => (
                     <div key={session.id} className="mb-3 pb-3 border-b border-[#243137]">
@@ -328,7 +404,19 @@ const TestOptionsPage = () => {
 
         {/* Form Coach Access Section */}
         <div className="w-full max-w-[300px] mx-auto mb-6 p-4 bg-[rgba(176,232,227,0.08)] rounded-lg">
-            <h3 className="text-[#B0E8E3] text-lg mb-2">Form Coach Access</h3>
+            <div className="flex items-center mb-2">
+                <h3 className="text-[#B0E8E3] text-lg">Form Coach Access</h3>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <HelpCircle className="ml-2 text-[#A4B1B7]" size={16}/>
+                        </TooltipTrigger>
+                        <TooltipContent className="bg-[#243137] text-white border-[#0C1518] max-w-[250px]">
+                            <p>Displays the current user's Form Coach access status and workout count.</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            </div>
             <div className="text-white">
                 Status: {formCoachEnabled ?
                 <span className="text-green-400">Enabled</span> :
@@ -339,7 +427,20 @@ const TestOptionsPage = () => {
 
         {/* User Selection Section */}
         <div className="w-full max-w-[300px] mx-auto mb-6 p-4 bg-[rgba(176,232,227,0.08)] rounded-lg">
-            <h3 className="text-[#B0E8E3] text-lg mb-2">Select User</h3>
+            <div className="flex items-center mb-2">
+                <h3 className="text-[#B0E8E3] text-lg">Select User</h3>
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger asChild>
+                            <HelpCircle className="ml-2 text-[#A4B1B7]" size={16}/>
+                        </TooltipTrigger>
+                        <TooltipContent className="bg-[#243137] text-white border-[#0C1518] max-w-[250px]">
+                            <p>Select a user to view their information or perform actions on their account. You can also
+                                set them as the current user for testing.</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            </div>
             <Select
                 value={selectedUserId}
                 onValueChange={(value) => setSelectedUserId(value)}
@@ -364,61 +465,148 @@ const TestOptionsPage = () => {
                     <div className="text-[#A4B1B7]">Tester
                         Description: {selectedUserProfile.tester_description || 'N/A'}</div>
                     <div className="text-[#A4B1B7]">ID: {selectedUserProfile.id}</div>
+
+                    <div className="flex items-center mt-3">
+                        <Button
+                            variant="outline"
+                            className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
+                            onClick={() => setIsSetCurrentUserDialogOpen(true)}
+                            disabled={!selectedUserId}
+                        >
+                            <UserCircle className="mr-2 text-[#00C4B4]" size={18}/>
+                            Set as Current User
+                        </Button>
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger asChild>
+                                    <HelpCircle className="ml-2 text-[#A4B1B7]" size={16}/>
+                                </TooltipTrigger>
+                                <TooltipContent className="bg-[#243137] text-white border-[#0C1518] max-w-[250px]">
+                                    <p>Sets the selected user as the current user without requiring login. Useful for
+                                        testing with different user accounts.</p>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    </div>
                 </div>
             )}
         </div>
 
       <div className="w-full max-w-[300px] mx-auto space-y-4">
           {/* Generate Test Data Button */}
-          <Button
-              variant="outline"
-              className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
-              onClick={() => setIsGenerateDataDialogOpen(true)}
-          >
-              <Database className="mr-2 text-[#00C4B4]" size={18}/>
-              Generate Test Data
-          </Button>
+          <div className="flex items-center">
+              <Button
+                  variant="outline"
+                  className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
+                  onClick={() => setIsGenerateDataDialogOpen(true)}
+              >
+                  <Database className="mr-2 text-[#00C4B4]" size={18}/>
+                  Generate Test Data
+              </Button>
+              <TooltipProvider>
+                  <Tooltip>
+                      <TooltipTrigger asChild>
+                          <HelpCircle className="ml-2 text-[#A4B1B7]" size={16}/>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-[#243137] text-white border-[#0C1518] max-w-[250px]">
+                          <p>Creates sample workout data for testing purposes, including a workout plan, sessions, and
+                              exercise logs.</p>
+                      </TooltipContent>
+                  </Tooltip>
+              </TooltipProvider>
+          </div>
 
         {/* Clear App Data Button */}
-        <Button 
-          variant="outline" 
-          className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
-          onClick={() => setIsClearCacheDialogOpen(true)}
-        >
-          <Trash2 className="mr-2 text-[#00C4B4]" size={18} />
-          Clear App Data (Dev)
-        </Button>
+          <div className="flex items-center">
+              <Button
+                  variant="outline"
+                  className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
+                  onClick={() => setIsClearCacheDialogOpen(true)}
+              >
+                  <Trash2 className="mr-2 text-[#00C4B4]" size={18}/>
+                  Clear App Data (Dev)
+              </Button>
+              <TooltipProvider>
+                  <Tooltip>
+                      <TooltipTrigger asChild>
+                          <HelpCircle className="ml-2 text-[#A4B1B7]" size={16}/>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-[#243137] text-white border-[#0C1518] max-w-[250px]">
+                          <p>Clears all locally stored app data and returns you to the login screen. Your email will
+                              remain saved.</p>
+                      </TooltipContent>
+                  </Tooltip>
+              </TooltipProvider>
+          </div>
 
           {/* Delete User Data Button */}
-          <Button
-              variant="outline"
-              className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
-              onClick={() => setIsDeleteUserDataDialogOpen(true)}
-              disabled={!selectedUserId}
-          >
-              <UserX className="mr-2 text-[#00C4B4]" size={18}/>
-              Delete Selected User Data
-          </Button>
+          <div className="flex items-center">
+              <Button
+                  variant="outline"
+                  className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
+                  onClick={() => setIsDeleteUserDataDialogOpen(true)}
+                  disabled={!selectedUserId}
+              >
+                  <UserX className="mr-2 text-[#00C4B4]" size={18}/>
+                  Delete Selected User Data
+              </Button>
+              <TooltipProvider>
+                  <Tooltip>
+                      <TooltipTrigger asChild>
+                          <HelpCircle className="ml-2 text-[#A4B1B7]" size={16}/>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-[#243137] text-white border-[#0C1518] max-w-[250px]">
+                          <p>Deletes the profile data for the selected user. This action cannot be undone.</p>
+                      </TooltipContent>
+                  </Tooltip>
+              </TooltipProvider>
+          </div>
 
         {/* Simulate Missing Profile Button */}
-        <Button 
-          variant="outline" 
-          className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
-          onClick={() => setIsSimulateDialogOpen(true)}
-        >
-          <Trash2 className="mr-2 text-[#00C4B4]" size={18} />
-          Simulate Missing Profile
-        </Button>
+          <div className="flex items-center">
+              <Button
+                  variant="outline"
+                  className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
+                  onClick={() => setIsSimulateDialogOpen(true)}
+              >
+                  <Trash2 className="mr-2 text-[#00C4B4]" size={18}/>
+                  Simulate Missing Profile
+              </Button>
+              <TooltipProvider>
+                  <Tooltip>
+                      <TooltipTrigger asChild>
+                          <HelpCircle className="ml-2 text-[#A4B1B7]" size={16}/>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-[#243137] text-white border-[#0C1518] max-w-[250px]">
+                          <p>Deletes your profile data but keeps your authentication. You'll be redirected to the
+                              profile setup page.</p>
+                      </TooltipContent>
+                  </Tooltip>
+              </TooltipProvider>
+          </div>
 
         {/* Reset Progress Metrics Button (admin only) */}
-        <Button 
-          variant="outline" 
-          className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
-          onClick={() => setIsResetMetricsDialogOpen(true)}
-        >
-          <Trash2 className="mr-2 text-red-500" size={18} />
-          Reset Progress Metrics
-        </Button>
+          <div className="flex items-center">
+              <Button
+                  variant="outline"
+                  className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
+                  onClick={() => setIsResetMetricsDialogOpen(true)}
+              >
+                  <Trash2 className="mr-2 text-red-500" size={18}/>
+                  Reset Progress Metrics
+              </Button>
+              <TooltipProvider>
+                  <Tooltip>
+                      <TooltipTrigger asChild>
+                          <HelpCircle className="ml-2 text-[#A4B1B7]" size={16}/>
+                      </TooltipTrigger>
+                      <TooltipContent className="bg-[#243137] text-white border-[#0C1518] max-w-[250px]">
+                          <p>Deletes all your progress metrics data including weight history, measurements, and other
+                              tracked metrics.</p>
+                      </TooltipContent>
+                  </Tooltip>
+              </TooltipProvider>
+          </div>
       </div>
 
       {/* Clear Cache Dialog */}
@@ -564,6 +752,43 @@ const TestOptionsPage = () => {
                         disabled={!selectedUserProfile}
                     >
                         Delete User Data
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
+        </Dialog>
+
+        {/* Set Current User Dialog */}
+        <Dialog open={isSetCurrentUserDialogOpen} onOpenChange={setIsSetCurrentUserDialogOpen}>
+            <DialogContent className="bg-[#0C1518] border-[#243137] text-white">
+                <DialogHeader>
+                    <DialogTitle className="text-[#B0E8E3]">Set Current User</DialogTitle>
+                </DialogHeader>
+                <DialogDescription className="text-[#A4B1B7]">
+                    {selectedUserProfile ? (
+                        <>
+                            This will set <span className="text-white font-semibold">
+                            {selectedUserProfile.full_name || selectedUserProfile.username || 'the selected user'}</span> as
+                            the current user without requiring login.
+                            The page will reload to apply the changes.
+                        </>
+                    ) : (
+                        "Please select a user first."
+                    )}
+                </DialogDescription>
+                <DialogFooter>
+                    <Button
+                        variant="outline"
+                        onClick={() => setIsSetCurrentUserDialogOpen(false)}
+                        className="border-[#243137] text-[#A4B1B7] hover:bg-[#243137]"
+                    >
+                        Cancel
+                    </Button>
+                    <Button
+                        onClick={handleSetCurrentUser}
+                        className="bg-[#00C4B4] text-black hover:bg-[#00C4B4]/80"
+                        disabled={!selectedUserProfile}
+                    >
+                        Set as Current User
                     </Button>
                 </DialogFooter>
             </DialogContent>
