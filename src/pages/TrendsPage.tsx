@@ -1,22 +1,27 @@
-import React, { useState, useMemo } from 'react';
+import React, {useMemo, useState} from 'react';
 import PageContainer from '@/components/PageContainer';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { 
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, 
-  ResponsiveContainer, BarChart, Bar, Legend,
-  TooltipProps
+import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs';
+import {Card} from '@/components/ui/card';
+import {Button} from '@/components/ui/button';
+import {
+    Bar,
+    BarChart,
+    CartesianGrid,
+    Legend,
+    Line,
+    LineChart,
+    ResponsiveContainer,
+    Tooltip,
+    TooltipProps,
+    XAxis,
+    YAxis
 } from 'recharts';
-import { 
-  ChartLine, BarChartHorizontal, Activity, 
-  Loader2, ArrowLeft 
-} from 'lucide-react';
-import { useProgressMetrics } from '@/hooks/useProgressMetrics';
-import { useWorkoutSessions } from '@/hooks/useWorkoutSessions';
-import { safeFormat } from '@/utils/dateUtils';
+import {Activity, ArrowLeft, BarChartHorizontal, ChartLine, Loader2} from 'lucide-react';
+import {useProgressMetrics} from '@/hooks/useProgressMetrics';
+import {useWorkoutSessions} from '@/hooks/useWorkoutSessions';
+import {safeFormat} from '@/utils/dateUtils';
 import BottomNav from '@/components/BottomNav';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 
 const TrendsPage = () => {
     const navigate = useNavigate();
@@ -191,7 +196,7 @@ const TrendsPage = () => {
                 Back
             </Button>
             <h1 className="text-2xl font-bold text-center mb-6">Trends</h1>
-            <Tabs defaultvalue="weight">
+            <Tabs defaultValue="weight">
                 <TabsList className="w-full flex justify-center mb-4">
                     <TabsTrigger value="weight" className="data-[state=active]:bg-formcoach-primary data-[state=active]:text-formcoach-background">
                         <ChartLine className="mr-2 h-4 w-4" />
