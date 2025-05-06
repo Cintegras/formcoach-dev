@@ -1,5 +1,5 @@
 
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { useAdminAccess } from '@/hooks/useAdminAccess';
@@ -10,11 +10,11 @@ interface AdminRouteProps {
 }
 
 const AdminRoute: React.FC<AdminRouteProps> = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   const { isAdmin, loading: adminLoading, error } = useAdminAccess();
   const location = useLocation();
   
-  if (loading || adminLoading) {
+  if (authLoading || adminLoading) {
     return <LoadingIndicator fullScreen text="Checking admin access..." />;
   }
 
