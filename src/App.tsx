@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ProfileSetupPage from './pages/ProfileSetupPage';
+import ProfilePage from './pages/ProfilePage';
 import WorkoutCategorySelect from './pages/WorkoutCategorySelect';
 import ForgotPassword from './pages/ForgotPassword';
 import VerifyEmail from './pages/VerifyEmail';
@@ -94,6 +95,16 @@ function App() {
                     <ProtectedRoute>
                         <RequireProfile>
                             <MedicalDisclaimer/>
+                        </RequireProfile>
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/profile"
+                element={
+                    <ProtectedRoute>
+                        <RequireProfile>
+                            <ProfilePage/>
                         </RequireProfile>
                     </ProtectedRoute>
                 }
