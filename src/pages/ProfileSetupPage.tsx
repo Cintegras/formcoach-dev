@@ -9,19 +9,24 @@ import StepIndicator from '@/components/StepIndicator';
 import NameStep from '@/components/profile-setup/NameStep';
 import HeightStep from '@/components/profile-setup/HeightStep';
 import WeightStep from '@/components/profile-setup/WeightStep';
-import AgeStep from '@/components/profile-setup/AgeStep';
+import BirthdateStep from '@/components/profile-setup/BirthdateStep';
 import SexStep from '@/components/profile-setup/SexStep';
 import SummaryStep from '@/components/profile-setup/SummaryStep';
 import {ArrowLeft} from 'lucide-react';
 import {useProfile} from '@/hooks/useProfile';
 import {useAuth} from '@/features/auth/hooks/useAuth';
+import {createProgressMetric} from '@/services/supabase/progress-metrics';
+import {calculateAge} from '@/utils/date-utils';
 
 const profileSchema = z.object({
   firstName: z.string().min(1, { message: 'First name is required' }),
   heightFeet: z.number().min(4, { message: 'Height feet must be at least 4' }).max(7, { message: 'Height feet must be at most 7' }),
   heightInches: z.number().min(0, { message: 'Height inches must be at least 0' }).max(11, { message: 'Height inches must be at most 11' }),
   weight: z.number().min(80, { message: 'Weight must be at least 80 lbs' }).max(300, { message: 'Weight must be at most 300 lbs' }),
-  age: z.number().min(18, { message: 'Age must be at least 18' }).max(90, { message: 'Age must be at most 90' }),
+  birthdate: z.date({
+    required_error: "Birthdate is required",
+    invalid_type_error: "Birthdate must be a valid date",
+  }),
   sex: z.enum(["male", "female", "other"], {message: 'Please select your sex'}).optional(),
 });
 
@@ -42,7 +47,7 @@ const ProfileSetupPage = () => {
     heightFeet: 5,
     heightInches: 10,
     weight: 150,
-    age: 30,
+    birthdate: new Date(new Date().setFullYear(new Date().getFullYear() - 30)), // Default to 30 years ago
     sex: undefined,
   });
 
@@ -83,7 +88,32 @@ const ProfileSetupPage = () => {
           z.number().min(80, { message: 'Weight must be at least 80 lbs' }).max(300, { message: 'Weight must be at most 300 lbs' }).parse(formValues.weight);
           break;
         case 4:
-          z.number().min(18, { message: 'Age must be at least 18' }).max(90, { message: 'Age must be at most 90' }).parse(formValues.age);
+          // Validate birthdate - ensure it's a valid date and user is between 18-90 years old
+          const birthdate = formValues.birthdate;
+          if (!birthdate) {
+            throw new z.ZodError([{
+              code: 'custom',
+              path: ['birthdate'],
+              message: 'Birthdate is required'
+            }]);
+          }
+
+          const age = calculateAge(birthdate);
+          if (age < 18) {
+            throw new z.ZodError([{
+              code: 'custom',
+              path: ['birthdate'],
+              message: 'You must be at least 18 years old'
+            }]);
+          }
+
+          if (age > 90) {
+            throw new z.ZodError([{
+              code: 'custom',
+              path: ['birthdate'],
+              message: 'You must be at most 90 years old'
+            }]);
+          }
           break;
         case 5:
           z.enum(["male", "female", "other"], {message: 'Please select your sex'}).optional().parse(formValues.sex);
@@ -143,11 +173,27 @@ const ProfileSetupPage = () => {
       const profileData = {
         full_name: formValues.firstName, // Map firstName to full_name
         height: (formValues.heightFeet * 12) + formValues.heightInches, // Convert to total inches
-        weight: formValues.weight,
-        // Note: age, sex, and weight_history are not in the profiles table schema
+        birthdate: formValues.birthdate.toISOString().split('T')[0], // Format as YYYY-MM-DD
+        // Note: weight is now stored in progress_metrics, not in profiles
       };
 
       const result = await create(profileData);
+
+      // If profile creation was successful, add weight to progress_metrics
+      if (result && user) {
+        try {
+          await createProgressMetric({
+            user_id: user.id,
+            metric_type: 'weight',
+            metric_value: formValues.weight,
+            notes: 'Initial weight in lbs',
+            recorded_date: new Date().toISOString().split('T')[0]
+          });
+        } catch (err) {
+          console.error('Error creating weight metric:', err);
+          // Continue with profile setup even if weight metric creation fails
+        }
+      }
 
       setIsLoading(false);
 
@@ -232,9 +278,10 @@ const ProfileSetupPage = () => {
         );
       case 4:
         return (
-          <AgeStep 
-            age={formValues.age}
-            onChange={(value) => updateFormValue('age', value)}
+            <BirthdateStep
+                birthdate={formValues.birthdate}
+                onChange={(value) => updateFormValue('birthdate', value)}
+                error={errors.birthdate}
           />
         );
       case 5:
@@ -250,7 +297,7 @@ const ProfileSetupPage = () => {
             firstName={formValues.firstName}
             height={{ feet: formValues.heightFeet, inches: formValues.heightInches }}
             weight={formValues.weight}
-            age={formValues.age}
+            age={calculateAge(formValues.birthdate)}
             sex={formValues.sex}
             bmi={bmi}
           />
