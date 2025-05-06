@@ -4,7 +4,7 @@ import PageContainer from '@/components/PageContainer';
 import {Button} from '@/components/ui/button';
 import {Input} from '@/components/ui/input';
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from '@/components/ui/dialog';
-import {Lock, LogOut, Scale, Trash2, Settings} from 'lucide-react';
+import {Lock, LogOut, Scale, Settings, Trash2} from 'lucide-react';
 import {useToast} from '@/hooks/use-toast';
 import {format} from 'date-fns';
 import {CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis} from 'recharts';
@@ -380,7 +380,18 @@ const ProfilePage = () => {
             <Button
               variant="outline" 
               className="w-full justify-start bg-[rgba(176,232,227,0.12)] border-none text-white hover:bg-[rgba(176,232,227,0.2)]"
-              onClick={() => navigate('/test-options')}
+              onClick={() => {
+                  if (isAdmin) {
+                      navigate('/test-options');
+                  } else {
+                      // If somehow a non-admin user gets this button, prevent navigation
+                      toast({
+                          title: "Access Denied",
+                          description: "You don't have permission to access this page.",
+                          variant: "destructive"
+                      });
+                  }
+              }}
             >
               <Settings className="mr-2 text-[#00C4B4]" size={18} />
               Test Options
