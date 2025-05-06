@@ -14,6 +14,7 @@ import {useAdminAccess} from '@/hooks/useAdminAccess';
 import {createProgressMetric, getLatestWeight} from '@/services/supabase/progress-metrics';
 import {calculateAge} from '@/utils/date-utils';
 import {useAuth} from '@/features/auth/hooks/useAuth';
+import {supabase} from '@/integrations/supabase/client';
 
 interface UserData {
   firstName: string;
@@ -237,21 +238,65 @@ const ProfilePage = () => {
     navigate('/login');
   };
 
-  const handleClearCache = () => {
-    // Clear all localStorage data
-    localStorage.clear();
+    /**
+     * Resets user app data in the database
+     * @param userId - The ID of the user whose data should be cleared
+     * @returns A promise that resolves to an object with success status and any errors
+     */
+    const resetUserAppData = async (userId: string): Promise<{ success: boolean, errors: string[] }> => {
+        const errors: string[] = [];
+        const tablesToClear = ['progress_metrics', 'workout_sessions', 'exercise_logs'];
 
-      setIsClearCacheDialogOpen(false);
+        for (const table of tablesToClear) {
+            const {error} = await supabase.from(table).delete().eq('user_id', userId);
+            if (error) {
+                console.warn(`Error clearing ${table}:`, error.message);
+                errors.push(`${table}: ${error.message}`);
+            }
+        }
+
+        return {success: errors.length === 0, errors};
+    };
+
+    const handleClearCache = async () => {
+        setIsClearCacheDialogOpen(false);
+
+        // Show loading toast
+        toast({
+            title: "Clearing data...",
+            description: "Please wait while we reset your app data.",
+        });
+
+        try {
+            // First reset server-side data if user is logged in
+            if (authUser) {
+                const result = await resetUserAppData(authUser.id);
+                if (!result.success) {
+                    console.warn("Some data couldn't be cleared:", result.errors);
+                }
+            }
+
+            // Then clear localStorage and set the force_profile_setup flag
+            localStorage.clear();
+            localStorage.setItem("force_profile_setup", "true");
 
       toast({
-      title: "Cache Cleared",
+          title: "Data Cleared",
           description: "All app data has been reset. Redirecting to login...",
-    });
+      });
 
-      // Short delay before redirecting to login page
+            // Redirect to login
       setTimeout(() => {
           navigate('/login');
       }, 1500);
+        } catch (error) {
+            console.error("Error clearing data:", error);
+            toast({
+                title: "Error",
+                description: "There was a problem clearing your data. Please try again.",
+                variant: "destructive",
+            });
+        }
   };
 
     const handleDeleteAccount = () => {
@@ -542,7 +587,11 @@ const ProfilePage = () => {
 
             <div className="py-4">
             <p className="text-[#A4B1B7]">
-              This will reset all app data and return you to the profile setup screen. Your email will remain saved.
+                This will clear all locally stored app data and delete your workout history, progress metrics, and
+                exercise logs from the database. You will be returned to the profile setup screen on your next login.
+            </p>
+                <p className="text-[#A4B1B7] mt-2">
+                    Your account and basic profile information will remain in our database.
             </p>
             <p className="text-[#A4B1B7] mt-2">
               This action cannot be undone.

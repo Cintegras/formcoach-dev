@@ -39,6 +39,18 @@ export function useProfile() {
             return;
         }
 
+        // Check if we should force profile setup
+        const forceProfileSetup = localStorage.getItem("force_profile_setup") === "true";
+        if (forceProfileSetup) {
+            // Clear the flag
+            localStorage.removeItem("force_profile_setup");
+            // Return null profile to force profile setup
+            setProfile(null);
+            profileRef.current = null;
+            setLoading(false);
+            return;
+        }
+
         const fetchProfile = async () => {
             setLoading(true);
             setError(null);
