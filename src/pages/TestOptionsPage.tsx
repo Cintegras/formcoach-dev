@@ -350,7 +350,7 @@ const TestOptionsPage = () => {
                 <SelectContent className="bg-[#0C1518] border-[#243137] text-white">
                     {profiles.map((profile) => (
                         <SelectItem key={profile.id} value={profile.id}>
-                            {profile.first_name} {profile.last_name} ({profile.email || 'No email'})
+                            {profile.full_name || 'No name'}
                         </SelectItem>
                     ))}
                 </SelectContent>
@@ -358,9 +358,11 @@ const TestOptionsPage = () => {
 
             {selectedUserProfile && (
                 <div className="mt-2">
-                    <div
-                        className="text-white">Name: {selectedUserProfile.first_name} {selectedUserProfile.last_name}</div>
-                    <div className="text-[#A4B1B7]">Email: {selectedUserProfile.email || 'N/A'}</div>
+                    <div className="text-white">Name: {selectedUserProfile.full_name || 'N/A'}</div>
+                    <div className="text-[#A4B1B7]">Username: {selectedUserProfile.username || 'N/A'}</div>
+                    <div className="text-[#A4B1B7]">User Type: {selectedUserProfile.user_type || 'N/A'}</div>
+                    <div className="text-[#A4B1B7]">Tester
+                        Description: {selectedUserProfile.tester_description || 'N/A'}</div>
                     <div className="text-[#A4B1B7]">ID: {selectedUserProfile.id}</div>
                 </div>
             )}
