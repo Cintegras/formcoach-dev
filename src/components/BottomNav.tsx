@@ -59,11 +59,12 @@ const BottomNav = () => {
 
     // Base nav items (always shown)
   const navItems = [
-    { path: '/', label: 'Home', icon: Home },
+      {path: '/', label: 'Home', icon: Home, key: 'home'},
       {
           path: '/workout-category-select',
           label: 'Workout',
           icon: Activity,
+          key: 'workout',
           onClick: isAuthenticated ? toggleWorkoutMenu : undefined
       },
       {
@@ -71,6 +72,7 @@ const BottomNav = () => {
           label: 'Trends',
           icon: trendsEnabled ? TrendingUp : Lock,
           disabled: !trendsEnabled,
+          key: 'trends',
           onClick: (e: React.MouseEvent) => {
               if (!trendsEnabled) {
                   e.preventDefault();
@@ -82,14 +84,14 @@ const BottomNav = () => {
               navigate('/trends');
           }
       },
-    { path: '/profile', label: 'Profile', icon: UserRound },
+      {path: '/profile', label: 'Profile', icon: UserRound, key: 'profile'},
   ];
 
     // Workout submenu items (only shown when authenticated and menu is open)
     const workoutSubItems = [
-        {path: '/workout-category-select', label: 'Start Workout', icon: Activity},
-        {path: '/workout-plans', label: 'Workout Plans', icon: ClipboardList},
-        {path: '/workout-history', label: 'History', icon: History},
+        {path: '/workout-category-select', label: 'Start Workout', icon: Activity, key: 'start-workout'},
+        {path: '/workout-plans', label: 'Workout Plans', icon: ClipboardList, key: 'workout-plans'},
+        {path: '/workout-history', label: 'History', icon: History, key: 'workout-history'},
     ];
 
   return (
@@ -101,7 +103,7 @@ const BottomNav = () => {
                 <div className="max-w-[375px] mx-auto space-y-2">
                     {workoutSubItems.map((item) => (
                         <button
-                            key={item.path}
+                            key={item.key || item.path}
                             onClick={() => {
                                 navigate(item.path);
                                 setShowWorkoutMenu(false);
@@ -124,7 +126,7 @@ const BottomNav = () => {
       <div className="max-w-[375px] mx-auto flex justify-between items-center">
         {navItems.map((item) => (
           <button
-            key={item.path}
+              key={item.key || item.path}
             onClick={(e) => {
                 if (item.onClick) {
                     item.onClick(e);

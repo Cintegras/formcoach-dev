@@ -150,11 +150,17 @@ export function useProfile() {
         setError(null);
 
         try {
+            // First, try to get the existing profile to preserve user_type and tester_description
+            const existingProfile = await getProfile(user.id);
+
             // Ensure birthdate is a valid string
             const profileDataWithValidBirthdate = {
                 ...profileData,
                 // Make sure birthdate is not undefined
-                birthdate: profileData.birthdate ?? ""
+                birthdate: profileData.birthdate ?? "",
+                // Preserve user_type and tester_description if they exist in the current profile
+                user_type: existingProfile?.user_type ?? null,
+                tester_description: existingProfile?.tester_description ?? null
             };
 
             const newProfile = await createProfile({
