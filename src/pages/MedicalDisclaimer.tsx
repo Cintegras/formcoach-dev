@@ -19,41 +19,41 @@ const MedicalDisclaimer = () => {
 
   return (
     <PageContainer>
-      <div className="flex flex-col items-center justify-center min-h-[80vh]">
-        <div className="mb-6">
-          <h1 className="font-bold text-[28px] text-center text-[#D7E4E3]">
+        <div className="flex flex-col items-center justify-center min-h-[80vh] font-inter">
+            <div className="mb-10">
+                <h1 className="font-bold text-[32px] text-center text-[#A4B1B7]">
             Medical Disclaimer
           </h1>
-          <p className="font-normal text-[14px] text-[#9CA3AF] text-center mt-2">
+                <p className="font-normal text-[16px] text-[#A4B1B7] text-center mt-4 mb-8">
             Please read before continuing
           </p>
         </div>
 
-          <div className="bg-[#1C1C1E] rounded-lg p-6 mb-8">
-          <p className="font-normal text-[14px] text-[#D7E4E3] mb-4">
+            <div className="rounded-lg p-6 mb-8" style={{backgroundColor: "rgba(176, 232, 227, 0.12)"}}>
+                <p className="font-normal text-[14px] text-[#A4B1B7] mb-4">
             FormCoach is designed to assist with workout guidance but is not a substitute for professional medical advice, diagnosis, or treatment.
           </p>
 
-              <p className="font-normal text-[14px] text-[#D7E4E3] mb-4">
+                <p className="font-normal text-[14px] text-[#A4B1B7] mb-4">
             Before beginning any exercise program:
           </p>
 
               <ul className="space-y-3 mb-6">
             <li className="flex items-start">
               <span className="text-[#00C4B4] mr-2">•</span>
-              <span className="font-normal text-[14px] text-[#D7E4E3]">
+                <span className="font-normal text-[14px] text-[#A4B1B7]">
                 Consult with your healthcare provider, especially if you have chronic conditions, injuries, or health concerns
               </span>
             </li>
             <li className="flex items-start">
               <span className="text-[#00C4B4] mr-2">•</span>
-              <span className="font-normal text-[14px] text-[#D7E4E3]">
+                <span className="font-normal text-[14px] text-[#A4B1B7]">
                 Stop exercising immediately if you experience pain, dizziness, or discomfort
               </span>
             </li>
             <li className="flex items-start">
               <span className="text-[#00C4B4] mr-2">•</span>
-              <span className="font-normal text-[14px] text-[#D7E4E3]">
+                <span className="font-normal text-[14px] text-[#A4B1B7]">
                 Always prioritize your safety during workouts
               </span>
             </li>
@@ -68,7 +68,7 @@ const MedicalDisclaimer = () => {
             }`}>
               {isAgreed && <Check size={16} className="text-black" />}
             </div>
-            <span className="font-normal text-[14px] text-[#D7E4E3]">
+                  <span className="font-normal text-[14px] text-[#A4B1B7]">
               I understand and agree to these terms
             </span>
           </div>

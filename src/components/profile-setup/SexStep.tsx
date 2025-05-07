@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 interface SexStepProps {
@@ -9,11 +8,11 @@ interface SexStepProps {
 const SexStep: React.FC<SexStepProps> = ({ value, onChange }) => {
   return (
     <div className="space-y-6 animate-fade-in">
-      <h1 className="text-2xl font-bold text-center text-white">
+        <h1 className="font-bold text-[32px] text-center text-[#A4B1B7]">
         What's your sex?
       </h1>
-      
-      <div className="flex flex-col gap-4 mt-8">
+
+        <div className="flex flex-col gap-4 mt-8">
         <button
           type="button"
           onClick={() => onChange("male")}
@@ -25,8 +24,8 @@ const SexStep: React.FC<SexStepProps> = ({ value, onChange }) => {
         >
           Male
         </button>
-        
-        <button
+
+            <button
           type="button"
           onClick={() => onChange("female")}
           className={`p-4 rounded-lg text-lg transition-colors ${
@@ -37,8 +36,8 @@ const SexStep: React.FC<SexStepProps> = ({ value, onChange }) => {
         >
           Female
         </button>
-        
-        <button
+
+            <button
           type="button"
           onClick={() => onChange("other")}
           className={`p-4 rounded-lg text-lg transition-colors ${

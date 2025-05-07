@@ -1,6 +1,5 @@
-
 import React from 'react';
-import { User, Ruler, Scale, Calendar, Info } from 'lucide-react';
+import {Calendar, Info, Ruler, Scale, User} from 'lucide-react';
 
 interface SummaryStepProps {
   firstName: string;
@@ -35,41 +34,41 @@ const SummaryStep: React.FC<SummaryStepProps> = ({
 
   return (
     <div className="space-y-6 animate-fade-in">
-      <h1 className="text-2xl font-bold text-center text-white">
+        <h1 className="font-bold text-[32px] text-center text-[#A4B1B7]">
         Your Profile Summary
       </h1>
-      
+
       <div className="mt-8 space-y-6">
         <div className="flex items-center">
           <User size={20} className="text-[#00C4B4] mr-3" />
           <span className="text-[#A4B1B7]">Name:</span>
-          <span className="ml-2 text-white">{firstName}</span>
+            <span className="ml-2 text-[#A4B1B7]">{firstName}</span>
         </div>
-        
+
         <div className="flex items-center">
           <Ruler size={20} className="text-[#00C4B4] mr-3" />
           <span className="text-[#A4B1B7]">Height:</span>
-          <span className="ml-2 text-white">{height.feet}'{height.inches}"</span>
+            <span className="ml-2 text-[#A4B1B7]">{height.feet}'{height.inches}"</span>
         </div>
-        
+
         <div className="flex items-center">
           <Scale size={20} className="text-[#00C4B4] mr-3" />
           <span className="text-[#A4B1B7]">Weight:</span>
-          <span className="ml-2 text-white">{weight} lbs</span>
+            <span className="ml-2 text-[#A4B1B7]">{weight} lbs</span>
         </div>
-        
-        <div className="flex items-center">
+
+          <div className="flex items-center">
           <Calendar size={20} className="text-[#00C4B4] mr-3" />
           <span className="text-[#A4B1B7]">Age:</span>
-          <span className="ml-2 text-white">{age} years</span>
+              <span className="ml-2 text-[#A4B1B7]">{age} years</span>
         </div>
-        
-        <div className="flex items-center">
+
+          <div className="flex items-center">
           <span className="text-[#A4B1B7] ml-8">Sex:</span>
-          <span className="ml-2 text-white capitalize">{sex}</span>
+              <span className="ml-2 text-[#A4B1B7] capitalize">{sex}</span>
         </div>
-        
-        <div className="mt-8 p-4 rounded-lg bg-[rgba(176,232,227,0.08)]">
+
+          <div className="mt-8 p-4 rounded-lg" style={{backgroundColor: "rgba(176, 232, 227, 0.12)"}}>
           <div className="flex items-center justify-between">
             <span className="text-[#A4B1B7]">Your BMI:</span>
             <span className="text-2xl font-bold text-[#00C4B4]">{bmi.toFixed(1)}</span>

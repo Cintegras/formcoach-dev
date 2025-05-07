@@ -47,7 +47,7 @@ const BirthdateStep: React.FC<BirthdateStepProps> = ({birthdate, onChange, error
         <div className="space-y-6 animate-fade-in">
             <div className="flex items-center justify-center mb-2">
                 <CalendarIcon size={28} className="text-[#00C4B4] mr-3"/>
-                <h1 className="text-2xl font-bold text-center text-[#D7E4E3]">
+                <h1 className="font-bold text-[32px] text-center text-[#A4B1B7]">
                     What's your birthdate?
                 </h1>
             </div>
@@ -58,7 +58,7 @@ const BirthdateStep: React.FC<BirthdateStepProps> = ({birthdate, onChange, error
                         <Button
                             variant="outline"
                             className={cn(
-                                "w-[270px] justify-center text-left font-normal text-[#D7E4E3] bg-[#1C1C1E] border border-[#2C2C2E]"
+                                "w-[270px] justify-center text-left font-normal text-[#A4B1B7] bg-[#1C1C1E] border border-[#2C2C2E]"
                             )}
                         >
                             <CalendarIcon className="mr-2 h-5 w-5 text-[#00C4B4]"/>
@@ -66,15 +66,15 @@ const BirthdateStep: React.FC<BirthdateStepProps> = ({birthdate, onChange, error
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent
-                        className="w-auto p-0 border-[#2C2C2E] bg-[#1C1C1E] text-[#D7E4E3]"
+                        className="w-auto p-0 border-[#2C2C2E] bg-[#1C1C1E] text-[#A4B1B7]"
                         align="center"
                     >
                         <div className="flex justify-between p-3 border-b border-[#2C2C2E]">
                             <Select value={currentMonth.getFullYear().toString()} onValueChange={handleYearChange}>
-                                <SelectTrigger className="w-[110px] bg-[#1C1C1E] border-[#2C2C2E] text-[#D7E4E3]">
+                                <SelectTrigger className="w-[110px] bg-[#1C1C1E] border-[#2C2C2E] text-[#A4B1B7]">
                                     <SelectValue placeholder="Year"/>
                                 </SelectTrigger>
-                                <SelectContent className="bg-[#1C1C1E] border-[#2C2C2E] text-[#D7E4E3]">
+                                <SelectContent className="bg-[#1C1C1E] border-[#2C2C2E] text-[#A4B1B7]">
                                     {years.map((year) => (
                                         <SelectItem
                                             key={year}
@@ -88,10 +88,10 @@ const BirthdateStep: React.FC<BirthdateStepProps> = ({birthdate, onChange, error
                             </Select>
 
                             <Select value={months[currentMonth.getMonth()]} onValueChange={handleMonthChange}>
-                                <SelectTrigger className="w-[110px] bg-[#1C1C1E] border-[#2C2C2E] text-[#D7E4E3]">
+                                <SelectTrigger className="w-[110px] bg-[#1C1C1E] border-[#2C2C2E] text-[#A4B1B7]">
                                     <SelectValue placeholder="Month"/>
                                 </SelectTrigger>
-                                <SelectContent className="bg-[#1C1C1E] border-[#2C2C2E] text-[#D7E4E3]">
+                                <SelectContent className="bg-[#1C1C1E] border-[#2C2C2E] text-[#A4B1B7]">
                                     {months.map((month) => (
                                         <SelectItem
                                             key={month}
@@ -115,7 +115,7 @@ const BirthdateStep: React.FC<BirthdateStepProps> = ({birthdate, onChange, error
                                 month={currentMonth}
                                 onMonthChange={setCurrentMonth}
                                 initialFocus
-                                className="bg-[#1C1C1E] text-white"
+                                className="bg-[#1C1C1E] text-[#A4B1B7]"
                             />
                         </div>
                     </PopoverContent>

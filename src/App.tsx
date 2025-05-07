@@ -24,6 +24,8 @@ import CardioTypeSelect from './pages/CardioTypeSelect';
 import CardioWarmUp from './pages/CardioWarmUp';
 import WorkoutHistoryPage from './pages/WorkoutHistoryPage';
 import WorkoutPlansPage from './pages/WorkoutPlansPage';
+import WorkoutPlanEditor from './pages/WorkoutPlanEditor';
+import WorkoutReview from './pages/WorkoutReview';
 
 function App() {
   return (
@@ -174,6 +176,36 @@ function App() {
                     <ProtectedRoute>
                         <RequireProfile>
                             <WorkoutPlansPage/>
+                        </RequireProfile>
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/workout-plan-editor"
+                element={
+                    <ProtectedRoute>
+                        <RequireProfile>
+                            <WorkoutPlanEditor/>
+                        </RequireProfile>
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/workout-plan-editor/:planId"
+                element={
+                    <ProtectedRoute>
+                        <RequireProfile>
+                            <WorkoutPlanEditor/>
+                        </RequireProfile>
+                    </ProtectedRoute>
+                }
+            />
+            <Route
+                path="/workout-review"
+                element={
+                    <ProtectedRoute>
+                        <RequireProfile>
+                            <WorkoutReview/>
                         </RequireProfile>
                     </ProtectedRoute>
                 }

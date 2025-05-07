@@ -4,7 +4,8 @@ import PageContainer from '@/components/PageContainer';
 import PrimaryButton from '@/components/PrimaryButton';
 import {ArrowLeft, Check, Clock, Pause, Play, RotateCcw} from 'lucide-react';
 import {useWorkoutSessions} from '@/hooks/useWorkoutSessions';
-import { safeParseDate } from '@/utils/dateUtils';
+import {safeParseDate} from '@/utils/dateUtils';
+import {v4 as uuidv4} from 'uuid';
 
 interface ExerciseItem {
   id: string;
@@ -222,8 +223,8 @@ const WorkoutPlan = () => {
         const selectedExercises = exercises.filter(exercise => exercise.selected);
 
         if (selectedExercises.length > 0) {
-            // Create a workout plan ID (in a real app, this would be a proper ID)
-            const workoutPlanId = `${category}-${Date.now()}`;
+            // Create a workout plan ID using proper UUID format
+            const workoutPlanId = uuidv4();
 
             // Start the workout session
             const session = await startSession(workoutPlanId);
