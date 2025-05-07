@@ -91,9 +91,7 @@ function App() {
                 path="/welcome"
                 element={
                     <ProtectedRoute>
-                        <RequireProfile>
-                            <Welcome/>
-                        </RequireProfile>
+                        <Welcome/>
                     </ProtectedRoute>
                 }
             />
