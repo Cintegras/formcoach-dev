@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -98,4 +99,24 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Custom styling for select dropdown */
+[data-radix-popper-content-wrapper] {
+  z-index: 50 !important; /* Ensure dropdowns appear above other elements */
+}
+
+/* Override styling for calendar and select elements */
+.react-day-picker {
+  color: #D7E4E3 !important;
+}
+
+.rdp-month {
+  background-color: #121212 !important;
+}
+
+/* Make sure checkbox and radio inputs have the proper styling */
+input[type="checkbox"], 
+input[type="radio"] {
+  accent-color: #00C4B4;
 }
