@@ -72,8 +72,9 @@ const RequireProfile: React.FC<RequireProfileProps> = ({children}) => {
     }
 
     if (shouldRedirect) {
-        // Redirect to profile setup and save the location they were trying to access
-        return <Navigate to="/profile-setup" state={{from: location}} replace/>;
+        // Redirect to welcome screen instead of profile setup
+        // This ensures users go through the welcome flow after clearing app data
+        return <Navigate to="/welcome" state={{from: location}} replace/>;
     }
 
     return <>{children}</>;

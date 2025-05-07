@@ -58,6 +58,9 @@ export const resetUserAppData = async (userId: string, allowTestUsers: boolean =
     }
 
     try {
+        // Clear profile_complete flag from localStorage to ensure user goes through welcome flow
+        localStorage.removeItem("profile_complete");
+
         // Log the start of the operation
         await logEvent({
             userId,
