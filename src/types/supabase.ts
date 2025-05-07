@@ -9,6 +9,41 @@ export type Json =
 export type Database = {
     public: {
         Tables: {
+            app_logs: {
+                Row: {
+                    context: string
+                    created_at: string | null
+                    id: string
+                    level: string | null
+                    message: string
+                    user_id: string | null
+                }
+                Insert: {
+                    context: string
+                    created_at?: string | null
+                    id?: string
+                    level?: string | null
+                    message: string
+                    user_id?: string | null
+                }
+                Update: {
+                    context?: string
+                    created_at?: string | null
+                    id?: string
+                    level?: string | null
+                    message?: string
+                    user_id?: string | null
+                }
+                Relationships: [
+                    {
+                        foreignKeyName: "app_logs_user_id_fkey"
+                        columns: ["user_id"]
+                        isOneToOne: false
+                        referencedRelation: "profiles"
+                        referencedColumns: ["id"]
+                    },
+                ]
+            }
             equipment: {
                 Row: {
                     brand: string | null
@@ -133,6 +168,41 @@ export type Database = {
                         columns: ["equipment_id"]
                         isOneToOne: false
                         referencedRelation: "equipment"
+                        referencedColumns: ["id"]
+                    },
+                ]
+            }
+            feature_toggles: {
+                Row: {
+                    created_at: string
+                    feature_name: string
+                    is_enabled: boolean | null
+                    metadata: Json | null
+                    updated_at: string | null
+                    user_id: string
+                }
+                Insert: {
+                    created_at?: string
+                    feature_name: string
+                    is_enabled?: boolean | null
+                    metadata?: Json | null
+                    updated_at?: string | null
+                    user_id: string
+                }
+                Update: {
+                    created_at?: string
+                    feature_name?: string
+                    is_enabled?: boolean | null
+                    metadata?: Json | null
+                    updated_at?: string | null
+                    user_id?: string
+                }
+                Relationships: [
+                    {
+                        foreignKeyName: "feature_toggles_user_id_fkey"
+                        columns: ["user_id"]
+                        isOneToOne: false
+                        referencedRelation: "profiles"
                         referencedColumns: ["id"]
                     },
                 ]
@@ -432,41 +502,6 @@ export type Database = {
                         referencedRelation: "workout_plans"
                         referencedColumns: ["id"]
                     },
-                ]
-            }
-            feature_toggles: {
-                Row: {
-                    user_id: string
-                    feature_name: string
-                    is_enabled: boolean
-                    created_at: string
-                    updated_at: string
-                    metadata: Json | null
-                }
-                Insert: {
-                    user_id: string
-                    feature_name: string
-                    is_enabled: boolean
-                    created_at?: string
-                    updated_at?: string
-                    metadata?: Json | null
-                }
-                Update: {
-                    user_id?: string
-                    feature_name?: string
-                    is_enabled?: boolean
-                    created_at?: string
-                    updated_at?: string
-                    metadata?: Json | null
-                }
-                Relationships: [
-                    {
-                        foreignKeyName: "feature_toggles_user_id_fkey"
-                        columns: ["user_id"]
-                        isOneToOne: false
-                        referencedRelation: "profiles"
-                        referencedColumns: ["id"]
-                    }
                 ]
             }
         }

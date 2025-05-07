@@ -79,7 +79,7 @@ const TestOptionsPage = () => {
                             .eq('workout_session_id', session.id)
                             .limit(1);
 
-                        logsMap[session.id] = data && data.length > 0;
+                        logsMap[session.id] = Boolean(data && data.length > 0);
                     } catch (error) {
                         console.error('Error checking exercise logs:', error);
                         logsMap[session.id] = false;
@@ -169,7 +169,7 @@ const TestOptionsPage = () => {
             }
 
             // 2. Create workout sessions (3 sessions)
-            const sessionPromises = [];
+            const sessionPromises: Promise<{ data: any; error: any }>[] = [];
             for (let i = 0; i < 3; i++) {
                 // Create session with date offset (today, yesterday, 2 days ago)
                 const sessionDate = new Date();
@@ -188,21 +188,21 @@ const TestOptionsPage = () => {
                     .select()
                     .single();
 
-                sessionPromises.push(sessionPromise);
+                sessionPromises.push(sessionPromise as any);
             }
 
             const sessionResults = await Promise.all(sessionPromises);
-            const sessions = sessionResults.map(result => {
+            const sessions = sessionResults.map((result: { data: any, error: any }) => {
                 if (result.error) {
                     console.error('Error creating session:', result.error);
                     return null;
                 }
-                return result.data;
+                return result.data as any;  // Type assertion to avoid TS2339
             }).filter(Boolean);
 
             // 3. Create exercise logs for each session
             const exerciseTypes = ['squat', 'bench_press', 'deadlift', 'shoulder_press', 'row'];
-            const exercisePromises = [];
+            const exercisePromises: Promise<any>[] = [];
 
             for (const session of sessions) {
                 // Add 2-3 exercises per session
@@ -212,21 +212,25 @@ const TestOptionsPage = () => {
                     const exerciseType = exerciseTypes[Math.floor(Math.random() * exerciseTypes.length)];
                     const sets = Math.floor(Math.random() * 3) + 2; // 2-4 sets
 
-                    const exercisePromise = supabase
-                        .from('exercise_logs')
-                        .insert({
+                    exercisePromises.push(
+                        (async () => {
+                            const {data, error} = await supabase
+                                .from('exercise_logs')
+                                .insert({
                             workout_session_id: session.id,
-                            exercise_type: exerciseType,
-                            sets: sets,
-                            reps: Math.floor(Math.random() * 5) + 8, // 8-12 reps
-                            weight: Math.floor(Math.random() * 50) + 50, // 50-100 lbs
-                            notes: 'Automatically generated test exercise',
-                            created_at: session.created_at
-                        })
-                        .select()
-                        .single();
+                                    exercise_id: exerciseType,
+                                    sets_completed: sets,
+                                    reps_completed: [Math.floor(Math.random() * 5) + 8],
+                                    weights_used: [Math.floor(Math.random() * 50) + 50],
+                                    form_feedback: 'Automatically generated test exercise',
+                                    created_at: session.created_at,
+                                })
+                                .select();
 
-                    exercisePromises.push(exercisePromise);
+                            if (error) throw error;
+                            return data?.[0] || null;
+                        })()
+                    );
                 }
             }
 
@@ -741,14 +745,14 @@ const TestOptionsPage = () => {
             This action cannot be undone.
           </DialogDescription>
           <DialogFooter>
-            <Button 
-              variant="outline" 
+              <Button
+                  variant="outline"
               onClick={() => setIsClearCacheDialogOpen(false)}
               className="border-[#243137] text-[#A4B1B7] hover:bg-[#243137]"
             >
               Cancel
             </Button>
-            <Button 
+              <Button
               onClick={handleClearCache}
               variant="destructive"
             >
@@ -770,14 +774,14 @@ const TestOptionsPage = () => {
               User type and tester description will be preserved.
           </DialogDescription>
           <DialogFooter>
-            <Button 
-              variant="outline" 
+              <Button
+                  variant="outline"
               onClick={() => setIsSimulateDialogOpen(false)}
               className="border-[#243137] text-[#A4B1B7] hover:bg-[#243137]"
             >
               Cancel
             </Button>
-            <Button 
+              <Button
               onClick={handleSimulateMissingProfile}
               variant="destructive"
             >
@@ -800,14 +804,14 @@ const TestOptionsPage = () => {
             This action cannot be undone.
           </DialogDescription>
           <DialogFooter>
-            <Button 
-              variant="outline" 
+              <Button
+                  variant="outline"
               onClick={() => setIsResetMetricsDialogOpen(false)}
               className="border-[#243137] text-[#A4B1B7] hover:bg-[#243137]"
             >
               Cancel
             </Button>
-            <Button 
+              <Button
               onClick={handleResetProgressMetrics}
               variant="destructive"
             >
