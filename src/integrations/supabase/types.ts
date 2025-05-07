@@ -9,6 +9,41 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      app_logs: {
+        Row: {
+          context: string
+          created_at: string | null
+          id: string
+          level: string | null
+          message: string
+          user_id: string | null
+        }
+        Insert: {
+          context: string
+          created_at?: string | null
+          id?: string
+          level?: string | null
+          message: string
+          user_id?: string | null
+        }
+        Update: {
+          context?: string
+          created_at?: string | null
+          id?: string
+          level?: string | null
+          message?: string
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "app_logs_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       equipment: {
         Row: {
           brand: string | null

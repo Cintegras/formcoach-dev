@@ -1,10 +1,18 @@
-import React from 'react';
+
+import React, { useState } from 'react';
 import {Calendar as CalendarIcon} from 'lucide-react';
 import {format} from 'date-fns';
 import {Calendar} from '@/components/ui/calendar';
 import {Button} from '@/components/ui/button';
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover';
 import {cn} from '@/lib/utils';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface BirthdateStepProps {
     birthdate: Date | undefined;
@@ -19,6 +27,33 @@ const BirthdateStep: React.FC<BirthdateStepProps> = ({birthdate, onChange, error
     minDate.setFullYear(today.getFullYear() - 90);
     const maxDate = new Date();
     maxDate.setFullYear(today.getFullYear() - 18);
+
+    // Create arrays for years and months for the dropdowns
+    const years = Array.from({ length: 73 }, (_, i) => today.getFullYear() - 18 - i);
+    const months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ];
+
+    // State to store current view date (used for calendar navigation)
+    const [currentMonth, setCurrentMonth] = useState<Date>(birthdate || maxDate);
+
+    // Handle year change
+    const handleYearChange = (year: string) => {
+        const newDate = new Date(currentMonth);
+        newDate.setFullYear(parseInt(year));
+        setCurrentMonth(newDate);
+    };
+
+    // Handle month change
+    const handleMonthChange = (month: string) => {
+        const monthIndex = months.findIndex(m => m === month);
+        if (monthIndex !== -1) {
+            const newDate = new Date(currentMonth);
+            newDate.setMonth(monthIndex);
+            setCurrentMonth(newDate);
+        }
+    };
 
     return (
         <div className="space-y-6 animate-fade-in">
@@ -44,11 +79,50 @@ const BirthdateStep: React.FC<BirthdateStepProps> = ({birthdate, onChange, error
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="center">
+                        {/* Year and Month selectors */}
+                        <div className="flex justify-between p-3 border-b">
+                            <Select
+                                value={currentMonth.getFullYear().toString()}
+                                onValueChange={handleYearChange}
+                            >
+                                <SelectTrigger className="w-[110px]">
+                                    <SelectValue placeholder="Year" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {years.map((year) => (
+                                        <SelectItem key={year} value={year.toString()}>
+                                            {year}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+
+                            <Select
+                                value={months[currentMonth.getMonth()]}
+                                onValueChange={handleMonthChange}
+                            >
+                                <SelectTrigger className="w-[110px]">
+                                    <SelectValue placeholder="Month" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {months.map((month) => (
+                                        <SelectItem key={month} value={month}>
+                                            {month}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        {/* Calendar with updated month/year based on selections */}
                         <Calendar
                             mode="single"
                             selected={birthdate}
                             onSelect={(date) => date && onChange(date)}
                             disabled={(date) => date > maxDate || date < minDate}
+                            defaultMonth={currentMonth}
+                            month={currentMonth}
+                            onMonthChange={setCurrentMonth}
                             initialFocus
                         />
                     </PopoverContent>
