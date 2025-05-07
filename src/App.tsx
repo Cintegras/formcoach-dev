@@ -99,9 +99,7 @@ function App() {
                 path="/medical-disclaimer"
                 element={
                     <ProtectedRoute>
-                        <RequireProfile>
-                            <MedicalDisclaimer/>
-                        </RequireProfile>
+                        <MedicalDisclaimer/>
                     </ProtectedRoute>
                 }
             />
