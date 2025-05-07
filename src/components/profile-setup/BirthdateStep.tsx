@@ -71,8 +71,9 @@ const BirthdateStep: React.FC<BirthdateStepProps> = ({birthdate, onChange, error
                             variant="outline"
                             className={cn(
                                 "w-[270px] justify-center text-left font-normal",
-                                !birthdate ? "text-[#A4B1B7] bg-[#1C1C1E] border-[#2C2C2E]" : 
-                                "text-[#00C4B4] bg-[#1C1C1E] border-[#00C4B4]"
+                                !birthdate ? 
+                                  "text-[rgba(209, 235, 233, 0.62)] bg-[rgba(176, 232, 227, 0.12)] border-0" : 
+                                  "text-[rgba(209, 235, 233, 0.62)] bg-[rgba(176, 232, 227, 0.12)] border-0"
                             )}
                         >
                             <CalendarIcon className="mr-2 h-5 w-5 text-[#00C4B4]"/>
@@ -89,12 +90,12 @@ const BirthdateStep: React.FC<BirthdateStepProps> = ({birthdate, onChange, error
                                 value={currentMonth.getFullYear().toString()}
                                 onValueChange={handleYearChange}
                             >
-                                <SelectTrigger className="w-[110px] bg-[#1C1C1E] border-[#2C2C2E] text-white">
+                                <SelectTrigger className="w-[110px] bg-[#1C1C1E] border-[#2C2C2E] text-[rgba(209, 235, 233, 0.62)]">
                                     <SelectValue placeholder="Year" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-[#1C1C1E] border-[#2C2C2E] text-white">
+                                <SelectContent className="bg-[#1C1C1E] border-[#2C2C2E] text-[rgba(209, 235, 233, 0.62)]">
                                     {years.map((year) => (
-                                        <SelectItem key={year} value={year.toString()} className="hover:bg-[#2C2C2E] focus:bg-[#2C2C2E] focus:text-white">
+                                        <SelectItem key={year} value={year.toString()} className="hover:bg-[#2C2C2E] focus:bg-[#2C2C2E] focus:text-[rgba(209, 235, 233, 0.62)]">
                                             {year}
                                         </SelectItem>
                                     ))}
@@ -105,12 +106,12 @@ const BirthdateStep: React.FC<BirthdateStepProps> = ({birthdate, onChange, error
                                 value={months[currentMonth.getMonth()]}
                                 onValueChange={handleMonthChange}
                             >
-                                <SelectTrigger className="w-[110px] bg-[#1C1C1E] border-[#2C2C2E] text-white">
+                                <SelectTrigger className="w-[110px] bg-[#1C1C1E] border-[#2C2C2E] text-[rgba(209, 235, 233, 0.62)]">
                                     <SelectValue placeholder="Month" />
                                 </SelectTrigger>
-                                <SelectContent className="bg-[#1C1C1E] border-[#2C2C2E] text-white">
+                                <SelectContent className="bg-[#1C1C1E] border-[#2C2C2E] text-[rgba(209, 235, 233, 0.62)]">
                                     {months.map((month) => (
-                                        <SelectItem key={month} value={month} className="hover:bg-[#2C2C2E] focus:bg-[#2C2C2E] focus:text-white">
+                                        <SelectItem key={month} value={month} className="hover:bg-[#2C2C2E] focus:bg-[#2C2C2E] focus:text-[rgba(209, 235, 233, 0.62)]">
                                             {month}
                                         </SelectItem>
                                     ))}

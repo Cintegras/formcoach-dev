@@ -12,9 +12,12 @@ interface NameStepProps {
 const NameStep: React.FC<NameStepProps> = ({ value, onChange, error }) => {
   return (
     <div className="space-y-6 animate-fade-in">
-      <h1 className="text-2xl font-bold text-center text-white">
-        What's your name?
-      </h1>
+      <div className="flex items-center justify-center mb-2">
+        <UserCircle size={28} className="text-[#00C4B4] mr-3"/>
+        <h1 className="text-2xl font-bold text-center text-[#D7E4E3]">
+          What's your name?
+        </h1>
+      </div>
       
       <div className="relative mt-8">
         <Input
