@@ -163,10 +163,19 @@ export function useProfile() {
                 tester_description: existingProfile?.tester_description ?? null
             };
 
-            const newProfile = await createProfile({
-                id: user.id,
-                ...profileDataWithValidBirthdate
-            });
+            let newProfile: Profile | null = null;
+
+            // If profile already exists, update it instead of creating a new one
+            if (existingProfile) {
+                console.log('Profile already exists, updating instead of creating');
+                newProfile = await updateProfile(user.id, profileDataWithValidBirthdate);
+            } else {
+                // Create a new profile if one doesn't exist
+                newProfile = await createProfile({
+                    id: user.id,
+                    ...profileDataWithValidBirthdate
+                });
+            }
 
             if (newProfile) {
                 // Update state and cache
