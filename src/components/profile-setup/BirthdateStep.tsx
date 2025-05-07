@@ -58,7 +58,7 @@ const BirthdateStep: React.FC<BirthdateStepProps> = ({birthdate, onChange, error
     return (
         <div className="space-y-6 animate-fade-in">
             <div className="flex items-center justify-center mb-2">
-                <CalendarIcon size={24} className="text-[#00C4B4] mr-2"/>
+                <CalendarIcon size={28} className="text-[#00C4B4] mr-3"/>
                 <h1 className="text-2xl font-bold text-center text-white">
                     What's your birthdate?
                 </h1>
@@ -70,27 +70,31 @@ const BirthdateStep: React.FC<BirthdateStepProps> = ({birthdate, onChange, error
                         <Button
                             variant="outline"
                             className={cn(
-                                "w-[240px] justify-center text-left font-normal",
-                                !birthdate && "text-muted-foreground"
+                                "w-[270px] justify-center text-left font-normal",
+                                !birthdate ? "text-[#A4B1B7] bg-[#1C1C1E] border-[#2C2C2E]" : 
+                                "text-white bg-[#1C1C1E] border-[#00C4B4]"
                             )}
                         >
-                            <CalendarIcon className="mr-2 h-4 w-4"/>
-                            {birthdate ? format(birthdate, 'PPP') : <span>Select your birthdate</span>}
+                            <CalendarIcon className="mr-2 h-5 w-5 text-[#00C4B4]"/>
+                            {birthdate ? format(birthdate, 'MMMM d, yyyy') : <span>Select your birthdate</span>}
                         </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0" align="center">
+                    <PopoverContent 
+                      className="w-auto p-0 border-[#2C2C2E] bg-[#121212]" 
+                      align="center"
+                    >
                         {/* Year and Month selectors */}
-                        <div className="flex justify-between p-3 border-b">
+                        <div className="flex justify-between p-3 border-b border-[#2C2C2E]">
                             <Select
                                 value={currentMonth.getFullYear().toString()}
                                 onValueChange={handleYearChange}
                             >
-                                <SelectTrigger className="w-[110px]">
+                                <SelectTrigger className="w-[110px] bg-[#1C1C1E] border-[#2C2C2E] text-white">
                                     <SelectValue placeholder="Year" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="bg-[#1C1C1E] border-[#2C2C2E] text-white">
                                     {years.map((year) => (
-                                        <SelectItem key={year} value={year.toString()}>
+                                        <SelectItem key={year} value={year.toString()} className="hover:bg-[#2C2C2E] focus:bg-[#2C2C2E] focus:text-white">
                                             {year}
                                         </SelectItem>
                                     ))}
@@ -101,12 +105,12 @@ const BirthdateStep: React.FC<BirthdateStepProps> = ({birthdate, onChange, error
                                 value={months[currentMonth.getMonth()]}
                                 onValueChange={handleMonthChange}
                             >
-                                <SelectTrigger className="w-[110px]">
+                                <SelectTrigger className="w-[110px] bg-[#1C1C1E] border-[#2C2C2E] text-white">
                                     <SelectValue placeholder="Month" />
                                 </SelectTrigger>
-                                <SelectContent>
+                                <SelectContent className="bg-[#1C1C1E] border-[#2C2C2E] text-white">
                                     {months.map((month) => (
-                                        <SelectItem key={month} value={month}>
+                                        <SelectItem key={month} value={month} className="hover:bg-[#2C2C2E] focus:bg-[#2C2C2E] focus:text-white">
                                             {month}
                                         </SelectItem>
                                     ))}
@@ -115,16 +119,19 @@ const BirthdateStep: React.FC<BirthdateStepProps> = ({birthdate, onChange, error
                         </div>
 
                         {/* Calendar with updated month/year based on selections */}
-                        <Calendar
-                            mode="single"
-                            selected={birthdate}
-                            onSelect={(date) => date && onChange(date)}
-                            disabled={(date) => date > maxDate || date < minDate}
-                            defaultMonth={currentMonth}
-                            month={currentMonth}
-                            onMonthChange={setCurrentMonth}
-                            initialFocus
-                        />
+                        <div className="bg-[#121212]">
+                            <Calendar
+                                mode="single"
+                                selected={birthdate}
+                                onSelect={(date) => date && onChange(date)}
+                                disabled={(date) => date > maxDate || date < minDate}
+                                defaultMonth={currentMonth}
+                                month={currentMonth}
+                                onMonthChange={setCurrentMonth}
+                                initialFocus
+                                className="bg-[#121212]"
+                            />
+                        </div>
                     </PopoverContent>
                 </Popover>
 
