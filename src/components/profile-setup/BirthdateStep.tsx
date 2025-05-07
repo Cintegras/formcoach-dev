@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import {Calendar as CalendarIcon} from 'lucide-react';
 import {format} from 'date-fns';
 import {Calendar} from '@/components/ui/calendar';
-import {Button} from '@/components/ui/button';
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover';
 import {cn} from '@/lib/utils';
 import {
@@ -13,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {Button} from '@/components/ui/button';
 
 interface BirthdateStepProps {
     birthdate: Date | undefined;
@@ -59,7 +59,7 @@ const BirthdateStep: React.FC<BirthdateStepProps> = ({birthdate, onChange, error
         <div className="space-y-6 animate-fade-in">
             <div className="flex items-center justify-center mb-2">
                 <CalendarIcon size={28} className="text-[#00C4B4] mr-3"/>
-                <h1 className="text-2xl font-bold text-center text-white">
+                <h1 className="text-2xl font-bold text-center text-[#D7E4E3]">
                     What's your birthdate?
                 </h1>
             </div>
@@ -72,7 +72,7 @@ const BirthdateStep: React.FC<BirthdateStepProps> = ({birthdate, onChange, error
                             className={cn(
                                 "w-[270px] justify-center text-left font-normal",
                                 !birthdate ? "text-[#A4B1B7] bg-[#1C1C1E] border-[#2C2C2E]" : 
-                                "text-white bg-[#1C1C1E] border-[#00C4B4]"
+                                "text-[#00C4B4] bg-[#1C1C1E] border-[#00C4B4]"
                             )}
                         >
                             <CalendarIcon className="mr-2 h-5 w-5 text-[#00C4B4]"/>
@@ -137,12 +137,6 @@ const BirthdateStep: React.FC<BirthdateStepProps> = ({birthdate, onChange, error
 
                 {error && (
                     <p className="text-red-500 text-sm mt-2">{error}</p>
-                )}
-
-                {birthdate && (
-                    <div className="text-lg font-medium text-[#00C4B4] mt-4">
-                        {format(birthdate, 'MMMM d, yyyy')}
-                    </div>
                 )}
             </div>
         </div>
